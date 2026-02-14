@@ -203,7 +203,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-auto md:h-[80vh] min-h-[560px] md:min-h-[600px] flex items-center justify-center overflow-visible md:overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
@@ -215,18 +215,18 @@ export default function HomePage() {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 container mx-auto px-4 text-center">
+        <div className="relative z-10 container mx-auto px-4 text-center py-8 md:py-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4">
               Discover Bangladesh's
               <br />
               <span className="text-primary">Finest Stays & Tours</span>
             </h1>
-            <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-white/80 mb-6 md:mb-8 max-w-2xl mx-auto">
               Book your perfect property or adventure with trusted local hosts.
               Experience the beauty of Bangladesh.
             </p>

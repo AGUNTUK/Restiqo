@@ -107,7 +107,7 @@ export default function HeroSearchBar() {
   ]
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full max-w-full md:max-w-4xl mx-auto px-4">
       {/* Search Type Tabs */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
@@ -144,12 +144,12 @@ export default function HeroSearchBar() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="bg-white rounded-full shadow-2xl"
+        className="bg-white rounded-2xl sm:rounded-full shadow-2xl overflow-hidden"
       >
-        <div className="flex items-center">
+        <div className="flex flex-col sm:flex-row items-stretch divide-y divide-gray-200 sm:divide-y-0 sm:divide-x">
           {/* Location Input */}
-          <div className="relative flex-1 min-w-[200px]">
-            <div className="px-6 py-4">
+          <div className="relative flex-1 min-w-0">
+            <div className="px-4 sm:px-6 py-4">
               <label className="block text-xs font-semibold text-gray-500 mb-1">
                 Where
               </label>
@@ -165,7 +165,7 @@ export default function HeroSearchBar() {
                     setShowSuggestions(true)
                   }}
                   onFocus={() => setShowSuggestions(true)}
-                  className="w-full pl-5 pr-2 text-sm text-gray-800 placeholder-gray-400 outline-none bg-transparent"
+                  className="w-full pl-5 pr-8 text-sm text-gray-800 placeholder-gray-400 outline-none bg-transparent"
                 />
                 {location && (
                   <button
@@ -211,11 +211,8 @@ export default function HeroSearchBar() {
             </AnimatePresence>
           </div>
 
-          {/* Divider */}
-          <div className="h-12 w-px bg-gray-200" />
-
           {/* Check In */}
-          <div className="min-w-[140px] px-4 py-4">
+          <div className="px-4 sm:px-6 py-4">
             <label className="block text-xs font-semibold text-gray-500 mb-1">
               Check In
             </label>
@@ -231,11 +228,8 @@ export default function HeroSearchBar() {
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="h-12 w-px bg-gray-200" />
-
           {/* Check Out */}
-          <div className="min-w-[140px] px-4 py-4">
+          <div className="px-4 sm:px-6 py-4">
             <label className="block text-xs font-semibold text-gray-500 mb-1">
               Check Out
             </label>
@@ -251,11 +245,8 @@ export default function HeroSearchBar() {
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="h-12 w-px bg-gray-200" />
-
           {/* Guests */}
-          <div className="relative min-w-[130px] px-4 py-4" ref={guestDropdownRef}>
+          <div className="relative px-4 sm:px-6 py-4" ref={guestDropdownRef}>
             <label className="block text-xs font-semibold text-gray-500 mb-1">
               Guests
             </label>
@@ -329,7 +320,7 @@ export default function HeroSearchBar() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleSearch}
-            className="flex items-center gap-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-8 py-4 my-2 mr-2 rounded-full transition-all duration-200 font-semibold shadow-lg"
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-6 sm:px-8 py-4 sm:my-2 sm:mr-2 rounded-none sm:rounded-full transition-all duration-200 font-semibold shadow-lg w-full sm:w-auto"
           >
             <Search className="w-5 h-5" />
             <span>Search</span>
