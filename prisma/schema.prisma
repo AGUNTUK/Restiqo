@@ -1,0 +1,205 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String
+  image         String?
+  role          String    @default("USER") // USER, HOST, ADMIN
+  phone         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  bookings      Booking[]
+  reviews       Review[]
+  favorites     Favorite[]
+  hostProfile   HostProfile?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+// NextAuth models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  
+  @@unique([identifier, token])
+}
+
+// Host Profile
+model HostProfile {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hostType        String    // APARTMENT, HOTEL, TOUR_OPERATOR, RESORT, GUESTHOUSE
+  companyName     String?
+  description     String?
+  status          String    @default("PENDING") // PENDING, APPROVED, SUSPENDED, REJECTED
+  totalRevenue    Float     @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  properties      Property[]
+  tours           Tour[]
+}
+
+// Property
+model Property {
+  id              String    @id @default(cuid())
+  hostId          String
+  host            HostProfile @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  name            String
+  type            String    // APARTMENT, HOTEL, RESORT, GUESTHOUSE, VILLA, COTTAGE
+  city            String
+  location        String
+  address         String
+  description     String
+  capacity        Int
+  bedrooms        Int
+  beds            Int
+  bathrooms       Int
+  price           Float
+  amenities       String    // JSON string array
+  images          String    // JSON string array
+  latitude        Float?
+  longitude       Float?
+  rating          Float     @default(0)
+  reviewCount     Int       @default(0)
+  isFeatured      Boolean   @default(false)
+  isVerified      Boolean   @default(false)
+  status          String    @default("ACTIVE") // ACTIVE, INACTIVE, DRAFT
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  bookings        Booking[]
+  reviews         Review[]
+  favorites       Favorite[]
+}
+
+// Tour
+model Tour {
+  id              String    @id @default(cuid())
+  hostId          String
+  host            HostProfile @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  name            String
+  location        String
+  duration        String
+  description     String
+  pricePerPerson  Float
+  maxGroupSize    Int
+  highlights      String    // JSON string array
+  images          String    // JSON string array
+  included        String    // JSON string array
+  excluded        String    // JSON string array
+  rating          Float     @default(0)
+  reviewCount     Int       @default(0)
+  isFeatured      Boolean   @default(false)
+  isVerified      Boolean   @default(false)
+  status          String    @default("ACTIVE") // ACTIVE, INACTIVE, DRAFT
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  bookings        Booking[]
+  reviews         Review[]
+  favorites       Favorite[]
+}
+
+// Booking
+model Booking {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId      String?
+  property        Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  tourId          String?
+  tour            Tour?     @relation(fields: [tourId], references: [id], onDelete: SetNull)
+  checkIn         DateTime?
+  checkOut        DateTime?
+  travelDate      DateTime?
+  guestCount      Int
+  totalPrice      Float
+  platformFee     Float
+  hostRevenue     Float
+  status          String    @default("PENDING") // PENDING, CONFIRMED, CANCELLED, COMPLETED
+  paymentStatus   String    @default("PENDING") // PENDING, PAID, REFUNDED
+  specialRequests String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  review          Review?
+}
+
+// Review
+model Review {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId      String?
+  property        Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  tourId          String?
+  tour            Tour?     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  bookingId       String    @unique
+  booking         Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  rating          Int
+  title           String
+  comment         String
+  hostResponse    String?
+  hostRespondedAt DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// Favorite
+model Favorite {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId      String?
+  property        Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  tourId          String?
+  tour            Tour?     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  
+  @@unique([userId, propertyId])
+  @@unique([userId, tourId])
+}

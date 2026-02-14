@@ -1,0 +1,24 @@
+# Robots.txt for Restiqo BD
+# https://restiqo.com
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private pages
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /host/
+Disallow: /api/
+Disallow: /auth/
+
+# Allow public pages
+Allow: /properties
+Allow: /tours
+Allow: /contact
+Allow: /about
+
+# Sitemap
+Sitemap: https://restiqo.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
