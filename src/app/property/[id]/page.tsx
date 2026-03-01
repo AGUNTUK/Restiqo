@@ -25,6 +25,7 @@ import {
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import Modal from '@/components/ui/Modal'
+import GoogleMap from '@/components/ui/GoogleMap'
 import { Property } from '@/types/database'
 import toast from 'react-hot-toast'
 
@@ -407,9 +408,18 @@ export default function PropertyDetailsPage() {
                   <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-brand-primary flex-shrink-0" />
                   <span className="text-sm sm:text-base text-[#64748B]">{property.address}, {property.city}</span>
                 </div>
-                <div className="h-48 sm:h-64 bg-gray-200 rounded-xl flex items-center justify-center">
-                  <p className="text-sm sm:text-base text-[#64748B]">Map integration coming soon</p>
-                </div>
+                <GoogleMap
+                  center={{ lat: property.latitude, lng: property.longitude }}
+                  zoom={14}
+                  markers={[
+                    {
+                      position: { lat: property.latitude, lng: property.longitude },
+                      title: property.title,
+                      info: property.address,
+                    },
+                  ]}
+                  height="300px"
+                />
               </div>
             </motion.div>
           </div>
