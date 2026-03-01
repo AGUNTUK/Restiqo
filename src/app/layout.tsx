@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { Navbar, Footer, MobileHeader, MobileBottomNav } from '@/components/layout'
 import { Toaster } from 'react-hot-toast'
@@ -97,6 +98,7 @@ export default async function RootLayout({
         <WebSiteJsonLd />
       </head>
       <body className={`${poppins.variable} font-sans antialiased`} suppressHydrationWarning>
+        <Analytics />
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <AuthProvider>
