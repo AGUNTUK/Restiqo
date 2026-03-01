@@ -10,3 +10,4 @@ export const localeNames: Record<Locale, string> = {
     en: 'English',
     bn: 'বাংলা',
 }
+

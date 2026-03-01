@@ -275,3 +275,4 @@ export default function Card({ property, onWishlistToggle, isWishlisted = false,
     </motion.div>
   )
 }
+

@@ -25,7 +25,7 @@ export default function HostPendingPage() {
           </h1>
           
           <p className="text-gray-600 mb-6">
-            Thank you for applying to become a host on Restiqo. Your application has been received and is currently under review.
+            Thank you for applying to become a host on Restiqa. Your application has been received and is currently under review.
           </p>
 
           {/* Timeline */}
@@ -78,8 +78,8 @@ export default function HostPendingPage() {
             <Mail className="w-4 h-4" />
             <span className="text-sm">
               Questions? Contact us at{' '}
-              <a href="mailto:hosts@restiqo.com" className="text-brand-primary hover:underline">
-                hosts@restiqo.com
+              <a href="mailto:hosts@restiqa.com" className="text-brand-primary hover:underline">
+                hosts@restiqa.com
               </a>
             </span>
           </div>
@@ -102,3 +102,4 @@ export default function HostPendingPage() {
     </div>
   )
 }
+

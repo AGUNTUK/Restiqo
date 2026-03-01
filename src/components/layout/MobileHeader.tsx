@@ -63,7 +63,7 @@ export default function MobileHeader() {
           >
             <Image
               src="/logo.png"
-              alt="Restiqo"
+              alt="Restiqa"
               width={100}
               height={32}
               className="h-8 w-auto"
@@ -102,3 +102,4 @@ export default function MobileHeader() {
     </header>
   )
 }
+

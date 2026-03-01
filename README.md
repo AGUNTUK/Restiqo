@@ -70,7 +70,7 @@ Restiqa features a modern Neomorphism design with:
 ## 📁 Project Structure
 
 ```
-restiqo/
+restiqa/
 ├── src/
 │   ├── app/                    # Next.js App Router pages
 │   │   ├── admin/              # Admin panel
@@ -123,8 +123,8 @@ restiqo/
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/restiqo.git
-cd restiqo
+git clone https://github.com/yourusername/restiqa.git
+cd restiqa
 ```
 
 2. **Install dependencies**

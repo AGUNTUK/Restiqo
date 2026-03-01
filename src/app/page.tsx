@@ -895,7 +895,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-6 sm:mb-12 lg:mb-16">
             <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-[#1E293B] mb-2 sm:mb-4">
-              Why Choose Restiqo?
+              Why Choose Restiqa?
             </h2>
             <p className="text-xs sm:text-base text-[#64748B] max-w-2xl mx-auto">
               We provide the best travel experience with premium properties,
@@ -959,7 +959,7 @@ export default function HomePage() {
               Ready to List Your Property?
             </h2>
             <p className="text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto text-xs sm:text-base">
-              Join thousands of hosts who trust Restiqo to manage their
+              Join thousands of hosts who trust Restiqa to manage their
               properties and connect with travelers from around the world.
             </p>
             <Link href="/host/properties/new">
@@ -977,3 +977,4 @@ export default function HomePage() {
     </div>
   )
 }
+

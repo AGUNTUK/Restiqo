@@ -479,3 +479,4 @@ export type ReviewWithUser = Review & {
 export type WishlistWithProperty = Wishlist & {
   property: Property
 }
+

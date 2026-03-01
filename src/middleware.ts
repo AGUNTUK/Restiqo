@@ -2,7 +2,25 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 // Route configuration
-const PUBLIC_PATHS = ['/', '/auth', '/apartments', '/hotels', '/tours', '/search', '/property']
+const PUBLIC_PATHS = [
+  '/',
+  '/auth',
+  '/apartments',
+  '/hotels',
+  '/tours',
+  '/search',
+  '/property',
+  '/support',
+  '/help-center',
+  '/safety',
+  '/cancellation',
+  '/covid-19-response',
+  '/legal',
+  '/privacy-policy',
+  '/terms-of-service',
+  '/cookie-policy',
+  '/sitemap',
+]
 const GUEST_PATHS = ['/dashboard', '/bookings', '/wishlist', '/profile']
 const HOST_PATHS = ['/host']
 const ADMIN_PATHS = ['/admin']
@@ -139,3 +157,4 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 }
+

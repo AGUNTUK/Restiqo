@@ -111,7 +111,7 @@ export default function Navbar() {
             >
               <Image
                 src="/logo.png"
-                alt="Restiqo Logo"
+                alt="Restiqa Logo"
                 width={120}
                 height={40}
                 className="h-10 w-auto"
@@ -486,3 +486,4 @@ export default function Navbar() {
     </nav>
   )
 }
+

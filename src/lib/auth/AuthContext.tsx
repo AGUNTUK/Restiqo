@@ -395,3 +395,4 @@ export function useRequireRole(requiredRole: UserRole, redirectTo: string = '/')
 
   return auth
 }
+

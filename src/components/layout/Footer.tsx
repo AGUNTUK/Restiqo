@@ -58,7 +58,7 @@ export default function Footer() {
               <Link href="/" className="inline-block mb-4 sm:mb-6">
                 <Image
                   src="/logo.png"
-                  alt="Restiqo Logo"
+                  alt="Restiqa Logo"
                   width={120}
                   height={40}
                   className="h-8 sm:h-10 w-auto"
@@ -75,7 +75,7 @@ export default function Footer() {
                   <div className="neu-icon w-8 h-8 flex-shrink-0">
                     <Mail className="w-4 h-4 text-brand-primary" />
                   </div>
-                  <span>hello@restiqo.com</span>
+                  <span>hello@restiqa.com</span>
                 </div>
                 <div className="flex items-center space-x-3 text-[#64748B] text-sm sm:text-base">
                   <div className="neu-icon w-8 h-8 flex-shrink-0">
@@ -209,7 +209,7 @@ export default function Footer() {
         <div className="py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-[#64748B] text-sm">
-              © {currentYear} Restiqo. All rights reserved.
+              © {currentYear} Restiqa. All rights reserved.
             </p>
             <div className="flex items-center space-x-6">
               <span className="text-[#64748B] text-sm">
@@ -222,3 +222,4 @@ export default function Footer() {
     </footer>
   )
 }
+

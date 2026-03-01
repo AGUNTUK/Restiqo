@@ -114,7 +114,7 @@ export default function BecomeHostPage() {
             <Home className="w-8 h-8 text-brand-primary" />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Become a Host on Restiqo
+            Become a Host on Restiqa
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Join thousands of hosts earning money by sharing their properties with travelers from around the world.
@@ -266,3 +266,4 @@ export default function BecomeHostPage() {
     </div>
   )
 }
+

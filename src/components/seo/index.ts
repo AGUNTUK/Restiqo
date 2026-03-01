@@ -6,3 +6,4 @@ export {
   FAQJsonLd,
   ReviewJsonLd,
 } from './StructuredData'
+

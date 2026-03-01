@@ -8,9 +8,9 @@ interface OrganizationJsonLdProps {
 }
 
 export function OrganizationJsonLd({
-  name = 'Restiqo',
-  url = 'https://restiqo.com',
-  logo = 'https://restiqo.com/logo.png',
+  name = 'Restiqa',
+  url = 'https://restiqa.com',
+  logo = 'https://restiqa.com/logo.png',
   description = 'Premium Travel & Accommodation Booking Platform in Bangladesh',
 }: OrganizationJsonLdProps) {
   const jsonLd = {
@@ -27,9 +27,9 @@ export function OrganizationJsonLd({
       availableLanguage: ['English', 'Bengali'],
     },
     sameAs: [
-      'https://facebook.com/restiqo',
-      'https://twitter.com/restiqo',
-      'https://instagram.com/restiqo',
+      'https://facebook.com/restiqa',
+      'https://twitter.com/restiqa',
+      'https://instagram.com/restiqa',
     ],
   }
 
@@ -49,8 +49,8 @@ interface WebSiteJsonLdProps {
 }
 
 export function WebSiteJsonLd({
-  name = 'Restiqo',
-  url = 'https://restiqo.com',
+  name = 'Restiqa',
+  url = 'https://restiqa.com',
   description = 'Discover amazing apartments, hotels, and tours. Your perfect stay and experience awaits you in Bangladesh and beyond.',
 }: WebSiteJsonLdProps) {
   const jsonLd = {
@@ -117,7 +117,7 @@ export function PropertyJsonLd({
   amenities,
   hostName,
 }: PropertyJsonLdProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://restiqo.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://restiqa.com'
   
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -282,3 +282,4 @@ export function ReviewJsonLd({ review, itemReviewed }: ReviewJsonLdProps) {
     />
   )
 }
+

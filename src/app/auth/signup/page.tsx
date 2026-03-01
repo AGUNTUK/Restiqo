@@ -133,7 +133,7 @@ export default function SignupPage() {
               Create Account
             </h1>
             <p className="text-[#64748B] text-sm sm:text-base">
-              Join Restiqo and start your journey
+              Join Restiqa and start your journey
             </p>
           </div>
 
@@ -326,3 +326,4 @@ export default function SignupPage() {
     </div>
   )
 }
+

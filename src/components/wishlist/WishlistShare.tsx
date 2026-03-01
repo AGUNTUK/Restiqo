@@ -79,7 +79,7 @@ export default function WishlistShare({
 
     const shareToTwitter = () => {
         if (!shareUrl) return
-        const text = `Check out my "${wishlist.name}" wishlist on Restiqo!`
+        const text = `Check out my "${wishlist.name}" wishlist on Restiqa!`
         window.open(
             `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`,
             '_blank',
@@ -90,13 +90,13 @@ export default function WishlistShare({
     const shareViaEmail = () => {
         if (!shareUrl) return
         const subject = `Check out my "${wishlist.name}" wishlist`
-        const body = `I thought you might like these properties I found on Restiqo!\n\n${shareUrl}`
+        const body = `I thought you might like these properties I found on Restiqa!\n\n${shareUrl}`
         window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     }
 
     const shareViaWhatsApp = () => {
         if (!shareUrl) return
-        const text = `Check out my "${wishlist.name}" wishlist on Restiqo! ${shareUrl}`
+        const text = `Check out my "${wishlist.name}" wishlist on Restiqa! ${shareUrl}`
         window.open(
             `https://wa.me/?text=${encodeURIComponent(text)}`,
             '_blank'

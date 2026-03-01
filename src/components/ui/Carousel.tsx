@@ -236,3 +236,4 @@ export default function Carousel<T extends { id: string | number }>({
         </div>
     )
 }
+

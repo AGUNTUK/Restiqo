@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Restiqo",
+    "appName": "Restiqa",
     "tagline": "Premium Travel & Accommodation Booking",
     "loading": "Loading...",
     "error": "Something went wrong",
@@ -155,7 +155,7 @@
     },
     "signup": {
       "title": "Create Account",
-      "subtitle": "Join Restiqo today",
+      "subtitle": "Join Restiqa today",
       "fullName": "Full Name",
       "email": "Email Address",
       "password": "Password",
@@ -279,7 +279,7 @@
   },
   "footer": {
     "about": "About Us",
-    "aboutDesc": "Restiqo is your trusted platform for finding premium accommodations and unique travel experiences in Bangladesh.",
+    "aboutDesc": "Restiqa is your trusted platform for finding premium accommodations and unique travel experiences in Bangladesh.",
     "quickLinks": "Quick Links",
     "support": "Support",
     "legal": "Legal",
@@ -298,7 +298,7 @@
       "placeholder": "Enter your email",
       "button": "Subscribe"
     },
-    "copyright": "© {year} Restiqo. All rights reserved.",
+    "copyright": "© {year} Restiqa. All rights reserved.",
     "madeWith": "Made with ❤️ in Bangladesh"
   },
   "notifications": {
@@ -339,3 +339,4 @@
     "wishlistRemoved": "Removed from your wishlist"
   }
 }
+
