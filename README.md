@@ -1,8 +1,8 @@
-# Restiqo - Premium Travel & Accommodation Booking Platform
+# Restiqa - Premium Travel & Accommodation Booking Platform
 
 A modern, premium travel and accommodation booking web application built with Next.js, featuring a beautiful Claymorphism UI design.
 
-![Restiqo](https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200)
+![Restiqa](https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200)
 
 ## 🌟 Features
 
@@ -10,18 +10,25 @@ A modern, premium travel and accommodation booking web application built with Ne
 - **🏠 Apartments** - Browse and book premium apartments
 - **🏨 Hotels** - Discover luxury hotels and resorts
 - **🎯 Tours & Experiences** - Explore curated tours and adventures
+- **🔍 Advanced Search** - Search properties with filters and sorting
+- **🖼️ Image Lightbox** - Full-screen image gallery with zoom
 
 ### User Features
 - **Authentication System** - Sign up, login, logout with Supabase Auth
 - **User Roles** - Guest, Host, and Admin roles
 - **Dashboard** - Manage bookings, wishlist, and profile settings
-- **Wishlist** - Save favorite properties
+- **Wishlist** - Save and share favorite properties
 - **Reviews & Ratings** - Leave and view property reviews
+- **Real-time Notifications** - Instant booking and message alerts
+- **Chat System** - Direct messaging between hosts and guests
+- **Multi-language Support** - English and Bengali (বাংলা)
 
 ### Host Features
 - **Property Management** - Add, edit, and manage listings
 - **Booking Management** - Handle guest bookings
 - **Earnings Overview** - Track revenue and performance
+- **Analytics Dashboard** - View property performance metrics
+- **Pending Approvals** - Manage property approval requests
 
 ### Admin Features
 - **User Management** - Manage all users
@@ -31,11 +38,11 @@ A modern, premium travel and accommodation booking web application built with Ne
 
 ## 🎨 Design
 
-### Claymorphism UI
-Restiqo features a modern Claymorphism design with:
+### Neomorphism UI
+Restiqa features a modern Neomorphism design with:
 - Soft rounded surfaces
 - Subtle shadows
-- Floating clay-like cards
+- Floating card-like elements
 - Smooth gradients
 - Premium minimalistic feel
 
@@ -54,9 +61,11 @@ Restiqo features a modern Claymorphism design with:
 - **Database**: Supabase PostgreSQL
 - **Auth**: Supabase Auth
 - **Storage**: Supabase Storage
+- **Real-time**: Supabase Realtime (Chat & Notifications)
 - **Animations**: Framer Motion
 - **Icons**: Lucide React
 - **Notifications**: React Hot Toast
+- **i18n**: next-intl
 
 ## 📁 Project Structure
 
@@ -67,22 +76,39 @@ restiqo/
 │   │   ├── admin/              # Admin panel
 │   │   ├── apartments/         # Apartments listing
 │   │   ├── auth/               # Authentication pages
+│   │   ├── bookings/           # User bookings page
 │   │   ├── dashboard/          # User dashboard
 │   │   ├── hotels/             # Hotels listing
-│   │   ├── host/               # Host dashboard
+│   │   ├── host/               # Host dashboard & management
 │   │   ├── property/           # Property details
 │   │   ├── search/             # Search page
-│   │   └── tours/              # Tours listing
+│   │   ├── tours/              # Tours listing
+│   │   └── wishlist/           # User wishlist
 │   ├── components/
+│   │   ├── booking/            # Booking components (Calendar)
+│   │   ├── chat/               # Real-time chat & notifications
+│   │   ├── dashboard/          # Dashboard tabs
 │   │   ├── layout/             # Layout components (Navbar, Footer)
-│   │   └── ui/                 # Reusable UI components
+│   │   ├── mobile/             # Mobile-specific components
+│   │   ├── reviews/            # Review form & list
+│   │   ├── seo/                # SEO components
+│   │   ├── ui/                 # Reusable UI components
+│   │   └── wishlist/           # Wishlist components
 │   ├── lib/
-│   │   └── supabase/           # Supabase client configuration
-│   └── types/
-│       └── database.ts         # TypeScript types for database
+│   │   ├── auth/               # Auth context & hooks
+│   │   ├── pricing/            # Pricing & discounts
+│   │   ├── query/              # React Query provider
+│   │   ├── realtime/           # Real-time subscriptions
+│   │   ├── supabase/           # Supabase client config
+│   │   └── validations/        # Zod schemas
+│   ├── types/
+│   │   └── database.ts         # TypeScript types
+│   └── i18n/                   # Internationalization
+│       └── messages/           # Translation files (en.json, bn.json)
 ├── supabase/
-│   └── schema.sql              # Database schema and RLS policies
-├── .env.local                  # Environment variables
+│   ├── schema.sql              # Database schema & RLS policies
+│   └── realtime-schema.sql     # Realtime subscriptions
+├── public/                     # Static assets
 └── package.json
 ```
 
@@ -109,6 +135,7 @@ npm install
 3. **Set up Supabase**
    - Create a new project at [supabase.com](https://supabase.com)
    - Go to SQL Editor and run the contents of `supabase/schema.sql`
+   - Run `supabase/realtime-schema.sql` for real-time features
    - Enable Google OAuth in Authentication > Providers (optional)
 
 4. **Configure environment variables**
@@ -122,7 +149,7 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_APP_NAME=Restiqo
+NEXT_PUBLIC_APP_NAME=Restiqa
 ```
 
 5. **Run the development server**
@@ -144,6 +171,8 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 - **reviews** - Property reviews
 - **wishlists** - User wishlists
 - **amenities** - Available amenities
+- **conversations** - Chat conversations
+- **messages** - Chat messages
 
 ### Row Level Security (RLS)
 All tables have RLS enabled with appropriate policies for:
@@ -151,9 +180,16 @@ All tables have RLS enabled with appropriate policies for:
 - User-specific access for personal data
 - Role-based access for admin functions
 
+### Realtime Subscriptions
+Enabled for:
+- New booking notifications
+- Chat messages
+- Review updates
+- Property status changes
+
 ## 🔐 Authentication
 
-Restiqo uses Supabase Auth with:
+Restiqa uses Supabase Auth with:
 - Email/Password authentication
 - Google OAuth (optional)
 - Protected routes via middleware
@@ -168,9 +204,25 @@ Restiqo uses Supabase Auth with:
 
 The application is fully responsive with:
 - Mobile-first approach
+- Mobile navigation (bottom nav)
+- Mobile gestures support
 - Tablet-optimized layouts
 - Desktop premium experience
 - Smooth animations and transitions
+
+## 🔄 Real-time Features
+
+- **Chat** - Instant messaging between hosts and guests
+- **Notifications** - Real-time booking and message alerts
+- **Live Updates** - Property availability and booking status
+
+## 🌍 Internationalization
+
+Restiqa supports multiple languages:
+- **English** (en) - Default
+- **Bengali** (bn) - বাংলা
+
+Language switcher available in the UI.
 
 ## 🚀 Deployment
 
@@ -187,7 +239,7 @@ NEXT_PUBLIC_SUPABASE_URL=your_production_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_production_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_production_service_role_key
 NEXT_PUBLIC_APP_URL=https://your-domain.com
-NEXT_PUBLIC_APP_NAME=Restiqo
+NEXT_PUBLIC_APP_NAME=Restiqa
 ```
 
 ## 🎯 Target Audience
@@ -197,14 +249,15 @@ NEXT_PUBLIC_APP_NAME=Restiqo
 
 ## 🔮 Future Enhancements
 
-- [ ] Real-time chat between hosts and guests
+- [x] Real-time chat between hosts and guests
+- [x] Multi-language support (English & Bengali)
 - [ ] Payment integration (Stripe, bKash)
 - [ ] Map integration with property locations
 - [ ] Mobile app (React Native)
-- [ ] Multi-language support
 - [ ] Advanced analytics dashboard
 - [ ] Email notifications
 - [ ] SMS verification
+- [ ] AI-powered search recommendations
 
 ## 📄 License
 
@@ -216,9 +269,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📞 Support
 
-For support, email hello@restiqo.com or join our Discord channel.
+For support, email hello@restiqa.com or join our Discord channel.
 
 ---
 
 Built with ❤️ in Bangladesh
-

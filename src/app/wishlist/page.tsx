@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -29,21 +29,10 @@ export default function WishlistPage() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
 
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.push('/auth/login?redirect=/wishlist')
-    }
-  }, [authLoading, isAuthenticated, router])
-
-  useEffect(() => {
-    if (user) {
-      loadWishlist()
-    }
-  }, [user])
-
-  const loadWishlist = async () => {
+  const loadWishlist = useCallback(async () => {
     if (!user) return
 
+    setLoading(true)
     const supabase = createClient()
     
     const { data, error } = await supabase
@@ -62,7 +51,19 @@ export default function WishlistPage() {
       setWishlist(data as WishlistWithProperty[])
     }
     setLoading(false)
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/auth/login?redirect=/wishlist')
+    }
+  }, [authLoading, isAuthenticated, router])
+
+  useEffect(() => {
+    if (user) {
+      loadWishlist()
+    }
+  }, [user, loadWishlist])
 
   const removeFromWishlist = async (wishlistId: string) => {
     const supabase = createClient()

@@ -16,6 +16,7 @@ export function createClient() {
     supabaseUrl === 'your_supabase_project_url' ||
     supabaseAnonKey === 'your_supabase_anon_key') {
     console.warn('Supabase environment variables not configured. Using mock client.')
+     
     return {
       auth: {
         getUser: () => Promise.resolve({ data: { user: null }, error: null }),
@@ -35,6 +36,7 @@ export function createClient() {
         eq: () => Promise.resolve({ data: null, error: null }),
         order: () => Promise.resolve({ data: null, error: null }),
       }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
   }
 

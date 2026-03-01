@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -41,21 +41,10 @@ export default function BookingsPage() {
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past' | 'cancelled'>('all')
   const [searchQuery, setSearchQuery] = useState('')
 
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.push('/auth/login?redirect=/bookings')
-    }
-  }, [authLoading, isAuthenticated, router])
-
-  useEffect(() => {
-    if (user) {
-      loadBookings()
-    }
-  }, [user])
-
-  const loadBookings = async () => {
+  const loadBookings = useCallback(async () => {
     if (!user) return
 
+    setLoading(true)
     const supabase = createClient()
     
     const { data, error } = await supabase
@@ -74,7 +63,19 @@ export default function BookingsPage() {
       setBookings(data as BookingWithProperty[])
     }
     setLoading(false)
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/auth/login?redirect=/bookings')
+    }
+  }, [authLoading, isAuthenticated, router])
+
+  useEffect(() => {
+    if (user) {
+      loadBookings()
+    }
+  }, [user, loadBookings])
 
   const cancelBooking = async (bookingId: string) => {
     const supabase = createClient()

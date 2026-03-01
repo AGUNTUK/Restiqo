@@ -33,13 +33,13 @@ export default function VerifyEmailPage() {
             <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600">
               <li>Check your email inbox</li>
               <li>Click the verification link in the email</li>
-              <li>You'll be redirected to complete your registration</li>
+              <li>You will be redirected to complete your registration</li>
             </ol>
           </div>
 
           {/* Tips */}
           <div className="text-sm text-gray-500 mb-6">
-            <p>Didn't receive the email?</p>
+            <p>Did not receive the email?</p>
             <ul className="mt-2 space-y-1">
               <li>• Check your spam folder</li>
               <li>• Make sure you entered the correct email</li>

@@ -255,7 +255,7 @@ function LoginContent() {
 
         {/* Sign Up Link */}
         <p className="mt-8 text-center text-[#64748B]">
-          Don't have an account?{' '}
+          Do not have an account?{' '}
           <Link
             href="/auth/signup"
             className="text-brand-primary font-medium hover:underline"

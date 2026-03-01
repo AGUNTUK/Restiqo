@@ -47,6 +47,32 @@ export default function ImageLightbox({
     }, [isOpen])
 
     // Keyboard navigation
+    const navigatePrev = useCallback(() => {
+        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+        setZoom(1)
+        setPosition({ x: 0, y: 0 })
+    }, [images.length])
+
+    const navigateNext = useCallback(() => {
+        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+        setZoom(1)
+        setPosition({ x: 0, y: 0 })
+    }, [images.length])
+
+    const handleZoomIn = useCallback(() => {
+        setZoom((prev) => Math.min(prev + 0.5, 3))
+    }, [])
+
+    const handleZoomOut = useCallback(() => {
+        setZoom((prev) => {
+            const newZoom = Math.max(prev - 0.5, 1)
+            if (newZoom === 1) {
+                setPosition({ x: 0, y: 0 })
+            }
+            return newZoom
+        })
+    }, [])
+
     const handleKeyDown = useCallback(
         (e: KeyboardEvent) => {
             if (!isOpen) return
@@ -70,39 +96,13 @@ export default function ImageLightbox({
                     break
             }
         },
-        [isOpen, onClose, currentIndex, images.length]
+        [isOpen, onClose, navigatePrev, navigateNext, handleZoomIn, handleZoomOut]
     )
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown)
         return () => window.removeEventListener('keydown', handleKeyDown)
     }, [handleKeyDown])
-
-    const navigatePrev = () => {
-        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
-        setZoom(1)
-        setPosition({ x: 0, y: 0 })
-    }
-
-    const navigateNext = () => {
-        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
-        setZoom(1)
-        setPosition({ x: 0, y: 0 })
-    }
-
-    const handleZoomIn = () => {
-        setZoom((prev) => Math.min(prev + 0.5, 3))
-    }
-
-    const handleZoomOut = () => {
-        setZoom((prev) => {
-            const newZoom = Math.max(prev - 0.5, 1)
-            if (newZoom === 1) {
-                setPosition({ x: 0, y: 0 })
-            }
-            return newZoom
-        })
-    }
 
     const handleDownload = async () => {
         const image = images[currentIndex]

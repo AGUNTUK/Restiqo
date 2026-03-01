@@ -57,6 +57,24 @@ export default function Carousel<T extends { id: string | number }>({
     }, [checkScrollButtons])
 
     // Auto-play functionality
+    const scroll = (direction: 'left' | 'right') => {
+        if (containerRef.current) {
+            const itemElement = containerRef.current.querySelector('[data-carousel-item]') as HTMLElement
+            const itemWidth = itemElement?.clientWidth || 320
+            const gapSize = 24 // gap-6 = 1.5rem = 24px
+            const scrollAmount = itemWidth + gapSize
+
+            const newScrollLeft = direction === 'left'
+                ? containerRef.current.scrollLeft - scrollAmount
+                : containerRef.current.scrollLeft + scrollAmount
+
+            containerRef.current.scrollTo({
+                left: newScrollLeft,
+                behavior: 'smooth'
+            })
+        }
+    }
+
     useEffect(() => {
         if (!autoPlay || isDragging) return
 
@@ -75,25 +93,7 @@ export default function Carousel<T extends { id: string | number }>({
         }, autoPlayInterval)
 
         return () => clearInterval(interval)
-    }, [autoPlay, autoPlayInterval, isDragging])
-
-    const scroll = (direction: 'left' | 'right') => {
-        if (containerRef.current) {
-            const itemElement = containerRef.current.querySelector('[data-carousel-item]') as HTMLElement
-            const itemWidth = itemElement?.clientWidth || 320
-            const gapSize = 24 // gap-6 = 1.5rem = 24px
-            const scrollAmount = itemWidth + gapSize
-
-            const newScrollLeft = direction === 'left'
-                ? containerRef.current.scrollLeft - scrollAmount
-                : containerRef.current.scrollLeft + scrollAmount
-
-            containerRef.current.scrollTo({
-                left: newScrollLeft,
-                behavior: 'smooth'
-            })
-        }
-    }
+    }, [autoPlay, autoPlayInterval, isDragging, scroll])
 
     const scrollToIndex = (index: number) => {
         if (containerRef.current) {

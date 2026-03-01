@@ -18,14 +18,14 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Restiqo - Premium Travel & Accommodation Booking',
-    template: '%s | Restiqo',
+    default: 'Restiqa - Premium Travel & Accommodation Booking',
+    template: '%s | Restiqa',
   },
   description: 'Discover amazing apartments, hotels, and tours. Your perfect stay and experience awaits you in Bangladesh and beyond.',
   keywords: ['travel', 'booking', 'apartments', 'hotels', 'tours', 'Bangladesh', 'accommodation', 'vacation rental', 'holiday'],
-  authors: [{ name: 'Restiqo Team' }],
-  creator: 'Restiqo',
-  publisher: 'Restiqo',
+  authors: [{ name: 'Restiqa Team' }],
+  creator: 'Restiqa',
+  publisher: 'Restiqa',
   icons: {
     icon: '/logo.png',
     apple: '/logo.png',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://restiqo.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://restiqa.com'),
   alternates: {
     canonical: '/',
     languages: {
@@ -44,27 +44,27 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Restiqo - Premium Travel & Accommodation Booking',
+    title: 'Restiqa - Premium Travel & Accommodation Booking',
     description: 'Discover amazing apartments, hotels, and tours. Your perfect stay and experience awaits you in Bangladesh and beyond.',
     type: 'website',
     locale: 'en_US',
     alternateLocale: ['bn_BD'],
-    siteName: 'Restiqo',
+    siteName: 'Restiqa',
     images: [
       {
         url: '/logo.png',
         width: 1200,
         height: 630,
-        alt: 'Restiqo - Premium Travel & Accommodation Booking',
+        alt: 'Restiqa - Premium Travel & Accommodation Booking',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Restiqo - Premium Travel & Accommodation Booking',
+    title: 'Restiqa - Premium Travel & Accommodation Booking',
     description: 'Discover amazing apartments, hotels, and tours. Your perfect stay and experience awaits you in Bangladesh and beyond.',
     images: ['/logo.png'],
-    creator: '@restiqo',
+    creator: '@restiqa',
   },
   robots: {
     index: true,
