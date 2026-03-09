@@ -10,6 +10,7 @@ import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo'
 import { QueryProvider } from '@/lib/query/QueryProvider'
 import { ErrorBoundary } from '@/components/ui'
 import { AuthProvider } from '@/lib/auth'
+import { ThemeProvider } from '@/lib/theme'
 
 export const metadata: Metadata = {
   title: {
@@ -88,6 +89,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#EEF2F6" />
+        <meta name="heleket" content="59dd1cbe" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/logo.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -103,53 +105,55 @@ export default async function RootLayout({
         <SpeedInsights />
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
-            <AuthProvider>
-              <ErrorBoundary>
-                {/* Desktop Navbar - Hidden on mobile */}
-                <div className="hidden md:block">
-                  <Navbar />
-                </div>
+            <ThemeProvider>
+              <AuthProvider>
+                <ErrorBoundary>
+                  {/* Desktop Navbar - Hidden on mobile */}
+                  <div className="hidden md:block">
+                    <Navbar />
+                  </div>
 
-                {/* Mobile Header - Hidden on desktop */}
-                <MobileHeader />
+                  {/* Mobile Header - Hidden on desktop */}
+                  <MobileHeader />
 
-                <main className="min-h-screen pt-16 md:pt-0 has-mobile-nav">
-                  {children}
-                </main>
+                  <main className="min-h-screen pt-16 md:pt-0 has-mobile-nav">
+                    {children}
+                  </main>
 
-                <Footer />
+                  <Footer />
 
-                {/* Mobile Bottom Navigation - Hidden on desktop */}
-                <MobileBottomNav />
+                  {/* Mobile Bottom Navigation - Hidden on desktop */}
+                  <MobileBottomNav />
 
-                <Toaster
-                  position="top-right"
-                  toastOptions={{
-                    duration: 4000,
-                    style: {
-                      background: '#EEF2F6',
-                      border: 'none',
-                      borderRadius: '16px',
-                      boxShadow: '8px 8px 16px rgba(0, 0, 0, 0.08), -8px -8px 16px rgba(255, 255, 255, 0.9)',
-                      color: '#1E293B',
-                      padding: '16px',
-                    },
-                    success: {
-                      iconTheme: {
-                        primary: '#88C51C',
-                        secondary: '#fff',
+                  <Toaster
+                    position="top-right"
+                    toastOptions={{
+                      duration: 4000,
+                      style: {
+                        background: '#EEF2F6',
+                        border: 'none',
+                        borderRadius: '16px',
+                        boxShadow: '8px 8px 16px rgba(0, 0, 0, 0.08), -8px -8px 16px rgba(255, 255, 255, 0.9)',
+                        color: '#1E293B',
+                        padding: '16px',
                       },
-                    },
-                    error: {
-                      iconTheme: {
-                        primary: '#ef4444',
-                        secondary: '#fff',
+                      success: {
+                        iconTheme: {
+                          primary: '#88C51C',
+                          secondary: '#fff',
+                        },
                       },
-                    },
-                  }}
-                />
-              </ErrorBoundary>
-            </AuthProvider>
+                      error: {
+                        iconTheme: {
+                          primary: '#ef4444',
+                          secondary: '#fff',
+                        },
+                      },
+                    }}
+                  />
+                </ErrorBoundary>
+              </AuthProvider>
+            </ThemeProvider>
           </QueryProvider>
         </NextIntlClientProvider>
       </body>
