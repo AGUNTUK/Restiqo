@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   collection, 
   doc, 
-  getDoc, 
   getDocs, 
   query, 
   where, 
@@ -388,7 +387,7 @@ export function getHostService(): HostService {
 
 // React hook for host data
 export function useHostData() {
-  const { user, profile } = useAuth()
+  const { user } = useAuth()
   const [properties, setProperties] = useState<HostProperty[]>([])
   const [bookings, setBookings] = useState<HostBooking[]>([])
   const [stats, setStats] = useState<HostStats | null>(null)

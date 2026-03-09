@@ -4,9 +4,9 @@
   /* Neumorphism Color System */
   --color-background: #EEF2F6;
   --color-background-light: #EEF2F6;
-  --color-primary: #fc9905;
-  --color-primary-dark: #d67f00;
-  --color-primary-light: #fdb84d;
+  --color-primary: #d67f00;
+  --color-primary-dark: #b66300;
+  --color-primary-light: #f3b14c;
   --color-accent: #88C51C;
   --color-accent-dark: #6da315;
   --color-accent-light: #9dd42a;
@@ -15,8 +15,8 @@
 
   /* Text Colors */
   --color-text-primary: #1E293B;
-  --color-text-secondary: #64748B;
-  --color-text-muted: #94A3B8;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748B;
 
   /* Neumorphism Shadow Variables */
   --shadow-dark: rgba(0, 0, 0, 0.08);
@@ -37,11 +37,10 @@
   --radius-full: 9999px;
 }
 
-/* Custom Tailwind Theme */
-:root {
-  --color-brand-primary: #fc9905;
-  --color-brand-primary-dark: #d67f00;
-  --color-brand-primary-light: #fdb84d;
+@theme {
+  --color-brand-primary: #d67f00;
+  --color-brand-primary-dark: #b66300;
+  --color-brand-primary-light: #f3b14c;
   --color-brand-accent: #88C51C;
   --color-brand-accent-dark: #6da315;
   --color-brand-accent-light: #9dd42a;
@@ -50,12 +49,11 @@
   --color-brand-background: #EEF2F6;
   --color-brand-background-light: #EEF2F6;
   --color-brand-text: #1E293B;
-  --color-brand-text-secondary: #64748B;
-  --color-brand-text-muted: #94A3B8;
+  --color-brand-text-secondary: #475569;
+  --color-brand-text-muted: #64748B;
 
   --font-family-sans: var(--font-poppins), 'Poppins', system-ui, -apple-system, sans-serif;
 
-  /* Neumorphism Shadows */
   --shadow-neu:
     8px 8px 16px rgba(0, 0, 0, 0.08),
     -8px -8px 16px rgba(255, 255, 255, 0.9);
@@ -81,7 +79,7 @@
     inset -4px -4px 8px rgba(255, 255, 255, 0.8);
 
   --shadow-neu-primary:
-    8px 8px 16px rgba(252, 153, 5, 0.25),
+    8px 8px 16px rgba(214, 127, 0, 0.25),
     -8px -8px 16px rgba(255, 255, 255, 0.9);
 
   --shadow-neu-accent:
@@ -117,6 +115,8 @@ body {
   background: var(--color-background);
   color: var(--color-text-primary);
   font-family: var(--font-poppins);
+  font-size: 16px;
+  line-height: 1.6;
   min-height: 100vh;
   width: 100%;
   max-width: 100%;
@@ -895,9 +895,14 @@ h6 {
 .focus-ring:focus {
   outline: none;
   box-shadow:
-    0 0 0 3px rgba(252, 153, 5, 0.3),
+    0 0 0 3px rgba(214, 127, 0, 0.35),
     6px 6px 12px var(--shadow-dark),
     -6px -6px 12px var(--shadow-light);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-primary-dark);
+  outline-offset: 2px;
 }
 
 /* ============================================

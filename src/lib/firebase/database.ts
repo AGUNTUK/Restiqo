@@ -17,8 +17,6 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
   serverTimestamp,
-  Timestamp,
-  increment
 } from 'firebase/firestore'
 import { 
   ref, 
@@ -28,7 +26,6 @@ import {
   remove, 
   onValue, 
   off, 
-  get, 
   serverTimestamp as rtdbServerTimestamp 
 } from 'firebase/database'
 import { getFirebaseFirestore, getFirebaseRealtimeDB } from './config'
@@ -350,7 +347,7 @@ class RealtimeDB {
   subscribeToChat(chatId: string, callback: (messages: any[]) => void) {
     const messagesRef = ref(this.rtdb, `chats/${chatId}/messages`)
     
-    const listener = onValue(messagesRef, (snapshot) => {
+    onValue(messagesRef, (snapshot) => {
       const data = snapshot.val()
       if (data) {
         const messages = Object.entries(data).map(([key, value]: [string, any]) => ({
@@ -387,7 +384,7 @@ class RealtimeDB {
   subscribeToNotifications(userId: string, callback: (notifications: any[]) => void) {
     const notificationsRef = ref(this.rtdb, `notifications/${userId}`)
     
-    const listener = onValue(notificationsRef, (snapshot) => {
+    onValue(notificationsRef, (snapshot) => {
       const data = snapshot.val()
       if (data) {
         const notifications = Object.entries(data).map(([key, value]: [string, any]) => ({
@@ -421,7 +418,7 @@ class RealtimeDB {
   subscribeToOnlineStatus(userId: string, callback: (status: string) => void) {
     const statusRef = ref(this.rtdb, `presence/${userId}`)
     
-    const listener = onValue(statusRef, (snapshot) => {
+    onValue(statusRef, (snapshot) => {
       const data = snapshot.val()
       callback(data?.status || 'offline')
     })
@@ -442,7 +439,7 @@ class RealtimeDB {
   subscribeToTyping(chatId: string, callback: (typingUsers: string[]) => void) {
     const typingRef = ref(this.rtdb, `typing/${chatId}`)
     
-    const listener = onValue(typingRef, (snapshot) => {
+    onValue(typingRef, (snapshot) => {
       const data = snapshot.val()
       if (data) {
         callback(Object.keys(data))

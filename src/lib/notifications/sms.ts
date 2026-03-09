@@ -41,17 +41,17 @@ const smsTemplates = {
 }
 
 export class SMSService {
-  private supabase: ReturnType<typeof createClient>
+  private dbClient: ReturnType<typeof createClient>
   
   constructor() {
-    this.supabase = createClient()
+    this.dbClient = createClient()
   }
 
-  // Send SMS via Supabase Edge Function
+  // Send SMS via Firebase function endpoint
   async sendSMS(phoneNumber: string, message: string): Promise<{ success: boolean; error?: string }> {
     try {
       // Store SMS in database for logging
-      const { error: logError } = await this.supabase
+      const { error: logError } = await this.dbClient
         .from('sms_logs')
         .insert({
           phone_number: phoneNumber,
@@ -64,12 +64,17 @@ export class SMSService {
         console.error('Error logging SMS:', logError)
       }
 
-      // Call Edge Function to send SMS
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-sms`, {
+      // Call Firebase HTTP function (example: https://<region>-<project>.cloudfunctions.net)
+      const functionsBaseUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL
+      if (!functionsBaseUrl) {
+        throw new Error('NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL is not configured')
+      }
+      const accessToken = (await this.dbClient.auth.getSession()).data.session?.access_token
+      const response = await fetch(`${functionsBaseUrl.replace(/\/$/, '')}/send-sms`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await this.supabase.auth.getSession()).data.session?.access_token}`
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
           to: phoneNumber,
@@ -98,7 +103,7 @@ export class SMSService {
       }
 
       // Check if there's a recent unexpired verification
-      const { data: recentVerification } = await this.supabase
+      const { data: recentVerification } = await this.dbClient
         .from('sms_verifications')
         .select('*')
         .eq('phone_number', cleanedPhone)
@@ -126,7 +131,7 @@ export class SMSService {
       const sessionId = generateSessionId()
 
       // Store verification in database
-      const { error: insertError } = await this.supabase
+      const { error: insertError } = await this.dbClient
         .from('sms_verifications')
         .insert({
           phone_number: cleanedPhone,
@@ -167,7 +172,7 @@ export class SMSService {
       const cleanedPhone = this.cleanPhoneNumber(phoneNumber)
 
       // Get the most recent unverified code
-      const { data: verification, error: fetchError } = await this.supabase
+      const { data: verification, error: fetchError } = await this.dbClient
         .from('sms_verifications')
         .select('*')
         .eq('phone_number', cleanedPhone)
@@ -188,7 +193,7 @@ export class SMSService {
       }
 
       // Increment attempts
-      await this.supabase
+      await this.dbClient
         .from('sms_verifications')
         .update({ attempts: verification.attempts + 1 })
         .eq('id', verification.id)
@@ -199,7 +204,7 @@ export class SMSService {
       }
 
       // Mark as verified
-      await this.supabase
+      await this.dbClient
         .from('sms_verifications')
         .update({ 
           is_verified: true, 

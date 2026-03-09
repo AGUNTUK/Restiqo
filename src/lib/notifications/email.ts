@@ -394,19 +394,19 @@ const emailTemplates = {
 
 // Email service class
 export class EmailService {
-  private supabase: ReturnType<typeof createClient>
+  private dbClient: ReturnType<typeof createClient>
   
   constructor() {
-    this.supabase = createClient()
+    this.dbClient = createClient()
   }
 
-  // Send email via Supabase Edge Function
+  // Send email via Firebase function endpoint
   async sendEmail(to: string, type: keyof typeof emailTemplates, data: any): Promise<{ success: boolean; error?: string }> {
     try {
       const template = emailTemplates[type]({ to, ...data })
       
       // Store email in database for logging
-      const { error: dbError } = await this.supabase
+      const { error: dbError } = await this.dbClient
         .from('email_logs')
         .insert({
           to,
@@ -420,12 +420,17 @@ export class EmailService {
         console.error('Error logging email:', dbError)
       }
 
-      // Call Edge Function to send email
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-email`, {
+      // Call Firebase HTTP function (example: https://<region>-<project>.cloudfunctions.net)
+      const functionsBaseUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL
+      if (!functionsBaseUrl) {
+        throw new Error('NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL is not configured')
+      }
+      const accessToken = (await this.dbClient.auth.getSession()).data.session?.access_token
+      const response = await fetch(`${functionsBaseUrl.replace(/\/$/, '')}/send-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await this.supabase.auth.getSession()).data.session?.access_token}`
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
           to,
@@ -440,7 +445,7 @@ export class EmailService {
 
       // Update email log status
       if (!dbError) {
-        await this.supabase
+        await this.dbClient
           .from('email_logs')
           .update({ status: 'sent', sent_at: new Date().toISOString() })
           .eq('to', to)

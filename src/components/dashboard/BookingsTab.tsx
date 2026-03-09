@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Loader2, Calendar, MapPin, Users, Clock, X, Check, AlertCircle } from 'lucide-react'
+import { Loader2, Calendar, MapPin, Users, Clock, X, Check } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
-import { createClient } from '@/lib/supabase/client'
+import { getFirestoreDB } from '@/lib/firebase'
 import { Booking, Property } from '@/types/database'
 
 interface BookingWithProperty extends Booking {
@@ -33,26 +33,53 @@ export default function BookingsTab() {
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past' | 'cancelled'>('all')
 
   const loadBookings = useCallback(async () => {
-    if (!user) return
+    if (!user) {
+      setBookings([])
+      setLoading(false)
+      return
+    }
 
     setLoading(true)
-    const supabase = createClient()
-    
-    const { data, error } = await supabase
-      .from('bookings')
-      .select(`
-        *,
-        property:properties (*)
-      `)
-      .eq('guest_id', user.id)
-      .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error('Error loading bookings:', error)
-    } else {
-      setBookings(data as BookingWithProperty[])
+    try {
+      const db = getFirestoreDB()
+      const rawBookings = await db.getBookings(user.id)
+
+      const mappedBookings = await Promise.all(
+        rawBookings.map(async (booking: any) => {
+          const propertyId = booking.propertyId ?? booking.property_id
+          if (!propertyId) return null
+
+          const property = await db.getProperty(propertyId)
+          if (!property) return null
+
+          const mapped: BookingWithProperty = {
+            id: booking.id,
+            property_id: propertyId,
+            guest_id: booking.guestId ?? booking.guest_id ?? user.id,
+            check_in: booking.checkIn ?? booking.check_in ?? booking.checkInDate ?? booking.check_in_date,
+            check_out: booking.checkOut ?? booking.check_out ?? booking.checkOutDate ?? booking.check_out_date,
+            guests: booking.guests ?? 1,
+            total_price: booking.totalPrice ?? booking.total_price ?? 0,
+            status: booking.status ?? 'pending',
+            payment_status: booking.paymentStatus ?? booking.payment_status ?? 'pending',
+            special_requests: booking.specialRequests ?? booking.special_requests ?? null,
+            created_at: booking.createdAt ?? booking.created_at ?? new Date().toISOString(),
+            updated_at: booking.updatedAt ?? booking.updated_at ?? new Date().toISOString(),
+            property: property as Property,
+          }
+
+          return mapped
+        })
+      )
+
+      setBookings(mappedBookings.filter(Boolean) as BookingWithProperty[])
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to load bookings'
+      console.error('Error loading bookings:', message)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [user])
 
   useEffect(() => {
@@ -62,17 +89,13 @@ export default function BookingsTab() {
   }, [user, loadBookings])
 
   const cancelBooking = async (bookingId: string) => {
-    const supabase = createClient()
-    
-    const { error } = await supabase
-      .from('bookings')
-      .update({ status: 'cancelled' })
-      .eq('id', bookingId)
-
-    if (error) {
-      console.error('Error cancelling booking:', error)
-    } else {
+    try {
+      const db = getFirestoreDB()
+      await db.cancelBooking(bookingId)
       loadBookings()
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to cancel booking'
+      console.error('Error cancelling booking:', message)
     }
   }
 

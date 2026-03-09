@@ -167,25 +167,6 @@ export function VirtualizedGrid<T>({
     className = '',
 }: VirtualizedGridProps<T>) {
     const containerRef = useRef<HTMLDivElement>(null)
-    const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
-
-    useEffect(() => {
-        const updateDimensions = () => {
-            if (containerRef.current) {
-                setDimensions({
-                    width: containerWidth || containerRef.current.clientWidth,
-                    height:
-                        typeof containerHeight === 'number'
-                            ? containerHeight
-                            : containerRef.current.clientHeight,
-                })
-            }
-        }
-
-        updateDimensions()
-        window.addEventListener('resize', updateDimensions)
-        return () => window.removeEventListener('resize', updateDimensions)
-    }, [containerWidth, containerHeight])
 
     // Handle scroll for infinite loading
     const handleScroll = useCallback(
@@ -218,6 +199,7 @@ export function VirtualizedGrid<T>({
         >
             <div
                 style={{
+                    width: containerWidth ? `${containerWidth}px` : '100%',
                     display: 'grid',
                     gridTemplateColumns: `repeat(auto-fill, minmax(${itemWidth}px, 1fr))`,
                     gap: `${gap}px`,
@@ -229,6 +211,7 @@ export function VirtualizedGrid<T>({
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: Math.min(index * 0.02, 0.5) }}
+                        style={{ minHeight: itemHeight }}
                     >
                         {renderItem(item, index)}
                     </motion.div>

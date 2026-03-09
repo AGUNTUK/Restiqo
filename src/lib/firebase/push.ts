@@ -3,8 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { getToken, onMessage, Messaging } from 'firebase/messaging'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
-import { getFirebaseApp } from './config'
-import { getFirebaseFirestore } from './config'
+import { getFirebaseApp, getFirebaseAuth, getFirebaseFirestore } from './config'
 
 // Notification types
 export interface PushNotification {
@@ -85,6 +84,10 @@ class FirebasePushNotifications {
   // Save token to Firestore
   async saveTokenToFirestore(userId: string, token: string): Promise<void> {
     try {
+      const auth = getFirebaseAuth()
+      if (!auth.currentUser || auth.currentUser.uid !== userId) {
+        return
+      }
       const db = getFirebaseFirestore()
       const tokenRef = doc(db, 'fcmTokens', userId)
       
@@ -100,6 +103,10 @@ class FirebasePushNotifications {
   // Get token from Firestore
   async getTokenFromFirestore(userId: string): Promise<string | null> {
     try {
+      const auth = getFirebaseAuth()
+      if (!auth.currentUser || auth.currentUser.uid !== userId) {
+        return null
+      }
       const db = getFirebaseFirestore()
       const tokenRef = doc(db, 'fcmTokens', userId)
       const tokenDoc = await getDoc(tokenRef)

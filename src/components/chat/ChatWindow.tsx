@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { X, Send, Loader2 } from 'lucide-react'
 import { useRealtimeChat, type Message } from '@/lib/realtime'
 import { useAuth } from '@/lib/auth'

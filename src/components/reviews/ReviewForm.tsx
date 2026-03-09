@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Star, Camera, X, Upload } from 'lucide-react'
+import { Star, Camera, X } from 'lucide-react'
 import Button from '@/components/ui/Button'
 
 interface RatingBreakdown {
@@ -35,7 +36,7 @@ const ratingCategories: { key: keyof RatingBreakdown; label: string }[] = [
     { key: 'value', label: 'Value' },
 ]
 
-export default function ReviewForm({ propertyId, bookingId, onSubmit, onCancel }: ReviewFormProps) {
+export default function ReviewForm({ onSubmit, onCancel }: ReviewFormProps) {
     const [overallRating, setOverallRating] = useState(0)
     const [hoveredRating, setHoveredRating] = useState(0)
     const [ratingBreakdown, setRatingBreakdown] = useState<RatingBreakdown>({
@@ -97,7 +98,7 @@ export default function ReviewForm({ propertyId, bookingId, onSubmit, onCancel }
                 comment: comment.trim(),
                 photos,
             })
-        } catch (err) {
+        } catch {
             setError('Failed to submit review. Please try again.')
         } finally {
             setIsSubmitting(false)
@@ -211,10 +212,12 @@ export default function ReviewForm({ propertyId, bookingId, onSubmit, onCancel }
                             animate={{ opacity: 1, scale: 1 }}
                             className="relative w-20 h-20 rounded-xl overflow-hidden group"
                         >
-                            <img
+                            <Image
                                 src={photo}
                                 alt={`Review photo ${index + 1}`}
+                                fill
                                 className="w-full h-full object-cover"
+                                unoptimized
                             />
                             <button
                                 onClick={() => removePhoto(index)}

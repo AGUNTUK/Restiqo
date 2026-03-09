@@ -49,7 +49,7 @@ export default function BottomNav() {
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
     if (href.includes('?tab=')) {
-      const [path, tab] = href.split('?tab=')
+      const [path] = href.split('?tab=')
       return pathname === path
     }
     return pathname.startsWith(href)

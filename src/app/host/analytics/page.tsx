@@ -1,31 +1,25 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
     TrendingUp,
-    TrendingDown,
     DollarSign,
     Eye,
     Calendar,
     Star,
-    Users,
     Home,
-    BarChart3,
-    PieChart,
+    Loader2,
     ArrowUpRight,
     ArrowDownRight,
     Download,
-    Filter,
 } from 'lucide-react'
 import {
     format,
     subDays,
     subMonths,
-    startOfMonth,
-    endOfMonth,
     eachDayOfInterval,
-    eachMonthOfInterval,
 } from 'date-fns'
 import Button from '@/components/ui/Button'
 import { useAuth } from '@/lib/auth'
@@ -77,10 +71,19 @@ interface AnalyticsData {
 type DateRange = '7d' | '30d' | '90d' | '12m'
 
 export default function HostAnalyticsPage() {
-    const { user, isHost } = useAuth()
+    const router = useRouter()
+    const { isHost, isHostPending, isAuthenticated, isLoading: authLoading } = useAuth()
     const [dateRange, setDateRange] = useState<DateRange>('30d')
     const [isLoading, setIsLoading] = useState(true)
     const [data, setData] = useState<AnalyticsData | null>(null)
+
+    useEffect(() => {
+        if (!authLoading && !isAuthenticated) {
+            router.push('/auth/login?redirect=/host/analytics')
+        } else if (!authLoading && isAuthenticated && !isHost) {
+            router.push(isHostPending ? '/host/pending' : '/host/register')
+        }
+    }, [authLoading, isAuthenticated, isHost, isHostPending, router])
 
     // Calculate date range
     const dateRangeConfig = useMemo(() => {
@@ -180,19 +183,10 @@ export default function HostAnalyticsPage() {
         }
     }, [isHost, dateRangeConfig])
 
-    if (!isHost) {
+    if (authLoading || !isAuthenticated || !isHost) {
         return (
-            <div className="min-h-screen pt-20 px-4">
-                <div className="max-w-7xl mx-auto">
-                    <div className="neu-xl p-8 text-center">
-                        <h2 className="text-xl font-semibold text-[#1E293B] mb-2">
-                            Host Access Required
-                        </h2>
-                        <p className="text-[#64748B]">
-                            You need to be a registered host to view analytics.
-                        </p>
-                    </div>
-                </div>
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
             </div>
         )
     }

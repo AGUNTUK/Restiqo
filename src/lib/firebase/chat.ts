@@ -119,7 +119,7 @@ class FirebaseChatService {
     const messagesRef = ref(this.db, `chats/${chatId}/messages`)
     const messagesQuery = query(messagesRef, orderByChild('timestamp'))
 
-    const listener = onValue(messagesQuery, (snapshot) => {
+    onValue(messagesQuery, (snapshot) => {
       const data = snapshot.val()
       
       if (data) {
@@ -153,7 +153,7 @@ class FirebaseChatService {
       equalTo(userId)
     )
 
-    const listener = onValue(userChatsQuery, async (snapshot) => {
+    onValue(userChatsQuery, async (snapshot) => {
       const data = snapshot.val()
       
       if (data) {
@@ -223,7 +223,7 @@ class FirebaseChatService {
   ): () => void {
     const typingRef = ref(this.db, `typing/${chatId}`)
 
-    const listener = onValue(typingRef, (snapshot) => {
+    onValue(typingRef, (snapshot) => {
       const data = snapshot.val()
       
       if (data) {

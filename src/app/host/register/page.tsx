@@ -61,7 +61,13 @@ const steps = [
 
 export default function BecomeHostPage() {
   const router = useRouter()
-  const { user, isAuthenticated, isLoading: authLoading, isHost, becomeHost } = useAuth()
+  const {
+    isAuthenticated,
+    isLoading: authLoading,
+    isHost,
+    isHostPending,
+    becomeHost,
+  } = useAuth()
   const [loading, setLoading] = useState(false)
   const [agreed, setAgreed] = useState(false)
 
@@ -70,8 +76,10 @@ export default function BecomeHostPage() {
       router.push('/auth/login?redirect=/host/register')
     } else if (!authLoading && isHost) {
       router.push('/host')
+    } else if (!authLoading && isHostPending) {
+      router.push('/host/pending')
     }
-  }, [authLoading, isAuthenticated, isHost, router])
+  }, [authLoading, isAuthenticated, isHost, isHostPending, router])
 
   const handleBecomeHost = async () => {
     if (!agreed) {
@@ -86,14 +94,14 @@ export default function BecomeHostPage() {
     if (error) {
       toast.error(error)
     } else {
-      toast.success('Congratulations! You are now a host!')
-      router.push('/host')
+      toast.success('Application submitted. We will review it shortly.')
+      router.push('/host/pending')
     }
     
     setLoading(false)
   }
 
-  if (authLoading || !isAuthenticated || isHost) {
+  if (authLoading || !isAuthenticated || isHost || isHostPending) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />

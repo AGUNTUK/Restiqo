@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   User,
@@ -11,7 +12,6 @@ import {
   Camera,
   Loader2,
   Save,
-  Shield,
   Calendar,
 } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
@@ -19,7 +19,7 @@ import toast from 'react-hot-toast'
 
 export default function ProfilePage() {
   const router = useRouter()
-  const { user, profile, isAuthenticated, isLoading: authLoading, updateProfile, isHost, isAdmin } = useAuth()
+  const { profile, isAuthenticated, isLoading: authLoading, updateProfile, isHost, isAdmin } = useAuth()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     full_name: '',
@@ -100,9 +100,11 @@ export default function ProfilePage() {
             {/* Avatar */}
             <div className="relative">
               {profile?.avatar_url ? (
-                <img
+                <Image
                   src={profile.avatar_url}
                   alt={profile.full_name || 'User'}
+                  width={96}
+                  height={96}
                   className="w-24 h-24 rounded-full object-cover"
                 />
               ) : (

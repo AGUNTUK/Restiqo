@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   Loader2,
@@ -11,18 +12,16 @@ import {
   Calendar,
   DollarSign,
   Star,
-  TrendingUp,
   Shield,
   AlertTriangle,
   Check,
   X,
   Eye,
-  Trash2,
   BarChart3,
 } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/client'
-import { User, Property, Booking, Review } from '@/types/database'
+import { User, Property } from '@/types/database'
 import toast from 'react-hot-toast'
 
 interface AdminStats {
@@ -46,7 +45,6 @@ export default function AdminDashboardPage() {
     totalRevenue: 0,
   })
   const [pendingProperties, setPendingProperties] = useState<Property[]>([])
-  const [pendingReviews, setPendingReviews] = useState<(Review & { user: User, property: Property })[]>([])
   const [recentUsers, setRecentUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'overview' | 'properties' | 'users' | 'reviews'>('overview')
@@ -392,7 +390,13 @@ export default function AdminDashboardPage() {
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
                         {property.images?.[0] ? (
-                          <img src={property.images[0]} alt={property.title} className="w-full h-full object-cover" />
+                          <Image
+                            src={property.images[0]}
+                            alt={property.title}
+                            width={64}
+                            height={64}
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <Building className="w-6 h-6 text-gray-400" />

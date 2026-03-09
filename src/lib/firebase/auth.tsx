@@ -12,7 +12,6 @@ import {
   FacebookAuthProvider,
   signInWithPopup,
   updateProfile as firebaseUpdateProfile,
-  updatePhoneNumber,
   RecaptchaVerifier,
   signInWithPhoneNumber,
   ConfirmationResult,
@@ -47,6 +46,7 @@ interface AuthState {
   isAuthenticated: boolean
   isHost: boolean
   isAdmin: boolean
+  isHostPending: boolean
 }
 
 interface AuthContextType extends AuthState {
@@ -72,9 +72,21 @@ const roleHierarchy: Record<UserRole, number> = {
   admin: 2,
 }
 
+function deriveRoleState(role: UserRole, profile: FirebaseUserProfile | null) {
+  const isAdmin = role === 'admin'
+  const isHost = isAdmin || role === 'host'
+  const isHostPending =
+    role === 'guest' &&
+    Boolean(profile?.hostRequestedAt) &&
+    !profile?.hostApprovedAt
+
+  return { isAdmin, isHost, isHostPending }
+}
+
 export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
-  const auth = getFirebaseAuth()
-  const db = getFirebaseFirestore()
+  const isBrowser = typeof window !== 'undefined'
+  const auth = isBrowser ? getFirebaseAuth() : null
+  const db = isBrowser ? getFirebaseFirestore() : null
 
   const [state, setState] = useState<AuthState>({
     user: null,
@@ -84,10 +96,15 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated: false,
     isHost: false,
     isAdmin: false,
+    isHostPending: false,
   })
+
+  const getInitError = () => ({ error: 'Firebase auth is still initializing' as string | null })
 
   // Fetch user profile from Firestore
   const fetchProfile = useCallback(async (userId: string): Promise<FirebaseUserProfile | null> => {
+    if (!db) return null
+
     try {
       const userDoc = await getDoc(doc(db, 'users', userId))
       
@@ -135,10 +152,16 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
   // Initialize auth state
   useEffect(() => {
+    if (!auth || !db) {
+      setState(prev => ({ ...prev, isLoading: false }))
+      return
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const profile = await fetchProfile(firebaseUser.uid)
         const role = profile?.role || 'guest'
+        const roleState = deriveRoleState(role, profile)
 
         setState({
           user: firebaseUser,
@@ -146,8 +169,7 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
           role,
           isLoading: false,
           isAuthenticated: true,
-          isHost: role === 'host' || role === 'admin',
-          isAdmin: role === 'admin',
+          ...roleState,
         })
 
         // Update email in profile if changed
@@ -166,6 +188,7 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
           isAuthenticated: false,
           isHost: false,
           isAdmin: false,
+          isHostPending: false,
         })
       }
     })
@@ -175,6 +198,8 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
   // Sign in with email/password
   const signIn = async (email: string, password: string): Promise<{ error: string | null }> => {
+    if (!auth) return getInitError()
+
     try {
       await signInWithEmailAndPassword(auth, email, password)
       return { error: null }
@@ -186,6 +211,8 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
   // Sign up with email/password
   const signUp = async (email: string, password: string, fullName: string): Promise<{ error: string | null }> => {
+    if (!auth || !db) return getInitError()
+
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password)
       
@@ -227,11 +254,15 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
   // Sign out
   const signOut = async (): Promise<void> => {
+    if (!auth) return
+
     await firebaseSignOut(auth)
   }
 
   // Sign in with Google
   const signInWithGoogle = async (): Promise<{ error: string | null }> => {
+    if (!auth || !db) return getInitError()
+
     try {
       const provider = new GoogleAuthProvider()
       const { user } = await signInWithPopup(auth, provider)
@@ -271,6 +302,8 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
   // Sign in with Facebook
   const signInWithFacebook = async (): Promise<{ error: string | null }> => {
+    if (!auth || !db) return getInitError()
+
     try {
       const provider = new FacebookAuthProvider()
       const { user } = await signInWithPopup(auth, provider)
@@ -310,6 +343,10 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
   // Sign in with phone number
   const signInWithPhone = async (phone: string, recaptchaVerifier: RecaptchaVerifier): Promise<{ confirmationResult: ConfirmationResult | null; error: string | null }> => {
+    if (!auth) {
+      return { confirmationResult: null, ...getInitError() }
+    }
+
     try {
       const confirmationResult = await signInWithPhoneNumber(auth, phone, recaptchaVerifier)
       return { confirmationResult, error: null }
@@ -321,6 +358,8 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
   // Update profile
   const updateProfile = async (updates: Partial<FirebaseUserProfile>): Promise<{ error: string | null }> => {
+    if (!db) return getInitError()
+
     try {
       if (!state.user) {
         return { error: 'User not authenticated' }
@@ -346,27 +385,44 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
   // Refresh profile
   const refreshProfile = async (): Promise<void> => {
+    if (!db) return
+
     if (state.user) {
       const profile = await fetchProfile(state.user.uid)
+      const role = profile?.role || 'guest'
+      const roleState = deriveRoleState(role, profile)
       setState(prev => ({
         ...prev,
         profile,
-        role: profile?.role || 'guest',
-        isHost: (profile?.role || 'guest') === 'host' || (profile?.role || 'guest') === 'admin',
-        isAdmin: (profile?.role || 'guest') === 'admin',
+        role,
+        ...roleState,
       }))
     }
   }
 
   // Become host
   const becomeHost = async (): Promise<{ error: string | null }> => {
+    if (!db) return getInitError()
+
     try {
       if (!state.user) {
         return { error: 'User not authenticated' }
       }
 
+      if (state.role === 'host' || state.role === 'admin') {
+        return { error: null }
+      }
+
+      const hasPendingRequest =
+        Boolean(state.profile?.hostRequestedAt) &&
+        !state.profile?.hostApprovedAt
+
+      if (hasPendingRequest) {
+        await refreshProfile()
+        return { error: null }
+      }
+
       await setDoc(doc(db, 'users', state.user.uid), {
-        role: 'host',
         hostRequestedAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       }, { merge: true })
@@ -391,6 +447,8 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
   // Send password reset email
   const sendPasswordReset = async (email: string): Promise<{ error: string | null }> => {
+    if (!auth) return getInitError()
+
     try {
       await sendPasswordResetEmail(auth, email)
       return { error: null }

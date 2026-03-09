@@ -9,13 +9,8 @@ import {
   Calendar,
   MapPin,
   Users,
-  Clock,
   Loader2,
-  Filter,
   Search,
-  X,
-  Check,
-  AlertCircle,
 } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/client'

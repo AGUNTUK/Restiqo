@@ -5,12 +5,6 @@ import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   Search,
-  Filter,
-  MapPin,
-  Star,
-  Heart,
-  X,
-  ChevronDown,
   SlidersHorizontal,
 } from 'lucide-react'
 import Button from '@/components/ui/Button'

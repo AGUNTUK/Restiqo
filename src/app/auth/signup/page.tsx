@@ -91,7 +91,7 @@ export default function SignupPage() {
 
       toast.success('Account created! Please check your email to verify.')
       router.push('/auth/verify-email')
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred. Please try again.')
     } finally {
       setIsLoading(false)

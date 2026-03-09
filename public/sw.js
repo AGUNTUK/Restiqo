@@ -1,5 +1,4 @@
 // Restiqa Service Worker
-const CACHE_NAME = 'restiqa-v1';
 const STATIC_CACHE = 'restiqa-static-v1';
 const DYNAMIC_CACHE = 'restiqa-dynamic-v1';
 
@@ -109,7 +108,7 @@ async function networkFirst(request) {
     }
     
     return networkResponse;
-  } catch (error) {
+  } catch {
     console.log('[Service Worker] Network failed, serving from cache');
     const cachedResponse = await caches.match(request);
     
@@ -126,7 +125,7 @@ self.addEventListener('push', (event) => {
   if (event.data) {
     try {
       data = event.data.json();
-    } catch (e) {
+    } catch {
       data.body = event.data.text();
     }
   }

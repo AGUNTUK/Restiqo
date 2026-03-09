@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, X, Check, CheckCheck, MessageSquare, Calendar, Star, CreditCard, AlertCircle } from 'lucide-react'
+import { Bell, CheckCheck, MessageSquare, Calendar, Star, CreditCard, AlertCircle } from 'lucide-react'
 import { useRealtimeNotifications, type Notification } from '@/lib/realtime'
 import { useAuth } from '@/lib/auth'
 import { formatDistanceToNow } from 'date-fns'

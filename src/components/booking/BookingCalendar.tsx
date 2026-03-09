@@ -34,7 +34,6 @@ export default function BookingCalendar({
     blockedDates = [],
     pricingTiers = [],
     minStay = 1,
-    maxStay = 365,
     checkIn: selectedCheckIn,
     checkOut: selectedCheckOut,
     onDateSelect,

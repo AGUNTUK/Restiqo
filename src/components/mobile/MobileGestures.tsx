@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useRef, useEffect, ReactNode } from 'react'
+import Image from 'next/image'
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import { RefreshCw } from 'lucide-react'
 
@@ -339,12 +340,16 @@ export function SwipeableGallery({
             >
                 {images.map((image, index) => (
                     <div key={index} className="w-full flex-shrink-0">
-                        <img
-                            src={image}
-                            alt={`${alt} - ${index + 1}`}
-                            className="w-full h-full object-cover"
-                            draggable={false}
-                        />
+                        <div className="relative w-full h-full">
+                            <Image
+                                src={image}
+                                alt={`${alt} - ${index + 1}`}
+                                fill
+                                className="w-full h-full object-cover"
+                                draggable={false}
+                                unoptimized
+                            />
+                        </div>
                     </div>
                 ))}
             </motion.div>

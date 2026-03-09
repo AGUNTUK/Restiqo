@@ -44,7 +44,14 @@ export default function DashboardPage() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const { profile, isLoading: authLoading, isAuthenticated, isHost, isAdmin } = useAuth()
+  const {
+    profile,
+    isLoading: authLoading,
+    isAuthenticated,
+    isHost,
+    isAdmin,
+    isHostPending,
+  } = useAuth()
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -110,17 +117,27 @@ export default function DashboardPage() {
                   ? 'neu-badge bg-purple-500 text-white shadow-[3px_3px_6px_rgba(168,85,247,0.3),-3px_-3px_6px_rgba(255,255,255,0.8)]'
                   : isHost
                     ? 'neu-badge bg-blue-500 text-white shadow-[3px_3px_6px_rgba(59,130,246,0.3),-3px_-3px_6px_rgba(255,255,255,0.8)]'
+                    : isHostPending
+                      ? 'neu-badge bg-amber-500 text-white shadow-[3px_3px_6px_rgba(245,158,11,0.3),-3px_-3px_6px_rgba(255,255,255,0.8)]'
                     : 'neu-badge-primary'
               }`}
             >
-              {isAdmin ? 'Admin' : isHost ? 'Host' : 'Guest'}
+              {isAdmin ? 'Admin' : isHost ? 'Host' : isHostPending ? 'Host Pending' : 'Guest'}
             </span>
-            {!isHost && (
+            {!isHost && !isHostPending && (
               <Link
                 href="/host/register"
                 className="text-xs sm:text-sm text-brand-primary hover:underline"
               >
                 Become a Host -&gt;
+              </Link>
+            )}
+            {isHostPending && (
+              <Link
+                href="/host/pending"
+                className="text-xs sm:text-sm text-brand-primary hover:underline"
+              >
+                View Host Application -&gt;
               </Link>
             )}
           </div>

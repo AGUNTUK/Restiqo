@@ -587,6 +587,7 @@ export default function HomePage() {
                               }}
                               className="neu-dropdown-item w-full text-left px-3 py-2 sm:py-2.5 rounded-xl flex items-center justify-between"
                               role="option"
+                              aria-selected={searchData.location === loc.name}
                             >
                               <div className="flex items-center gap-2">
                                 <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-primary" aria-hidden="true" />

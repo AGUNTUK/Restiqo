@@ -57,7 +57,7 @@ export default function Carousel<T extends { id: string | number }>({
     }, [checkScrollButtons])
 
     // Auto-play functionality
-    const scroll = (direction: 'left' | 'right') => {
+    const scroll = useCallback((direction: 'left' | 'right') => {
         if (containerRef.current) {
             const itemElement = containerRef.current.querySelector('[data-carousel-item]') as HTMLElement
             const itemWidth = itemElement?.clientWidth || 320
@@ -73,7 +73,7 @@ export default function Carousel<T extends { id: string | number }>({
                 behavior: 'smooth'
             })
         }
-    }
+    }, [])
 
     useEffect(() => {
         if (!autoPlay || isDragging) return

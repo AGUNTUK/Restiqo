@@ -33,7 +33,16 @@ export default function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const pathname = usePathname()
 
-  const { user, profile, isAuthenticated, isLoading, isHost, isAdmin, signOut } = useAuth()
+  const {
+    user,
+    profile,
+    isAuthenticated,
+    isLoading,
+    isHost,
+    isAdmin,
+    isHostPending,
+    signOut,
+  } = useAuth()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -90,6 +99,7 @@ export default function Navbar() {
   const getRoleBadgeStyle = () => {
     if (isAdmin) return 'neu-badge bg-purple-500 text-white shadow-[3px_3px_6px_rgba(168,85,247,0.3),-3px_-3px_6px_rgba(255,255,255,0.8)]'
     if (isHost) return 'neu-badge bg-blue-500 text-white shadow-[3px_3px_6px_rgba(59,130,246,0.3),-3px_-3px_6px_rgba(255,255,255,0.8)]'
+    if (isHostPending) return 'neu-badge bg-amber-500 text-white shadow-[3px_3px_6px_rgba(245,158,11,0.3),-3px_-3px_6px_rgba(255,255,255,0.8)]'
     return 'neu-badge-primary'
   }
 
@@ -137,10 +147,18 @@ export default function Navbar() {
 
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
-            {!isLoading && !isHost && !isAdmin && (
+            {!isLoading && !isHost && !isAdmin && !isHostPending && (
               <Link href={isAuthenticated ? '/host/register' : '/auth/login?redirect=/host/register'}>
                 <Button variant="outline" size="sm">
                   Become a Host
+                </Button>
+              </Link>
+            )}
+
+            {!isLoading && isAuthenticated && isHostPending && (
+              <Link href="/host/pending">
+                <Button variant="outline" size="sm">
+                  Host Request Pending
                 </Button>
               </Link>
             )}
@@ -160,10 +178,13 @@ export default function Navbar() {
                   className="flex items-center gap-2 px-3 py-2 rounded-xl neu-button transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-primary"
                 >
                   {profile?.avatar_url ? (
-                    <img
+                    <Image
                       src={profile.avatar_url}
                       alt={profile.full_name || 'User'}
+                      width={32}
+                      height={32}
                       className="w-8 h-8 rounded-full object-cover"
+                      unoptimized
                     />
                   ) : (
                     <div className="w-8 h-8 rounded-full neu-icon-primary flex items-center justify-center">
@@ -191,7 +212,7 @@ export default function Navbar() {
                         </p>
                         <p className="text-sm text-[#64748B] truncate">{user?.email}</p>
                         <span className={`inline-block mt-1 px-2 py-0.5 text-xs rounded-full ${getRoleBadgeStyle()}`}>
-                          {isAdmin ? 'Admin' : isHost ? 'Host' : 'Guest'}
+                          {isAdmin ? 'Admin' : isHost ? 'Host' : isHostPending ? 'Host Pending' : 'Guest'}
                         </span>
                       </div>
 
@@ -366,7 +387,7 @@ export default function Navbar() {
                       <p className="font-medium text-[#1E293B]">{profile?.full_name || 'User'}</p>
                       <p className="text-sm text-[#64748B]">{user?.email}</p>
                       <span className={`inline-block mt-1 px-2 py-0.5 text-xs rounded-full ${getRoleBadgeStyle()}`}>
-                        {isAdmin ? 'Admin' : isHost ? 'Host' : 'Guest'}
+                        {isAdmin ? 'Admin' : isHost ? 'Host' : isHostPending ? 'Host Pending' : 'Guest'}
                       </span>
                     </div>
 
@@ -447,7 +468,7 @@ export default function Navbar() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {!isHost && !isAdmin && (
+                    {!isHost && !isAdmin && !isHostPending && (
                       <Link
                         href="/auth/login?redirect=/host/register"
                         onClick={() => setIsMenuOpen(false)}
@@ -455,6 +476,17 @@ export default function Navbar() {
                       >
                         <Button variant="outline" className="w-full">
                           Become a Host
+                        </Button>
+                      </Link>
+                    )}
+                    {isHostPending && (
+                      <Link
+                        href="/host/pending"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="block w-full"
+                      >
+                        <Button variant="outline" className="w-full">
+                          Host Request Pending
                         </Button>
                       </Link>
                     )}

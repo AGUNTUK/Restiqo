@@ -1,21 +1,14 @@
 import type { Metadata } from 'next'
-import { Poppins } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { Navbar, Footer, MobileHeader, MobileBottomNav } from '@/components/layout'
 import { Toaster } from 'react-hot-toast'
-import { FirebaseAuthProvider } from '@/lib/firebase'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo'
 import { QueryProvider } from '@/lib/query/QueryProvider'
 import { ErrorBoundary } from '@/components/ui'
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-poppins',
-})
+import { AuthProvider } from '@/lib/auth'
 
 export const metadata: Metadata = {
   title: {
@@ -104,11 +97,11 @@ export default async function RootLayout({
         <OrganizationJsonLd />
         <WebSiteJsonLd />
       </head>
-      <body className={`${poppins.variable} font-sans antialiased`} suppressHydrationWarning>
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <Analytics />
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
-            <FirebaseAuthProvider>
+            <AuthProvider>
               <ErrorBoundary>
                 {/* Desktop Navbar - Hidden on mobile */}
                 <div className="hidden md:block">
@@ -154,7 +147,7 @@ export default async function RootLayout({
                   }}
                 />
               </ErrorBoundary>
-            </FirebaseAuthProvider>
+            </AuthProvider>
           </QueryProvider>
         </NextIntlClientProvider>
       </body>

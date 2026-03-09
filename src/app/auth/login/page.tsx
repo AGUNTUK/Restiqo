@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -25,11 +25,13 @@ function LoginContent() {
     password: '',
   })
 
-  // Redirect if already logged in
-  if (!authLoading && isAuthenticated) {
-    router.push(redirectTo)
-    return null
-  }
+  const shouldRedirect = !authLoading && isAuthenticated
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.replace(redirectTo)
+    }
+  }, [shouldRedirect, redirectTo, router])
 
   const validateForm = () => {
     const newErrors = { email: '', password: '' }
@@ -73,7 +75,7 @@ function LoginContent() {
 
       toast.success('Welcome back!')
       router.push(redirectTo)
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred. Please try again.')
       setIsLoading(false)
     }
@@ -93,7 +95,7 @@ function LoginContent() {
     }
   }
 
-  if (authLoading) {
+  if (authLoading || shouldRedirect) {
     return (
       <div className="w-full max-w-md">
         <div className="neu-xl p-6 sm:p-8 text-center">

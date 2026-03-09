@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Star, ThumbsUp, Flag, MoreHorizontal, ChevronDown } from 'lucide-react'
+import { Star, ThumbsUp, Flag, ChevronDown } from 'lucide-react'
 import Image from 'next/image'
 import { format } from 'date-fns'
 import Button from '@/components/ui/Button'
@@ -239,12 +239,14 @@ export default function ReviewList({
                                         <button
                                             key={idx}
                                             onClick={() => setSelectedPhoto(photo)}
-                                            className="w-20 h-20 rounded-xl overflow-hidden hover:scale-105 transition-transform"
+                                            className="relative w-20 h-20 rounded-xl overflow-hidden hover:scale-105 transition-transform"
                                         >
-                                            <img
+                                            <Image
                                                 src={photo}
                                                 alt={`Review photo ${idx + 1}`}
+                                                fill
                                                 className="w-full h-full object-cover"
+                                                unoptimized
                                             />
                                         </button>
                                     ))}
@@ -330,11 +332,15 @@ export default function ReviewList({
                     >
                         ×
                     </button>
-                    <img
-                        src={selectedPhoto}
-                        alt="Review photo"
-                        className="max-w-full max-h-[90vh] object-contain"
-                    />
+                    <div className="relative w-full h-[90vh] max-w-5xl">
+                        <Image
+                            src={selectedPhoto}
+                            alt="Review photo"
+                            fill
+                            className="object-contain"
+                            unoptimized
+                        />
+                    </div>
                 </div>
             )}
         </div>

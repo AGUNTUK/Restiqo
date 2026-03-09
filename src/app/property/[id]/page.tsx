@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   Heart,
@@ -16,11 +17,9 @@ import {
   Coffee,
   Tv,
   Wind,
-  Calendar,
   ChevronLeft,
   ChevronRight,
   Check,
-  X,
 } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
@@ -362,9 +361,11 @@ export default function PropertyDetailsPage() {
                 {reviews.map((review) => (
                   <div key={review.id} className="neu-card p-4">
                     <div className="flex items-start gap-3 sm:gap-4">
-                      <img
+                      <Image
                         src={review.user.avatar}
                         alt={review.user.name}
+                        width={48}
+                        height={48}
                         className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
@@ -545,9 +546,11 @@ export default function PropertyDetailsPage() {
       >
         <div className="space-y-6">
           <div className="flex gap-4 pb-4 border-b border-gray-200">
-            <img
+            <Image
               src={property.images[0]}
               alt={property.title}
+              width={96}
+              height={96}
               className="w-24 h-24 rounded-xl object-cover"
             />
             <div>

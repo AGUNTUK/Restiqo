@@ -23,13 +23,11 @@ let db: Firestore | undefined
 let storage: FirebaseStorage | undefined
 let realtimeDb: Database | undefined
 
-// Initialize Firebase only on client side and if not already initialized
+// Initialize Firebase once per runtime (client or server)
 export function getFirebaseApp(): FirebaseApp {
   if (!app) {
-    if (typeof window === 'undefined') {
-      throw new Error('Firebase cannot be initialized on the server side')
-    }
-    app = initializeApp(firebaseConfig)
+    const existingApps = getApps()
+    app = existingApps.length > 0 ? existingApps[0] : initializeApp(firebaseConfig)
   }
   return app
 }

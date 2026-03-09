@@ -32,7 +32,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       primary: 'neu-button-primary hover:shadow-[8px_8px_16px_rgba(252,153,5,0.35),-8px_-8px_16px_rgba(255,255,255,0.9)] active:shadow-[inset_6px_6px_12px_rgba(0,0,0,0.15),inset_-6px_-6px_12px_rgba(255,255,255,0.4)]',
       accent: 'neu-button-accent hover:shadow-[8px_8px_16px_rgba(136,197,28,0.35),-8px_-8px_16px_rgba(255,255,255,0.9)] active:shadow-[inset_6px_6px_12px_rgba(0,0,0,0.15),inset_-6px_-6px_12px_rgba(255,255,255,0.4)]',
       outline: 'bg-transparent text-brand-primary rounded-2xl hover:bg-[#EEF2F6] hover:shadow-[4px_4px_8px_rgba(0,0,0,0.06),-4px_-4px_8px_rgba(255,255,255,0.8)] active:shadow-[inset_4px_4px_8px_rgba(0,0,0,0.06),inset_-4px_-4px_8px_rgba(255,255,255,0.8)] transition-all duration-200',
-      ghost: 'neu-button-ghost text-[#64748B] hover:text-[#1E293B]',
+      ghost: 'neu-button-ghost text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-text-primary)]',
     }
 
     const sizes = {

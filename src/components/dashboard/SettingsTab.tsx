@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { User, Mail, Phone, MapPin, Camera, Loader2, Save } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import toast from 'react-hot-toast'
@@ -44,10 +45,13 @@ export default function SettingsTab() {
         <div className="flex items-center gap-6">
           <div className="relative">
             {profile?.avatar_url ? (
-              <img
+              <Image
                 src={profile.avatar_url}
                 alt={profile.full_name || 'User'}
+                width={96}
+                height={96}
                 className="w-24 h-24 rounded-full object-cover"
+                unoptimized
               />
             ) : (
               <div className="w-24 h-24 rounded-full bg-brand-primary/10 flex items-center justify-center">

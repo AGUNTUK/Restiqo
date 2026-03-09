@@ -1,11 +1,35 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Check, Clock, Mail, ArrowRight } from 'lucide-react'
+import { Check, Clock, Mail, ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
+import { useAuth } from '@/lib/auth'
 
 export default function HostPendingPage() {
+  const router = useRouter()
+  const { isAuthenticated, isLoading, isHost, isHostPending } = useAuth()
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/auth/login?redirect=/host/pending')
+    } else if (!isLoading && isHost) {
+      router.push('/host')
+    } else if (!isLoading && isAuthenticated && !isHostPending) {
+      router.push('/host/register')
+    }
+  }, [isAuthenticated, isLoading, isHost, isHostPending, router])
+
+  if (isLoading || !isAuthenticated || isHost || !isHostPending) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-brand-background-light to-white flex items-center justify-center px-4">
       <motion.div
@@ -91,7 +115,7 @@ export default function HostPendingPage() {
                 Go to Homepage
               </Button>
             </Link>
-            <Link href="/auth/login">
+            <Link href="/dashboard">
               <Button variant="primary" rightIcon={<ArrowRight className="w-5 h-5" />}>
                 Go to Dashboard
               </Button>

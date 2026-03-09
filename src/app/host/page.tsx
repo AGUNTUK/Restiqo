@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   Loader2,
@@ -14,22 +15,22 @@ import {
   Plus,
   Edit,
 } from 'lucide-react'
-import { useAuth } from '@/lib/firebase/auth'
+import { useAuth } from '@/lib/auth'
 import { useHostData, getHostService } from '@/lib/firebase/host'
 import toast from 'react-hot-toast'
 
 export default function HostDashboardPage() {
   const router = useRouter()
-  const { user, isLoading: authLoading, isAuthenticated, isHost } = useAuth()
+  const { isLoading: authLoading, isAuthenticated, isHost, isHostPending } = useAuth()
   const { properties, bookings, stats, isLoading } = useHostData()
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       router.push('/auth/login?redirect=/host')
     } else if (!authLoading && isAuthenticated && !isHost) {
-      router.push('/host/register')
+      router.push(isHostPending ? '/host/pending' : '/host/register')
     }
-  }, [authLoading, isAuthenticated, isHost, router])
+  }, [authLoading, isAuthenticated, isHost, isHostPending, router])
 
   const togglePropertyAvailability = async (propertyId: string, currentStatus: boolean) => {
     const hostService = getHostService()
@@ -37,7 +38,7 @@ export default function HostDashboardPage() {
     try {
       await hostService.updatePropertyStatus(propertyId, currentStatus ? 'inactive' : 'approved')
       toast.success('Property updated successfully')
-    } catch (error) {
+    } catch {
       toast.error('Failed to update property')
     }
   }
@@ -180,9 +181,11 @@ export default function HostDashboardPage() {
                       <div className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
                           {property.images?.[0] ? (
-                            <img
+                            <Image
                               src={property.images[0]}
                               alt={property.title}
+                              width={64}
+                              height={64}
                               className="w-full h-full object-cover"
                             />
                           ) : (

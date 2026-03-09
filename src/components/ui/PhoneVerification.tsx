@@ -48,7 +48,7 @@ export function PhoneVerification({ onVerified, onCancel }: PhoneVerificationPro
       } else {
         setError(result.error || 'Failed to send verification code')
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.')
     } finally {
       setIsLoading(false)
@@ -74,7 +74,7 @@ export function PhoneVerification({ onVerified, onCancel }: PhoneVerificationPro
       } else {
         setError(result.error || 'Invalid verification code')
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.')
     } finally {
       setIsLoading(false)

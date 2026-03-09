@@ -14,10 +14,8 @@ import {
   Edit,
   Trash2,
   Eye,
-  EyeOff,
   Check,
   X,
-  MoreVertical,
 } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/client'
@@ -26,7 +24,13 @@ import toast from 'react-hot-toast'
 
 export default function HostListingsPage() {
   const router = useRouter()
-  const { user, isAuthenticated, isLoading: authLoading, isHost } = useAuth()
+  const {
+    user,
+    isAuthenticated,
+    isLoading: authLoading,
+    isHost,
+    isHostPending,
+  } = useAuth()
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'active' | 'pending' | 'inactive'>('all')
@@ -56,9 +60,9 @@ export default function HostListingsPage() {
     if (!authLoading && !isAuthenticated) {
       router.push('/auth/login?redirect=/host/listings')
     } else if (!authLoading && isAuthenticated && !isHost) {
-      router.push('/host/register')
+      router.push(isHostPending ? '/host/pending' : '/host/register')
     }
-  }, [authLoading, isAuthenticated, isHost, router])
+  }, [authLoading, isAuthenticated, isHost, isHostPending, router])
 
   useEffect(() => {
     if (user && isHost) {

@@ -5,7 +5,11 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function DebugPage() {
   const [status, setStatus] = useState<string>('Checking...')
-  const [envStatus, setEnvStatus] = useState<{ url: boolean; key: boolean }>({ url: false, key: false })
+  const [envStatus, setEnvStatus] = useState<{
+    apiKey: boolean
+    authDomain: boolean
+    projectId: boolean
+  }>({ apiKey: false, authDomain: false, projectId: false })
   const [session, setSession] = useState<any>(null)
   const [testResult, setTestResult] = useState<any>(null)
 
@@ -14,34 +18,35 @@ export default function DebugPage() {
   }, [])
 
   const checkConnection = async () => {
-    const supabase = createClient()
-    
-    // Check environment variables
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    setEnvStatus({ url: !!url, key: !!key })
-    
-    // Check session
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+    const client = createClient()
+
+    setEnvStatus({
+      apiKey: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+      authDomain: !!process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+      projectId: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    })
+
+    const { data: sessionData, error: sessionError } = await client.auth.getSession()
     if (sessionError) {
       setStatus(`Session error: ${sessionError.message}`)
-    } else {
-      setSession(sessionData.session)
-      setStatus('Connected')
+      return
     }
+
+    setSession(sessionData.session)
+    setStatus('Connected')
   }
 
   const testLogin = async () => {
-    const supabase = createClient()
+    const client = createClient()
     const email = (document.getElementById('test-email') as HTMLInputElement)?.value
     const password = (document.getElementById('test-password') as HTMLInputElement)?.value
-    
+
     if (!email || !password) {
       setTestResult({ error: 'Please enter email and password' })
       return
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await client.auth.signInWithPassword({
       email,
       password,
     })
@@ -52,13 +57,14 @@ export default function DebugPage() {
   return (
     <div className="min-h-screen p-8 pt-24">
       <div className="max-w-2xl mx-auto space-y-8">
-        <h1 className="text-2xl font-bold">Supabase Debug Page</h1>
-        
+        <h1 className="text-2xl font-bold">Firebase Auth Debug</h1>
+
         <div className="clay p-6 space-y-4">
           <h2 className="text-lg font-semibold">Environment Variables</h2>
           <div className="space-y-2">
-            <p>NEXT_PUBLIC_SUPABASE_URL: {envStatus.url ? '✅ Set' : '❌ Not set'}</p>
-            <p>NEXT_PUBLIC_SUPABASE_ANON_KEY: {envStatus.key ? '✅ Set' : '❌ Not set'}</p>
+            <p>NEXT_PUBLIC_FIREBASE_API_KEY: {envStatus.apiKey ? 'Set' : 'Not set'}</p>
+            <p>NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: {envStatus.authDomain ? 'Set' : 'Not set'}</p>
+            <p>NEXT_PUBLIC_FIREBASE_PROJECT_ID: {envStatus.projectId ? 'Set' : 'Not set'}</p>
           </div>
         </div>
 
@@ -110,15 +116,13 @@ export default function DebugPage() {
         <div className="clay p-6">
           <h2 className="text-lg font-semibold mb-4">Troubleshooting Tips</h2>
           <ul className="list-disc list-inside space-y-2 text-gray-600">
-            <li>Make sure you have created an account via Sign Up first</li>
-            <li>Check if email confirmation is required in your Supabase project</li>
-            <li>Verify your Supabase project has Email auth enabled</li>
-            <li>Check the browser console for any errors</li>
-            <li>Try disabling email confirmation in Supabase Dashboard → Authentication → Providers</li>
+            <li>Make sure the Firebase client env variables are present in `.env.local`</li>
+            <li>Ensure Email/Password provider is enabled in Firebase Authentication</li>
+            <li>Check Firestore security rules for `users` collection access</li>
+            <li>Check browser console for Firebase SDK errors</li>
           </ul>
         </div>
       </div>
     </div>
   )
 }
-

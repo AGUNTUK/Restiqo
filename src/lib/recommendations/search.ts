@@ -38,12 +38,6 @@ const weights = {
   popularity: 10
 }
 
-interface SearchHistoryRow {
-  search_query: string
-  clicked_property_ids: string[]
-  filters: string | Record<string, unknown>
-}
-
 interface WishlistRow {
   property_id: string
 }
@@ -158,9 +152,6 @@ export class SearchRecommendationEngine {
       // Find most popular location and type
       const popularLocation = Object.entries(locationCounts)
         .sort(([,a], [,b]) => b - a)[0]?.[0] || ''
-      const popularType = Object.entries(typeCounts)
-        .sort(([,a], [,b]) => b - a)[0]?.[0] || ''
-
       // Query properties matching trending criteria
       let query = this.supabase
         .from('properties')

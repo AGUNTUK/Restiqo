@@ -1,13 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getChatService, ChatRoom, ChatMessage } from '@/lib/firebase/chat'
+import { getChatService, ChatRoom } from '@/lib/firebase/chat'
 import { useAuth } from '@/lib/firebase/auth'
-import Image from 'next/image'
 import Link from 'next/link'
 
 export default function ChatList() {
-  const { user, profile } = useAuth()
+  const { user } = useAuth()
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const chatService = getChatService()

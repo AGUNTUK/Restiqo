@@ -1,18 +1,16 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
     Heart,
     Share2,
     Copy,
     Check,
-    Link2,
     Mail,
     MessageCircle,
     Facebook,
     Twitter,
-    X,
     Lock,
     Globe,
     Settings

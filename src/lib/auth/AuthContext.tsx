@@ -1,23 +1,29 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { User, UserRole } from '@/types/database'
-import type { User as SupabaseUser, Session } from '@supabase/supabase-js'
+import type { User as FirebaseUser } from 'firebase/auth'
+import {
+  FirebaseAuthProvider,
+  useFirebaseAuth,
+} from '@/lib/firebase/auth'
+import type { User, UserRole } from '@/types/database'
 
-interface AuthState {
-  user: SupabaseUser | null
-  profile: User | null
-  session: Session | null
+interface CompatUser extends FirebaseUser {
+  id: string
+}
+
+type CompatProfile = User
+
+interface AuthContextType {
+  user: CompatUser | null
+  profile: CompatProfile | null
   role: UserRole
   isLoading: boolean
   isAuthenticated: boolean
   isHost: boolean
   isAdmin: boolean
-}
-
-interface AuthContextType extends AuthState {
+  isHostPending: boolean
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
@@ -30,391 +36,133 @@ interface AuthContextType extends AuthState {
   hasMinimumRole: (minimumRole: UserRole) => boolean
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+function toIsoString(value: unknown): string {
+  if (value instanceof Date) return value.toISOString()
+  if (typeof value === 'string') return value
+  return new Date().toISOString()
+}
 
-const roleHierarchy: Record<UserRole, number> = {
-  guest: 0,
-  host: 1,
-  admin: 2,
+function mapFirebaseProfileToCompat(profile: any): CompatProfile | null {
+  if (!profile) return null
+
+  return {
+    id: profile.id,
+    email: profile.email || '',
+    full_name: profile.fullName || null,
+    avatar_url: profile.avatarUrl || null,
+    phone: profile.phone || null,
+    address: profile.address || null,
+    bio: profile.bio || null,
+    role: (profile.role || 'guest') as UserRole,
+    is_verified: Boolean(profile.isVerified),
+    host_requested_at: profile.hostRequestedAt ? toIsoString(profile.hostRequestedAt) : null,
+    host_approved_at: profile.hostApprovedAt ? toIsoString(profile.hostApprovedAt) : null,
+    created_at: toIsoString(profile.createdAt),
+    updated_at: toIsoString(profile.updatedAt),
+  }
+}
+
+function mapCompatUpdatesToFirebase(updates: Partial<User>) {
+  const toDateOrUndefined = (value: string | undefined): Date | undefined => {
+    if (value === undefined) return undefined
+
+    const parsed = new Date(value)
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed
+  }
+
+  const toNullableDate = (value: string | null | undefined): Date | null | undefined => {
+    if (value === undefined) return undefined
+    if (value === null) return null
+
+    return toDateOrUndefined(value)
+  }
+
+  return {
+    email: updates.email,
+    fullName: updates.full_name,
+    avatarUrl: updates.avatar_url,
+    phone: updates.phone,
+    address: updates.address,
+    bio: updates.bio,
+    role: updates.role,
+    isVerified: updates.is_verified,
+    hostRequestedAt: toNullableDate(updates.host_requested_at),
+    hostApprovedAt: toNullableDate(updates.host_approved_at),
+    createdAt: toDateOrUndefined(updates.created_at ?? undefined),
+    updatedAt: toDateOrUndefined(updates.updated_at ?? undefined),
+  }
+}
+
+function mapFirebaseUserToCompat(user: FirebaseUser | null): CompatUser | null {
+  if (!user) return null
+  return Object.assign(user, { id: user.uid }) as CompatUser
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  return <FirebaseAuthProvider>{children}</FirebaseAuthProvider>
+}
+
+export function useAuth(): AuthContextType {
   const router = useRouter()
-  const supabase = createClient()
+  const auth = useFirebaseAuth()
 
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    profile: null,
-    session: null,
-    role: 'guest',
-    isLoading: true,
-    isAuthenticated: false,
-    isHost: false,
-    isAdmin: false,
-  })
+  const signOut = async () => {
+    await auth.signOut()
+    router.push('/')
+  }
 
-  // Fetch user profile from database
-  const fetchProfile = useCallback(async (userId: string): Promise<User | null> => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single()
+  const updateProfile = async (updates: Partial<User>) => {
+    const mapped = mapCompatUpdatesToFirebase(updates)
+    return auth.updateProfile(mapped)
+  }
 
-      if (error) {
-        console.error('Error fetching profile:', error)
-        return null
-      }
-
-      return data
-    } catch (error) {
-      console.error('Error fetching profile:', error)
-      return null
-    }
-  }, [supabase])
-
-  // Initialize auth state
-  const initializeAuth = useCallback(async () => {
-    try {
-      const { data: { session }, error } = await supabase.auth.getSession()
-
-      if (error) {
-        console.error('Error getting session:', error)
-        setState(prev => ({ ...prev, isLoading: false }))
-        return
-      }
-
-      if (session?.user) {
-        const profile = await fetchProfile(session.user.id)
-        const role = profile?.role || 'guest'
-
-        setState({
-          user: session.user,
-          profile,
-          session,
-          role,
-          isLoading: false,
-          isAuthenticated: true,
-          isHost: role === 'host' || role === 'admin',
-          isAdmin: role === 'admin',
-        })
-      } else {
-        setState(prev => ({
-          ...prev,
-          user: null,
-          profile: null,
-          session: null,
-          role: 'guest',
-          isLoading: false,
-          isAuthenticated: false,
-          isHost: false,
-          isAdmin: false,
-        }))
-      }
-    } catch (error) {
-      console.error('Error initializing auth:', error)
-      setState(prev => ({ ...prev, isLoading: false }))
-    }
-  }, [fetchProfile, supabase.auth])
-
-  // Listen for auth changes
-  useEffect(() => {
-    initializeAuth()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event: string, session: Session | null) => {
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          if (session?.user) {
-            const profile = await fetchProfile(session.user.id)
-            const role = profile?.role || 'guest'
-
-            setState({
-              user: session.user,
-              profile,
-              session,
-              role,
-              isLoading: false,
-              isAuthenticated: true,
-              isHost: role === 'host' || role === 'admin',
-              isAdmin: role === 'admin',
-            })
-          }
-        } else if (event === 'SIGNED_OUT') {
-          setState({
-            user: null,
-            profile: null,
-            session: null,
-            role: 'guest',
-            isLoading: false,
-            isAuthenticated: false,
-            isHost: false,
-            isAdmin: false,
-          })
-        }
-      }
-    )
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [initializeAuth, fetchProfile, supabase.auth])
-
-  // Sign in with email and password
-  const signIn = useCallback(async (email: string, password: string) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) {
-        return { error: error.message }
-      }
-
-      if (data.session) {
-        const profile = await fetchProfile(data.user.id)
-        const role = profile?.role || 'guest'
-
-        setState({
-          user: data.user,
-          profile,
-          session: data.session,
-          role,
-          isLoading: false,
-          isAuthenticated: true,
-          isHost: role === 'host' || role === 'admin',
-          isAdmin: role === 'admin',
-        })
-      }
-
-      return { error: null }
-    } catch (error) {
-      return { error: 'An unexpected error occurred' }
-    }
-  }, [supabase.auth, fetchProfile])
-
-  // Sign up with email and password
-  const signUp = useCallback(async (email: string, password: string, fullName: string) => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            role: 'guest',
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) {
-        return { error: error.message }
-      }
-
-      // Check if user already exists
-      if (data.user && data.user.identities && data.user.identities.length === 0) {
-        return { error: 'An account with this email already exists. Please sign in.' }
-      }
-
-      return { error: null }
-    } catch (error) {
-      return { error: 'An unexpected error occurred' }
-    }
-  }, [supabase.auth])
-
-  // Sign out
-  const signOut = useCallback(async () => {
-    try {
-      await supabase.auth.signOut()
-      setState({
-        user: null,
-        profile: null,
-        session: null,
-        role: 'guest',
-        isLoading: false,
-        isAuthenticated: false,
-        isHost: false,
-        isAdmin: false,
-      })
-      router.push('/')
-    } catch (error) {
-      console.error('Error signing out:', error)
-    }
-  }, [supabase.auth, router])
-
-  // Sign in with Google
-  const signInWithGoogle = useCallback(async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) {
-        return { error: error.message }
-      }
-
-      return { error: null }
-    } catch (error) {
-      return { error: 'An unexpected error occurred' }
-    }
-  }, [supabase.auth])
-
-  // Sign in with Facebook
-  const signInWithFacebook = useCallback(async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'facebook',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) {
-        return { error: error.message }
-      }
-
-      return { error: null }
-    } catch (error) {
-      return { error: 'An unexpected error occurred' }
-    }
-  }, [supabase.auth])
-
-  // Update profile
-  const updateProfile = useCallback(async (updates: Partial<User>) => {
-    if (!state.user) {
-      return { error: 'Not authenticated' }
-    }
-
-    try {
-      const { error } = await supabase
-        .from('users')
-        .update(updates)
-        .eq('id', state.user.id)
-
-      if (error) {
-        return { error: error.message }
-      }
-
-      // Refresh profile
-      const profile = await fetchProfile(state.user.id)
-      setState(prev => ({ ...prev, profile }))
-
-      return { error: null }
-    } catch (error) {
-      return { error: 'An unexpected error occurred' }
-    }
-  }, [state.user, supabase, fetchProfile])
-
-  // Refresh profile
-  const refreshProfile = useCallback(async () => {
-    if (state.user) {
-      const profile = await fetchProfile(state.user.id)
-      const role = profile?.role || 'guest'
-      setState(prev => ({
-        ...prev,
-        profile,
-        role,
-        isHost: role === 'host' || role === 'admin',
-        isAdmin: role === 'admin',
-      }))
-    }
-  }, [state.user, fetchProfile])
-
-  // Become a host
-  const becomeHost = useCallback(async () => {
-    if (!state.user) {
-      return { error: 'Not authenticated' }
-    }
-
-    try {
-      const { error } = await supabase
-        .from('users')
-        .update({
-          role: 'host',
-          host_approved_at: new Date().toISOString(),
-        })
-        .eq('id', state.user.id)
-
-      if (error) {
-        return { error: error.message }
-      }
-
-      // Refresh profile
-      await refreshProfile()
-
-      return { error: null }
-    } catch (error) {
-      return { error: 'An unexpected error occurred' }
-    }
-  }, [state.user, supabase, refreshProfile])
-
-  // Check if user has specific role
-  const hasRole = useCallback((requiredRole: UserRole): boolean => {
-    return state.role === requiredRole
-  }, [state.role])
-
-  // Check if user has minimum role level
-  const hasMinimumRole = useCallback((minimumRole: UserRole): boolean => {
-    return roleHierarchy[state.role] >= roleHierarchy[minimumRole]
-  }, [state.role])
-
-  const value: AuthContextType = {
-    ...state,
-    signIn,
-    signUp,
+  return {
+    user: mapFirebaseUserToCompat(auth.user),
+    profile: mapFirebaseProfileToCompat(auth.profile),
+    role: auth.role,
+    isLoading: auth.isLoading,
+    isAuthenticated: auth.isAuthenticated,
+    isHost: auth.isHost,
+    isAdmin: auth.isAdmin,
+    isHostPending: auth.isHostPending,
+    signIn: auth.signIn,
+    signUp: auth.signUp,
     signOut,
-    signInWithGoogle,
-    signInWithFacebook,
+    signInWithGoogle: auth.signInWithGoogle,
+    signInWithFacebook: auth.signInWithFacebook,
     updateProfile,
-    refreshProfile,
-    becomeHost,
-    hasRole,
-    hasMinimumRole,
+    refreshProfile: auth.refreshProfile,
+    becomeHost: auth.becomeHost,
+    hasRole: auth.hasRole,
+    hasMinimumRole: auth.hasMinimumRole,
   }
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return context
-}
-
-// Hook for protecting routes
 export function useRequireAuth(redirectTo: string = '/auth/login') {
   const auth = useAuth()
   const router = useRouter()
+  const { isLoading, isAuthenticated } = auth
 
   useEffect(() => {
-    if (!auth.isLoading && !auth.isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.push(redirectTo)
     }
-  }, [auth.isLoading, auth.isAuthenticated, router, redirectTo])
+  }, [isLoading, isAuthenticated, redirectTo, router])
 
   return auth
 }
 
-// Hook for role-based access
 export function useRequireRole(requiredRole: UserRole, redirectTo: string = '/') {
   const auth = useAuth()
   const router = useRouter()
+  const { isLoading, isAuthenticated } = auth
+  const hasRequiredRole = auth.hasMinimumRole(requiredRole)
 
   useEffect(() => {
-    if (!auth.isLoading && auth.isAuthenticated) {
-      if (!auth.hasMinimumRole(requiredRole)) {
-        router.push(redirectTo)
-      }
+    if (!isLoading && isAuthenticated && !hasRequiredRole) {
+      router.push(redirectTo)
     }
-  }, [auth.isLoading, auth.isAuthenticated, auth.hasMinimumRole, requiredRole, router, redirectTo])
+  }, [isLoading, isAuthenticated, hasRequiredRole, redirectTo, router])
 
   return auth
 }
-

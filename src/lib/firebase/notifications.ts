@@ -124,6 +124,10 @@ export async function savePhoneVerification(
   phoneNumber: string,
   isVerified: boolean = false
 ): Promise<void> {
+  const auth = getFirebaseAuth()
+  if (!auth.currentUser || auth.currentUser.uid !== userId) {
+    return
+  }
   const db = getFirebaseFirestore()
   
   await setDoc(doc(db, 'phoneVerifications', userId), {
@@ -137,6 +141,10 @@ export async function savePhoneVerification(
 
 // Check if phone is verified
 export async function isPhoneVerified(userId: string): Promise<boolean> {
+  const auth = getFirebaseAuth()
+  if (!auth.currentUser || auth.currentUser.uid !== userId) {
+    return false
+  }
   const db = getFirebaseFirestore()
   const docRef = doc(db, 'phoneVerifications', userId)
   const docSnap = await getDoc(docRef)
@@ -187,7 +195,7 @@ export class FirebaseNotificationService {
 
   async requestPermission(): Promise<boolean> {
     try {
-      const { getMessaging, getToken, onMessage } = await import('firebase/messaging')
+      const { getMessaging, getToken } = await import('firebase/messaging')
       
       if (!this.messaging) {
         this.messaging = getMessaging()
@@ -200,10 +208,6 @@ export class FirebaseNotificationService {
         })
         
         // Save token to user document
-        const { getFirebaseFirestore } = await import('./config')
-        const db = getFirebaseFirestore()
-        const { doc, setDoc } = await import('firebase/firestore')
-        
         // Note: You'll need to get the current user ID from your auth context
         // await setDoc(doc(db, 'fcmTokens', userId), { token }, { merge: true })
         
