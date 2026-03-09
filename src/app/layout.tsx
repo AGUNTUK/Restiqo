@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { Navbar, Footer, MobileHeader, MobileBottomNav } from '@/components/layout'
 import { Toaster } from 'react-hot-toast'
@@ -99,6 +100,7 @@ export default async function RootLayout({
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <Analytics />
+        <SpeedInsights />
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <AuthProvider>
