@@ -5,7 +5,7 @@ import { getFirebaseFirestore } from '@/lib/firebase/config'
 export const revalidate = 3600
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://restiqa.com'
+  const baseUrl = 'https://restiqa.com'
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },

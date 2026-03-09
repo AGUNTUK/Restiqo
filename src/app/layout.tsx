@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://restiqa.com'),
+  metadataBase: new URL('https://restiqa.com'),
   alternates: {
     canonical: '/',
     languages: {
