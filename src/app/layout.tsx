@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Outfit, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { Navbar, Footer, MobileHeader, MobileBottomNav } from '@/components/layout'
 import { Toaster } from 'react-hot-toast'
@@ -11,6 +12,18 @@ import { QueryProvider } from '@/lib/query/QueryProvider'
 import { ErrorBoundary } from '@/components/ui'
 import { AuthProvider } from '@/lib/auth'
 import { ThemeProvider } from '@/lib/theme'
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-wise-sans',
+  display: 'swap',
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -100,7 +113,7 @@ export default async function RootLayout({
         <OrganizationJsonLd />
         <WebSiteJsonLd />
       </head>
-      <body className="font-sans antialiased" suppressHydrationWarning>
+      <body className={`${outfit.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning>
         <Analytics />
         <SpeedInsights />
         <NextIntlClientProvider messages={messages}>

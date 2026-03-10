@@ -28,9 +28,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed border-none'
 
     const variants = {
-      default: 'neu-button hover:shadow-[8px_8px_16px_rgba(0,0,0,0.08),-8px_-8px_16px_rgba(255,255,255,0.9)] active:shadow-[inset_6px_6px_12px_rgba(0,0,0,0.08),inset_-6px_-6px_12px_rgba(255,255,255,0.9)] text-[#1E293B]',
-      primary: 'neu-button-primary hover:shadow-[8px_8px_16px_rgba(252,153,5,0.35),-8px_-8px_16px_rgba(255,255,255,0.9)] active:shadow-[inset_6px_6px_12px_rgba(0,0,0,0.15),inset_-6px_-6px_12px_rgba(255,255,255,0.4)]',
-      accent: 'neu-button-accent hover:shadow-[8px_8px_16px_rgba(136,197,28,0.35),-8px_-8px_16px_rgba(255,255,255,0.9)] active:shadow-[inset_6px_6px_12px_rgba(0,0,0,0.15),inset_-6px_-6px_12px_rgba(255,255,255,0.4)]',
+      default: 'bg-[#EEF2F6] text-[#1E293B] hover:bg-white hover:shadow-sm active:bg-[#EEF2F6] transition-all duration-200',
+      primary: 'bg-[#d67f00] text-white hover:bg-[#b66300] active:bg-[#a65a00] transition-all duration-200',
+      accent: 'bg-[#88C51C] text-white hover:bg-[#6da315] active:bg-[#5a8a10] transition-all duration-200',
       outline: 'bg-transparent text-brand-primary rounded-2xl hover:bg-[#EEF2F6] hover:shadow-[4px_4px_8px_rgba(0,0,0,0.06),-4px_-4px_8px_rgba(255,255,255,0.8)] active:shadow-[inset_4px_4px_8px_rgba(0,0,0,0.06),inset_-4px_-4px_8px_rgba(255,255,255,0.8)] transition-all duration-200',
       ghost: 'neu-button-ghost text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-text-primary)]',
     }

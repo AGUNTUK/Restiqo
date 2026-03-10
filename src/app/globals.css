@@ -26,8 +26,21 @@
   --shadow-dark-lg: rgba(0, 0, 0, 0.1);
   --shadow-light-lg: rgba(255, 255, 255, 0.95);
 
+  /* Card & Surface Colors */
+  --color-card: #ffffff;
+  --color-card-hover: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-input-bg: #ffffff;
+
   /* Font */
   --font-poppins: 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-playfair: 'Playfair Display', serif;
+
+  /* Hero Typography - Luxury Magazine Style */
+  --hero-font-family: var(--font-playfair);
+  --hero-font-weight: 600;
+  --hero-letter-spacing: 0.02em;
+  --hero-text-color: #FDFDFD;
 
   /* Border Radius */
   --radius-sm: 12px;
@@ -37,7 +50,41 @@
   --radius-full: 9999px;
 }
 
-@theme {
+/* Dark Mode Variables */
+.dark {
+  /* Neumorphism Color System - Dark Mode */
+  --color-background: #0f172a;
+  --color-background-light: #1e293b;
+  --color-primary: #f3b14c;
+  --color-primary-dark: #d67f00;
+  --color-primary-light: #fcd34d;
+  --color-accent: #9dd42a;
+  --color-accent-dark: #88C51C;
+  --color-accent-light: #bef264;
+  --color-secondary: #2dd4bf;
+  --color-secondary-dark: #218877;
+
+  /* Text Colors - Dark Mode */
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+
+  /* Neumorphism Shadow Variables - Dark Mode */
+  --shadow-dark: rgba(0, 0, 0, 0.4);
+  --shadow-light: rgba(255, 255, 255, 0.05);
+  --shadow-dark-sm: rgba(0, 0, 0, 0.3);
+  --shadow-light-sm: rgba(255, 255, 255, 0.03);
+  --shadow-dark-lg: rgba(0, 0, 0, 0.5);
+  --shadow-light-lg: rgba(255, 255, 255, 0.07);
+
+  /* Card & Surface Colors - Dark Mode */
+  --color-card: #1e293b;
+  --color-card-hover: #334155;
+  --color-border: #334155;
+  --color-input-bg: #1e293b;
+}
+
+:root {
   --color-brand-primary: #d67f00;
   --color-brand-primary-dark: #b66300;
   --color-brand-primary-light: #f3b14c;
@@ -52,7 +99,15 @@
   --color-brand-text-secondary: #475569;
   --color-brand-text-muted: #64748B;
 
+  /* Dark mode colors */
+  --color-brand-primary-dark-mode: #f3b14c;
+  --color-brand-background-dark-mode: #0f172a;
+  --color-brand-background-light-dark-mode: #1e293b;
+  --color-brand-text-dark-mode: #f1f5f9;
+  --color-brand-text-secondary-dark-mode: #cbd5e1;
+
   --font-family-sans: var(--font-poppins), 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-wise-sans: 'Outfit', system-ui, -apple-system, sans-serif;
 
   --shadow-neu:
     8px 8px 16px rgba(0, 0, 0, 0.08),

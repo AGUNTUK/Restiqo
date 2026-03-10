@@ -491,62 +491,84 @@ export default function HomePage() {
 
   return (
     <div className="relative">
-      {/* Hero Section */}
+      {/* Hero Section with Travel Image Background */}
       <section className="relative min-h-[100vh] overflow-hidden pt-20 sm:pt-28 pb-10 sm:pb-16">
-        <div className="absolute inset-0 bg-[#EAF0F5]" />
-        <div className="absolute left-1/2 top-[-260px] h-[740px] w-[1500px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(252,153,5,0.28)_0%,rgba(252,153,5,0.12)_35%,rgba(136,197,28,0.08)_65%,transparent_80%)] blur-2xl" />
-        <div className="absolute -left-36 top-28 h-24 w-[360px] rounded-full border border-white/80 bg-white/35 backdrop-blur-md rotate-[-16deg] shadow-[0_18px_35px_rgba(0,0,0,0.08)]" />
-        <div className="absolute -right-44 top-40 h-20 w-[320px] rounded-full border border-white/80 bg-white/30 backdrop-blur-md rotate-[18deg] shadow-[0_18px_35px_rgba(0,0,0,0.08)]" />
-        <div className="absolute left-8 sm:left-20 bottom-20 h-16 w-[220px] rounded-full bg-[#fc9905]/20 rotate-[-12deg]" />
-        <div className="absolute right-6 sm:right-16 bottom-14 h-20 w-[280px] rounded-full bg-[#88C51C]/20 rotate-[10deg]" />
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img 
+            src="/hero.jpg" 
+            alt="Beautiful Bangladesh landscape" 
+            className="w-full h-full object-cover"
+          />
+          {/* 40% dark gradient overlay at top for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/10" />
+        </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16">
+          {/* Headline */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="relative overflow-hidden rounded-[34px] sm:rounded-[52px] border border-white/80 bg-[linear-gradient(160deg,rgba(255,255,255,0.92)_0%,rgba(255,255,255,0.68)_100%)]"
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-center mb-6 sm:mb-8"
           >
-            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#fc9905]/24 blur-3xl" />
-            <div className="absolute -left-28 -bottom-28 h-80 w-80 rounded-full bg-[#88C51C]/20 blur-3xl" />
-            <div className="absolute right-24 top-8 h-8 w-44 rounded-full bg-white/70 rotate-[12deg]" />
-            <div className="absolute left-16 bottom-10 h-8 w-52 rounded-full bg-white/55 -rotate-[10deg]" />
+            <h1 
+              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-[#FDFDFD] mb-3 sm:mb-4"
+              style={{ 
+                fontFamily: 'var(--font-playfair), Playfair Display, serif',
+                letterSpacing: '0.02em'
+              }}
+            >
+              Find Your Perfect Stay
+            </h1>
+            <p className="text-sm sm:text-xl text-[#FDFDFD]/90 max-w-2xl mx-auto px-2">
+              Search apartments, hotels, and tours in one seamless booking experience.
+            </p>
+          </motion.div>
 
-            <div className="relative z-10 p-4 sm:p-8 lg:p-10">
-              <div className="text-center mb-6 sm:mb-10">
-                <span className="inline-flex items-center px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium text-[#1E293B] bg-white/80 border border-white shadow-[0_8px_18px_rgba(0,0,0,0.08)]">
-                  Ready For Your Next Adventure…
-                </span>
-                <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-[#1E293B] mt-3 sm:mt-5 mb-3 sm:mb-5">
-                  Discover Your Perfect
-                  <span className="block gradient-text mt-1 sm:mt-2">Getaway</span>
-                </h1>
-                <p className="text-sm sm:text-xl text-[#334155] max-w-2xl mx-auto px-2">
-                  Search apartments, hotels, and tours inside one streamlined booking experience.
-                </p>
-              </div>
+          {/* Trust Indicators */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-10"
+          >
+            <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-[10px] text-[#FDFDFD] text-xs sm:text-sm font-medium border border-white/15">
+              ⭐ 10,000+ Travelers
+            </span>
+            <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-[10px] text-[#FDFDFD] text-xs sm:text-sm font-medium border border-white/15">
+              🏠 1,500+ Properties
+            </span>
+            <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-[10px] text-[#FDFDFD] text-xs sm:text-sm font-medium border border-white/15">
+              🔒 Secure Booking
+            </span>
+          </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="rounded-[28px] sm:rounded-[34px] border border-white/90 bg-[#EEF2F6]/88 p-3 sm:p-6 md:p-8"
-              >
+          {/* Floating Search Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            className="max-w-5xl mx-auto"
+          >
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-sm border border-white/20 p-3 sm:p-6 md:p-8">
                 <div className="mb-3 sm:mb-4 overflow-x-auto scrollbar-hide -mx-1 px-1">
-                  <div className="flex p-1.5 sm:p-2 gap-1 sm:gap-1.5 min-w-max justify-center rounded-full bg-white/80">
+                  <div className="flex p-1.5 sm:p-2 gap-1 sm:gap-1.5 min-w-max justify-center rounded-full bg-gray-100/80">
                     {serviceTabs.map((tab) => (
-                      <button
+                      <motion.button
                         key={tab.id}
                         type="button"
                         onClick={() => handleTabChange(tab.id)}
-                        className={`flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-7 py-2 sm:py-2.5 rounded-full font-semibold transition-all duration-200 text-xs sm:text-sm ${activeTab === tab.id
-                          ? 'text-white bg-[linear-gradient(135deg,var(--color-primary),var(--color-accent))] shadow-[0_10px_20px_rgba(252,153,5,0.28)]'
-                          : 'text-[#64748B] hover:bg-white/70'
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`flex items-center justify-center gap-1.5 sm:gap-2 px-5 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold transition-all duration-200 text-xs sm:text-sm ${activeTab === tab.id
+                          ? 'text-white bg-[#d67f00]'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-white/70'
                           }`}
                       >
                         <tab.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                         <span className="whitespace-nowrap">{tab.label}</span>
-                      </button>
+                      </motion.button>
                     ))}
                   </div>
                 </div>
@@ -766,9 +788,42 @@ export default function HomePage() {
                     </div>
                   </div>
                 </form>
+              </div>
+            </motion.div>
+
+              {/* Popular Destinations */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="mt-6 sm:mt-8 text-center"
+              >
+                <p className="text-white/80 text-xs sm:text-sm mb-3 font-medium">Popular Destinations</p>
+                <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+                  {['Cox\'s Bazar', 'Sajek Valley', 'Sylhet', 'Dhaka'].map((destination, index) => (
+                    <motion.button
+                      key={destination}
+                      type="button"
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        setSearchData({ ...searchData, location: destination })
+                        const params = new URLSearchParams({
+                          location: destination,
+                          checkIn: searchData.checkIn,
+                          checkOut: searchData.checkOut,
+                          guests: totalGuests.toString(),
+                          type: searchData.type,
+                        })
+                        window.location.href = `/search?${params.toString()}`
+                      }}
+                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-xs sm:text-sm font-medium border border-white/30 hover:border-white/50 transition-all duration-200"
+                    >
+                      {destination}
+                    </motion.button>
+                  ))}
+                </div>
               </motion.div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
