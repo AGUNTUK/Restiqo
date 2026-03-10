@@ -112,7 +112,7 @@ const reviews = [
 export default function PropertyDetailsPage() {
   const params = useParams()
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -164,20 +164,50 @@ export default function PropertyDetailsPage() {
     try {
       setIsBooking(true)
       const db = getFirestoreDB()
+      const totalPrice = calculateTotal() + Math.round(calculateTotal() * 0.1)
       const newBookingId = await db.createBooking({
         propertyId: property?.id,
         guestId: user.id,
         checkIn: bookingData.checkIn,
         checkOut: bookingData.checkOut,
         guests: bookingData.guests,
-        totalPrice: calculateTotal() + Math.round(calculateTotal() * 0.1),
+        totalPrice: totalPrice,
         status: 'pending',
         paymentStatus: 'pending',
       })
 
-      toast.success('Booking created! Redirecting to checkout...')
-      setShowBookingModal(false)
-      router.push(`/checkout?bookingId=${newBookingId}`)
+      // Initiate Payment directly
+      try {
+        const fullName = profile?.full_name || user.displayName || 'Guest User'
+        const email = profile?.email || user.email || ''
+
+        const response = await fetch('/api/create-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: fullName,
+            email: email,
+            amount: totalPrice,
+            booking_id: newBookingId,
+          })
+        })
+
+        const data = await response.json()
+
+        if (response.ok && data.payment_url) {
+          toast.success('Booking created! Redirecting to payment...')
+          window.location.href = data.payment_url
+          return
+        } else {
+          console.error('Payment initialization failed:', data)
+          toast.error('Payment initialization failed. Redirecting to checkout review...')
+          router.push(`/checkout?bookingId=${newBookingId}`)
+        }
+      } catch (payError) {
+        console.error('Error initiating payment:', payError)
+        toast.error('Error starting payment. Redirecting to checkout review...')
+        router.push(`/checkout?bookingId=${newBookingId}`)
+      }
     } catch (error) {
       console.error('Error creating booking:', error)
       toast.error('Failed to create booking')
