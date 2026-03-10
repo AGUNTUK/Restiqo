@@ -505,7 +505,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="relative overflow-hidden rounded-[34px] sm:rounded-[52px] border border-white/80 bg-[linear-gradient(160deg,rgba(255,255,255,0.92)_0%,rgba(255,255,255,0.68)_100%)] shadow-[0_35px_75px_rgba(0,0,0,0.14)]"
+            className="relative overflow-hidden rounded-[34px] sm:rounded-[52px] border border-white/80 bg-[linear-gradient(160deg,rgba(255,255,255,0.92)_0%,rgba(255,255,255,0.68)_100%)]"
           >
             <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#fc9905]/24 blur-3xl" />
             <div className="absolute -left-28 -bottom-28 h-80 w-80 rounded-full bg-[#88C51C]/20 blur-3xl" />
@@ -530,10 +530,10 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="rounded-[28px] sm:rounded-[34px] border border-white/90 bg-[#EEF2F6]/88 p-3 sm:p-6 md:p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_16px_36px_rgba(0,0,0,0.12)]"
+                className="rounded-[28px] sm:rounded-[34px] border border-white/90 bg-[#EEF2F6]/88 p-3 sm:p-6 md:p-8"
               >
                 <div className="mb-3 sm:mb-4 overflow-x-auto scrollbar-hide -mx-1 px-1">
-                  <div className="flex p-1.5 sm:p-2 gap-1 sm:gap-1.5 min-w-max justify-center rounded-full bg-white/80 shadow-[inset_3px_3px_8px_rgba(0,0,0,0.06),inset_-3px_-3px_8px_rgba(255,255,255,0.92)]">
+                  <div className="flex p-1.5 sm:p-2 gap-1 sm:gap-1.5 min-w-max justify-center rounded-full bg-white/80">
                     {serviceTabs.map((tab) => (
                       <button
                         key={tab.id}
@@ -773,7 +773,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Apartments */}
-      <section className="py-8 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-12">
             <div>
@@ -812,7 +812,7 @@ export default function HomePage() {
       </section>
 
       {/* Popular Hotels */}
-      <section className="py-8 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="neu-panel-inset p-3 sm:p-8 lg:p-12">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-12">
@@ -853,7 +853,7 @@ export default function HomePage() {
       </section>
 
       {/* Trending Tours */}
-      <section className="py-8 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-12">
             <div>
@@ -892,7 +892,7 @@ export default function HomePage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-8 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-6 sm:mb-12 lg:mb-16">
             <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-[#1E293B] mb-2 sm:mb-4">
@@ -947,7 +947,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-8 sm:py-20 px-4 sm:px-6 lg:px-8 mb-16 sm:mb-0">
+      <section className="py-4 sm:py-10 px-4 sm:px-6 lg:px-8 mb-6 sm:mb-0">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
