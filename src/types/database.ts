@@ -156,6 +156,9 @@ export interface Database {
           status: BookingStatus
           payment_status: PaymentStatus
           special_requests: string | null
+          invoice_id?: string | null
+          payment_method?: string | null
+          transaction_time?: string | null
           created_at: string
           updated_at: string
         }
@@ -170,6 +173,9 @@ export interface Database {
           status?: BookingStatus
           payment_status?: PaymentStatus
           special_requests?: string | null
+          invoice_id?: string | null
+          payment_method?: string | null
+          transaction_time?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -184,6 +190,9 @@ export interface Database {
           status?: BookingStatus
           payment_status?: PaymentStatus
           special_requests?: string | null
+          invoice_id?: string | null
+          payment_method?: string | null
+          transaction_time?: string | null
           created_at?: string
           updated_at?: string
         }

@@ -17,8 +17,9 @@ import {
   ConfirmationResult,
   UserProfile
 } from 'firebase/auth'
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { doc, getDoc, setDoc, collection, getDocs, query, where, serverTimestamp } from 'firebase/firestore'
 import { getFirebaseAuth, getFirebaseFirestore } from './config'
+import { getRealtimeDB } from './database'
 
 export type UserRole = 'guest' | 'host' | 'admin'
 
@@ -136,13 +137,25 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
       }
 
       const data = userDoc.data()
+      
+      // Helper to safely convert to Date
+      const toDate = (value: any): Date | null => {
+        if (!value) return null
+        if (value instanceof Date) return value
+        if (typeof value.toDate === 'function') return value.toDate()
+        if (value instanceof Date) return value
+        if (typeof value === 'string') return new Date(value)
+        if (typeof value === 'number') return new Date(value)
+        return null
+      }
+      
       return {
         id: userDoc.id,
         ...data,
-        createdAt: data.createdAt?.toDate() || new Date(),
-        updatedAt: data.updatedAt?.toDate() || new Date(),
-        hostRequestedAt: data.hostRequestedAt?.toDate() || null,
-        hostApprovedAt: data.hostApprovedAt?.toDate() || null,
+        createdAt: toDate(data.createdAt) || new Date(),
+        updatedAt: toDate(data.updatedAt) || new Date(),
+        hostRequestedAt: toDate(data.hostRequestedAt),
+        hostApprovedAt: toDate(data.hostApprovedAt),
       } as FirebaseUserProfile
     } catch (error) {
       console.error('Error fetching profile:', error)
@@ -422,10 +435,35 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
         return { error: null }
       }
 
+      // Write to Firestore
       await setDoc(doc(db, 'users', state.user.uid), {
         hostRequestedAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       }, { merge: true })
+
+      // Notify admin via Firebase Realtime Database
+      try {
+        // Get all users with admin role from Firestore
+        const usersRef = collection(db, 'users')
+        const adminQuery = query(usersRef, where('role', '==', 'admin'))
+        const adminSnap = await getDocs(adminQuery)
+        
+        for (const adminDoc of adminSnap.docs) {
+          await getRealtimeDB().createNotification(adminDoc.id, {
+            type: 'system',
+            title: 'New Host Request',
+            body: `${state.profile?.fullName || state.user.email || 'A user'} has requested to become a host`,
+            data: { 
+              requesterId: state.user.uid,
+              requesterEmail: state.user.email,
+              type: 'host_request' 
+            },
+          })
+        }
+      } catch (notifError) {
+        console.error('Failed to notify admin:', notifError)
+        // Don't fail the whole operation if notification fails
+      }
 
       await refreshProfile()
       return { error: null }

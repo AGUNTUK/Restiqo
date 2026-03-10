@@ -109,7 +109,7 @@ const popularHotels = [
   {
     id: '4',
     title: 'Grand Palace Hotel',
-    description: '5-star luxury hotel with world-class amenities and service',
+    description: '5-star luxury hotel with world-class amenities and service. Secure your stay for 25,000 BDT per night.',
     property_type: 'hotel' as const,
     category: 'luxury',
     price_per_night: 25000,
@@ -136,7 +136,7 @@ const popularHotels = [
   {
     id: '5',
     title: 'Seaside Resort',
-    description: 'Beachfront resort with private beach access and water sports',
+    description: 'Beachfront resort with private beach access and water sports. Available for instant booking at 18,000 BDT per night.',
     property_type: 'hotel' as const,
     category: 'resort',
     price_per_night: 18000,
@@ -163,7 +163,7 @@ const popularHotels = [
   {
     id: '6',
     title: 'Boutique Inn',
-    description: 'Charming boutique hotel with personalized service',
+    description: 'Charming boutique hotel with personalized service. Breakfast included. Starting at 12,000 BDT per night.',
     property_type: 'hotel' as const,
     category: 'boutique',
     price_per_night: 12000,
@@ -193,7 +193,7 @@ const trendingTours = [
   {
     id: '7',
     title: 'Sundarbans Adventure',
-    description: 'Explore the world\'s largest mangrove forest and spot Royal Bengal Tigers',
+    description: 'Explore the world\'s largest mangrove forest and spot Royal Bengal Tigers. 3-day guided tour for 15,000 BDT per person.',
     property_type: 'tour' as const,
     category: 'adventure',
     price_per_night: 0,
@@ -220,7 +220,7 @@ const trendingTours = [
   {
     id: '8',
     title: 'Tea Garden Experience',
-    description: 'Visit the beautiful tea gardens of Sylhet and learn about tea production',
+    description: 'Visit the beautiful tea gardens of Sylhet and learn about tea production. Full-day trip starting at 8,000 BDT.',
     property_type: 'tour' as const,
     category: 'cultural',
     price_per_night: 0,
@@ -247,7 +247,7 @@ const trendingTours = [
   {
     id: '9',
     title: 'River Cruise Dhaka',
-    description: 'Scenic river cruise along the Buriganga with traditional Bengali cuisine',
+    description: 'Scenic river cruise along the Buriganga with traditional Bengali cuisine. Evening package for 5,000 BDT.',
     property_type: 'tour' as const,
     category: 'leisure',
     price_per_night: 0,
@@ -495,9 +495,9 @@ export default function HomePage() {
       <section className="relative min-h-[100vh] overflow-hidden pt-20 sm:pt-28 pb-10 sm:pb-16">
         {/* Background Image */}
         <div className="absolute inset-0">
-          <img 
-            src="/hero.jpg" 
-            alt="Beautiful Bangladesh landscape" 
+          <img
+            src="/hero.jpg"
+            alt="Beautiful Bangladesh landscape"
             className="w-full h-full object-cover"
           />
           {/* 40% dark gradient overlay at top for text readability */}
@@ -512,11 +512,13 @@ export default function HomePage() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-center mb-6 sm:mb-8"
           >
-            <h1 
-              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-[#FDFDFD] mb-3 sm:mb-4"
-              style={{ 
+            <h1
+              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold mb-3 sm:mb-4 drop-shadow-md"
+              style={{
                 fontFamily: 'var(--font-playfair), Playfair Display, serif',
-                letterSpacing: '0.02em'
+                letterSpacing: '0.02em',
+                color: '#d67f00',
+                textShadow: '0 2px 10px rgba(0,0,0,0.5)'
               }}
             >
               Find Your Perfect Stay
@@ -552,283 +554,283 @@ export default function HomePage() {
             className="max-w-5xl mx-auto"
           >
             <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-sm border border-white/20 p-3 sm:p-6 md:p-8">
-                <div className="mb-3 sm:mb-4 overflow-x-auto scrollbar-hide -mx-1 px-1">
-                  <div className="flex p-1.5 sm:p-2 gap-1 sm:gap-1.5 min-w-max justify-center rounded-full bg-gray-100/80">
-                    {serviceTabs.map((tab) => (
-                      <motion.button
-                        key={tab.id}
-                        type="button"
-                        onClick={() => handleTabChange(tab.id)}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className={`flex items-center justify-center gap-1.5 sm:gap-2 px-5 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold transition-all duration-200 text-xs sm:text-sm ${activeTab === tab.id
-                          ? 'text-white bg-[#d67f00]'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-white/70'
-                          }`}
-                      >
-                        <tab.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                        <span className="whitespace-nowrap">{tab.label}</span>
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-
-                <form onSubmit={handleSearch}>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-4">
-                    <div className="lg:col-span-1 relative" ref={locationDropdownRef}>
-                      <label htmlFor="search-location" className="block text-xs sm:text-sm font-medium text-[#1E293B] mb-1.5 sm:mb-2">
-                        Location
-                      </label>
-                      <div className="relative">
-                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-[#64748B]" aria-hidden="true" />
-                        <input
-                          id="search-location"
-                          name="location"
-                          type="text"
-                          autoComplete="off"
-                          placeholder="Where are you going…"
-                          value={searchData.location}
-                          onChange={(e) => {
-                            setSearchData({ ...searchData, location: e.target.value })
-                            setIsLocationDropdownOpen(true)
-                          }}
-                          onFocus={() => setIsLocationDropdownOpen(true)}
-                          className="neu-input w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
-                        />
-                      </div>
-
-                      {isLocationDropdownOpen && searchData.location.length > 0 && filteredLocations.length > 0 && (
-                        <div className="absolute left-0 right-0 top-full mt-2 neu-dropdown p-2 z-[100] max-h-64 overflow-y-auto" role="listbox">
-                          {filteredLocations.map((loc, index) => (
-                            <button
-                              key={index}
-                              type="button"
-                              onClick={() => {
-                                setSearchData({ ...searchData, location: loc.name })
-                                setIsLocationDropdownOpen(false)
-                              }}
-                              className="neu-dropdown-item w-full text-left px-3 py-2 sm:py-2.5 rounded-xl flex items-center justify-between"
-                              role="option"
-                              aria-selected={searchData.location === loc.name}
-                            >
-                              <div className="flex items-center gap-2">
-                                <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-primary" aria-hidden="true" />
-                                <span className="font-medium text-[#1E293B] text-xs sm:text-base">{loc.name}</span>
-                              </div>
-                              <span className="text-[10px] sm:text-xs text-[#64748B]">{loc.region}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="search-checkin" className="block text-xs sm:text-sm font-medium text-[#1E293B] mb-1.5 sm:mb-2">
-                        Check In
-                      </label>
-                      <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-[#64748B]" aria-hidden="true" />
-                        <input
-                          id="search-checkin"
-                          name="checkIn"
-                          type="date"
-                          value={searchData.checkIn}
-                          onChange={(e) =>
-                            setSearchData({ ...searchData, checkIn: e.target.value })
-                          }
-                          className="neu-input w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label htmlFor="search-checkout" className="block text-xs sm:text-sm font-medium text-[#1E293B] mb-1.5 sm:mb-2">
-                        Check Out
-                      </label>
-                      <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-[#64748B]" aria-hidden="true" />
-                        <input
-                          id="search-checkout"
-                          name="checkOut"
-                          type="date"
-                          value={searchData.checkOut}
-                          onChange={(e) =>
-                            setSearchData({ ...searchData, checkOut: e.target.value })
-                          }
-                          className="neu-input w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="relative z-[60]" ref={guestDropdownRef}>
-                      <label id="guests-label" className="block text-xs sm:text-sm font-medium text-[#1E293B] mb-1.5 sm:mb-2">
-                        Guests
-                      </label>
-                      <button
-                        type="button"
-                        id="search-guests"
-                        onClick={() => setIsGuestDropdownOpen(!isGuestDropdownOpen)}
-                        aria-expanded={isGuestDropdownOpen}
-                        aria-haspopup="listbox"
-                        aria-labelledby="guests-label"
-                        className="neu-input w-full pl-9 sm:pl-10 pr-8 sm:pr-10 py-2 sm:py-3 text-[#1E293B] text-left flex items-center justify-between text-xs sm:text-base !rounded-full bg-white/90 focus-visible:ring-2 focus-visible:ring-brand-primary"
-                      >
-                        <span className="truncate">{getGuestDisplayText()}</span>
-                        <ChevronDown className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#64748B] transition-transform ${isGuestDropdownOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
-                      </button>
-                      <Users className="absolute left-3 top-[30px] sm:top-[38px] w-4 h-4 sm:w-5 sm:h-5 text-[#64748B]" aria-hidden="true" />
-
-                      {isGuestDropdownOpen && (
-                        <div
-                          className="absolute left-0 right-0 top-full mt-2 neu-dropdown p-4 z-[100]"
-                          onClick={(e) => e.stopPropagation()}
-                          role="listbox"
-                          aria-labelledby="guests-label"
-                        >
-                          <div className="flex items-center justify-between py-3">
-                            <div>
-                              <p className="font-medium text-[#1E293B]">Adults</p>
-                              <p className="text-sm text-[#64748B]">Ages 13 or above</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  updateGuests('adults', false)
-                                }}
-                                aria-label="Decrease adults"
-                                className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-brand-primary"
-                                disabled={guestCounts.adults <= 1}
-                              >
-                                <Minus className="w-4 h-4" aria-hidden="true" />
-                              </button>
-                              <div className="w-10 h-8 overflow-hidden relative" aria-live="polite" aria-atomic="true">
-                                <motion.span
-                                  key={guestCounts.adults}
-                                  initial={{ y: -20, opacity: 0 }}
-                                  animate={{ y: 0, opacity: 1 }}
-                                  exit={{ y: 20, opacity: 0 }}
-                                  transition={{ duration: 0.2 }}
-                                  className="absolute inset-0 flex items-center justify-center font-medium text-[#1E293B]"
-                                >
-                                  {guestCounts.adults}
-                                </motion.span>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  updateGuests('adults', true)
-                                }}
-                                aria-label="Increase adults"
-                                className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-primary"
-                              >
-                                <Plus className="w-4 h-4" aria-hidden="true" />
-                              </button>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between py-3">
-                            <div>
-                              <p className="font-medium text-[#1E293B]">Children</p>
-                              <p className="text-sm text-[#64748B]">Ages 2-12</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  updateGuests('children', false)
-                                }}
-                                aria-label="Decrease children"
-                                className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-brand-primary"
-                                disabled={guestCounts.children <= 0}
-                              >
-                                <Minus className="w-4 h-4" aria-hidden="true" />
-                              </button>
-                              <div className="w-10 h-8 overflow-hidden relative" aria-live="polite" aria-atomic="true">
-                                <motion.span
-                                  key={guestCounts.children}
-                                  initial={{ y: -20, opacity: 0 }}
-                                  animate={{ y: 0, opacity: 1 }}
-                                  exit={{ y: 20, opacity: 0 }}
-                                  transition={{ duration: 0.2 }}
-                                  className="absolute inset-0 flex items-center justify-center font-medium text-[#1E293B]"
-                                >
-                                  {guestCounts.children}
-                                </motion.span>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  updateGuests('children', true)
-                                }}
-                                aria-label="Increase children"
-                                className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-primary"
-                              >
-                                <Plus className="w-4 h-4" aria-hidden="true" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-end">
-                      <Button
-                        type="submit"
-                        variant="primary"
-                        className="w-full py-2.5 sm:py-3 text-sm sm:text-base !rounded-full"
-                        rightIcon={<Search className="w-4 h-4 sm:w-5 sm:h-5" />}
-                      >
-                        Search
-                      </Button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </motion.div>
-
-              {/* Popular Destinations */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="mt-6 sm:mt-8 text-center"
-              >
-                <p className="text-white/80 text-xs sm:text-sm mb-3 font-medium">Popular Destinations</p>
-                <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-                  {['Cox\'s Bazar', 'Sajek Valley', 'Sylhet', 'Dhaka'].map((destination, index) => (
+              <div className="mb-3 sm:mb-4 overflow-x-auto scrollbar-hide -mx-1 px-1">
+                <div className="flex p-1.5 sm:p-2 gap-1 sm:gap-1.5 min-w-max justify-center rounded-full bg-gray-100/80">
+                  {serviceTabs.map((tab) => (
                     <motion.button
-                      key={destination}
+                      key={tab.id}
                       type="button"
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        setSearchData({ ...searchData, location: destination })
-                        const params = new URLSearchParams({
-                          location: destination,
-                          checkIn: searchData.checkIn,
-                          checkOut: searchData.checkOut,
-                          guests: totalGuests.toString(),
-                          type: searchData.type,
-                        })
-                        window.location.href = `/search?${params.toString()}`
-                      }}
-                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-xs sm:text-sm font-medium border border-white/30 hover:border-white/50 transition-all duration-200"
+                      onClick={() => handleTabChange(tab.id)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`flex items-center justify-center gap-1.5 sm:gap-2 px-5 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold transition-all duration-200 text-xs sm:text-sm ${activeTab === tab.id
+                        ? 'text-white bg-[#d67f00]'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/70'
+                        }`}
                     >
-                      {destination}
+                      <tab.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span className="whitespace-nowrap">{tab.label}</span>
                     </motion.button>
                   ))}
                 </div>
-              </motion.div>
+              </div>
+
+              <form onSubmit={handleSearch}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-4">
+                  <div className="lg:col-span-1 relative" ref={locationDropdownRef}>
+                    <label htmlFor="search-location" className="block text-xs sm:text-sm font-medium text-[#1E293B] mb-1.5 sm:mb-2">
+                      Location
+                    </label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-[#64748B]" aria-hidden="true" />
+                      <input
+                        id="search-location"
+                        name="location"
+                        type="text"
+                        autoComplete="off"
+                        placeholder="Where are you going…"
+                        value={searchData.location}
+                        onChange={(e) => {
+                          setSearchData({ ...searchData, location: e.target.value })
+                          setIsLocationDropdownOpen(true)
+                        }}
+                        onFocus={() => setIsLocationDropdownOpen(true)}
+                        className="neu-input w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
+                      />
+                    </div>
+
+                    {isLocationDropdownOpen && searchData.location.length > 0 && filteredLocations.length > 0 && (
+                      <div className="absolute left-0 right-0 top-full mt-2 neu-dropdown p-2 z-[100] max-h-64 overflow-y-auto" role="listbox">
+                        {filteredLocations.map((loc, index) => (
+                          <button
+                            key={index}
+                            type="button"
+                            onClick={() => {
+                              setSearchData({ ...searchData, location: loc.name })
+                              setIsLocationDropdownOpen(false)
+                            }}
+                            className="neu-dropdown-item w-full text-left px-3 py-2 sm:py-2.5 rounded-xl flex items-center justify-between"
+                            role="option"
+                            aria-selected={searchData.location === loc.name}
+                          >
+                            <div className="flex items-center gap-2">
+                              <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-primary" aria-hidden="true" />
+                              <span className="font-medium text-[#1E293B] text-xs sm:text-base">{loc.name}</span>
+                            </div>
+                            <span className="text-[10px] sm:text-xs text-[#64748B]">{loc.region}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="search-checkin" className="block text-xs sm:text-sm font-medium text-[#1E293B] mb-1.5 sm:mb-2">
+                      Check In
+                    </label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-[#64748B]" aria-hidden="true" />
+                      <input
+                        id="search-checkin"
+                        name="checkIn"
+                        type="date"
+                        value={searchData.checkIn}
+                        onChange={(e) =>
+                          setSearchData({ ...searchData, checkIn: e.target.value })
+                        }
+                        className="neu-input w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="search-checkout" className="block text-xs sm:text-sm font-medium text-[#1E293B] mb-1.5 sm:mb-2">
+                      Check Out
+                    </label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-[#64748B]" aria-hidden="true" />
+                      <input
+                        id="search-checkout"
+                        name="checkOut"
+                        type="date"
+                        value={searchData.checkOut}
+                        onChange={(e) =>
+                          setSearchData({ ...searchData, checkOut: e.target.value })
+                        }
+                        className="neu-input w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="relative z-[60]" ref={guestDropdownRef}>
+                    <label id="guests-label" className="block text-xs sm:text-sm font-medium text-[#1E293B] mb-1.5 sm:mb-2">
+                      Guests
+                    </label>
+                    <button
+                      type="button"
+                      id="search-guests"
+                      onClick={() => setIsGuestDropdownOpen(!isGuestDropdownOpen)}
+                      aria-expanded={isGuestDropdownOpen}
+                      aria-haspopup="listbox"
+                      aria-labelledby="guests-label"
+                      className="neu-input w-full pl-9 sm:pl-10 pr-8 sm:pr-10 py-2 sm:py-3 text-[#1E293B] text-left flex items-center justify-between text-xs sm:text-base !rounded-full bg-white/90 focus-visible:ring-2 focus-visible:ring-brand-primary"
+                    >
+                      <span className="truncate">{getGuestDisplayText()}</span>
+                      <ChevronDown className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#64748B] transition-transform ${isGuestDropdownOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                    </button>
+                    <Users className="absolute left-3 top-[30px] sm:top-[38px] w-4 h-4 sm:w-5 sm:h-5 text-[#64748B]" aria-hidden="true" />
+
+                    {isGuestDropdownOpen && (
+                      <div
+                        className="absolute left-0 right-0 top-full mt-2 neu-dropdown p-4 z-[100]"
+                        onClick={(e) => e.stopPropagation()}
+                        role="listbox"
+                        aria-labelledby="guests-label"
+                      >
+                        <div className="flex items-center justify-between py-3">
+                          <div>
+                            <p className="font-medium text-[#1E293B]">Adults</p>
+                            <p className="text-sm text-[#64748B]">Ages 13 or above</p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                updateGuests('adults', false)
+                              }}
+                              aria-label="Decrease adults"
+                              className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-brand-primary"
+                              disabled={guestCounts.adults <= 1}
+                            >
+                              <Minus className="w-4 h-4" aria-hidden="true" />
+                            </button>
+                            <div className="w-10 h-8 overflow-hidden relative" aria-live="polite" aria-atomic="true">
+                              <motion.span
+                                key={guestCounts.adults}
+                                initial={{ y: -20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: 20, opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute inset-0 flex items-center justify-center font-medium text-[#1E293B]"
+                              >
+                                {guestCounts.adults}
+                              </motion.span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                updateGuests('adults', true)
+                              }}
+                              aria-label="Increase adults"
+                              className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-primary"
+                            >
+                              <Plus className="w-4 h-4" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between py-3">
+                          <div>
+                            <p className="font-medium text-[#1E293B]">Children</p>
+                            <p className="text-sm text-[#64748B]">Ages 2-12</p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                updateGuests('children', false)
+                              }}
+                              aria-label="Decrease children"
+                              className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-brand-primary"
+                              disabled={guestCounts.children <= 0}
+                            >
+                              <Minus className="w-4 h-4" aria-hidden="true" />
+                            </button>
+                            <div className="w-10 h-8 overflow-hidden relative" aria-live="polite" aria-atomic="true">
+                              <motion.span
+                                key={guestCounts.children}
+                                initial={{ y: -20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: 20, opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute inset-0 flex items-center justify-center font-medium text-[#1E293B]"
+                              >
+                                {guestCounts.children}
+                              </motion.span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                updateGuests('children', true)
+                              }}
+                              aria-label="Increase children"
+                              className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-primary"
+                            >
+                              <Plus className="w-4 h-4" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-end">
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      className="w-full py-2.5 sm:py-3 text-sm sm:text-base !rounded-full"
+                      rightIcon={<Search className="w-4 h-4 sm:w-5 sm:h-5" />}
+                    >
+                      Search
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </motion.div>
+
+          {/* Popular Destinations */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="mt-6 sm:mt-8 text-center"
+          >
+            <p className="text-white/80 text-xs sm:text-sm mb-3 font-medium">Popular Destinations</p>
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+              {['Cox\'s Bazar', 'Sajek Valley', 'Sylhet', 'Dhaka'].map((destination, index) => (
+                <motion.button
+                  key={destination}
+                  type="button"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setSearchData({ ...searchData, location: destination })
+                    const params = new URLSearchParams({
+                      location: destination,
+                      checkIn: searchData.checkIn,
+                      checkOut: searchData.checkOut,
+                      guests: totalGuests.toString(),
+                      type: searchData.type,
+                    })
+                    window.location.href = `/search?${params.toString()}`
+                  }}
+                  className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-xs sm:text-sm font-medium border border-white/30 hover:border-white/50 transition-all duration-200"
+                >
+                  {destination}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Featured Apartments */}
-      <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
+      <section className="py-2 sm:py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-12">
             <div>
@@ -867,48 +869,46 @@ export default function HomePage() {
       </section>
 
       {/* Popular Hotels */}
-      <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
+      <section className="py-2 sm:py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="neu-panel-inset p-3 sm:p-8 lg:p-12">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-12">
-              <div>
-                <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-[#1E293B] mb-1 sm:mb-2">
-                  Popular Hotels
-                </h2>
-                <p className="text-xs sm:text-base text-[#64748B]">
-                  Top-rated hotels with exceptional service
-                </p>
-              </div>
-              <Link href="/hotels" className="self-start sm:self-auto">
-                <Button variant="outline" rightIcon={<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />} className="text-xs sm:text-sm py-2 sm:py-2.5">
-                  View All
-                </Button>
-              </Link>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-12">
+            <div>
+              <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-[#1E293B] mb-1 sm:mb-2">
+                Popular Hotels
+              </h2>
+              <p className="text-xs sm:text-base text-[#64748B]">
+                Top-rated hotels with exceptional service
+              </p>
             </div>
-
-            <Carousel
-              items={popularHotels}
-              renderItem={(property, index) => (
-                <motion.div
-                  key={property.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="h-full"
-                >
-                  <Card property={property} />
-                </motion.div>
-              )}
-              itemWidth="w-[280px] sm:w-[320px] lg:w-[380px]"
-              gap="gap-4 sm:gap-6"
-            />
+            <Link href="/hotels" className="self-start sm:self-auto">
+              <Button variant="outline" rightIcon={<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />} className="text-xs sm:text-sm py-2 sm:py-2.5">
+                View All
+              </Button>
+            </Link>
           </div>
+
+          <Carousel
+            items={popularHotels}
+            renderItem={(property, index) => (
+              <motion.div
+                key={property.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="h-full"
+              >
+                <Card property={property} />
+              </motion.div>
+            )}
+            itemWidth="w-[280px] sm:w-[320px] lg:w-[380px]"
+            gap="gap-4 sm:gap-6"
+          />
         </div>
       </section>
 
       {/* Trending Tours */}
-      <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
+      <section className="py-2 sm:py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-12">
             <div>
@@ -947,7 +947,7 @@ export default function HomePage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-4 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8">
+      <section className="py-2 sm:py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-6 sm:mb-12 lg:mb-16">
             <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-[#1E293B] mb-2 sm:mb-4">

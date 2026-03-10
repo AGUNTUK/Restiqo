@@ -86,11 +86,15 @@ export default function Footer() {
                   </div>
                   <span>+880 1234-567890</span>
                 </div>
-                <div className="flex items-center space-x-3 text-[#64748B] text-sm sm:text-base">
-                  <div className="neu-icon w-8 h-8 flex-shrink-0">
+                <div className="flex items-start space-x-3 text-[#64748B] text-sm sm:text-base">
+                  <div className="neu-icon w-8 h-8 flex-shrink-0 mt-1">
                     <MapPin className="w-4 h-4 text-brand-primary" />
                   </div>
-                  <span>Dhaka, Bangladesh</span>
+                  <span>
+                    Level 4, House 12, Road 14<br />
+                    Block G, Niketan, Gulshan 1<br />
+                    Dhaka 1212, Bangladesh
+                  </span>
                 </div>
               </div>
 

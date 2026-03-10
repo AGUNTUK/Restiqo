@@ -3,20 +3,17 @@
 import { useCallback, useState, useMemo } from 'react'
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api'
 
-// Google Maps container style
 const mapContainerStyle = {
   width: '100%',
   height: '400px',
   borderRadius: '16px',
 }
 
-// Default center (Dhaka, Bangladesh)
 const defaultCenter = {
   lat: 23.8103,
   lng: 90.4125,
 }
 
-// Map options
 const mapOptions = {
   disableDefaultUI: false,
   zoomControl: true,
@@ -45,18 +42,37 @@ interface GoogleMapProps {
   showInfoWindow?: boolean
 }
 
-export default function GoogleMapComponent({
+function resolveGoogleMapsApiKey() {
+  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.trim() ?? ''
+  if (!key) return ''
+  if (key.toLowerCase().includes('your_google_maps_api_key')) return ''
+  return key
+}
+
+function MapsUnavailable({ height, message }: { height: string; message: string }) {
+  return (
+    <div
+      className="flex items-center justify-center bg-gray-200 rounded-2xl"
+      style={{ height }}
+    >
+      <p className="text-gray-500">{message}</p>
+    </div>
+  )
+}
+
+function GoogleMapInner({
   center = defaultCenter,
   zoom = 12,
   markers = [],
   onMapClick,
   height = '400px',
   showInfoWindow = true,
-}: GoogleMapProps) {
+  googleMapsApiKey,
+}: GoogleMapProps & { googleMapsApiKey: string }) {
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null)
 
   const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+    googleMapsApiKey,
   })
 
   const mapCenter = useMemo(() => center, [center])
@@ -73,14 +89,7 @@ export default function GoogleMapComponent({
   )
 
   if (loadError) {
-    return (
-      <div
-        className="flex items-center justify-center bg-gray-200 rounded-2xl"
-        style={{ height }}
-      >
-        <p className="text-gray-500">Error loading maps</p>
-      </div>
-    )
+    return <MapsUnavailable height={height} message="Error loading maps" />
   }
 
   if (!isLoaded) {
@@ -105,7 +114,6 @@ export default function GoogleMapComponent({
       options={mapOptions}
       onClick={onMapClickHandler}
     >
-      {/* Markers */}
       {markers.map((marker, index) => (
         <Marker
           key={index}
@@ -115,7 +123,6 @@ export default function GoogleMapComponent({
         />
       ))}
 
-      {/* Info Windows */}
       {showInfoWindow &&
         selectedMarker !== null &&
         markers[selectedMarker] && (
@@ -141,20 +148,48 @@ export default function GoogleMapComponent({
   )
 }
 
-// Export a simpler version without markers for selection
-export function LocationPicker({
+export default function GoogleMapComponent({
+  center = defaultCenter,
+  zoom = 12,
+  markers = [],
+  onMapClick,
+  height = '400px',
+  showInfoWindow = true,
+}: GoogleMapProps) {
+  const googleMapsApiKey = resolveGoogleMapsApiKey()
+
+  if (!googleMapsApiKey) {
+    return <MapsUnavailable height={height} message="Google Maps API key is missing or invalid" />
+  }
+
+  return (
+    <GoogleMapInner
+      center={center}
+      zoom={zoom}
+      markers={markers}
+      onMapClick={onMapClick}
+      height={height}
+      showInfoWindow={showInfoWindow}
+      googleMapsApiKey={googleMapsApiKey}
+    />
+  )
+}
+
+function LocationPickerInner({
   center = defaultCenter,
   onLocationSelect,
   height = '400px',
+  googleMapsApiKey,
 }: {
   center?: { lat: number; lng: number }
   onLocationSelect?: (lat: number, lng: number) => void
   height?: string
+  googleMapsApiKey: string
 }) {
   const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number } | null>(null)
 
   const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+    googleMapsApiKey,
   })
 
   const onMapClickHandler = useCallback(
@@ -182,14 +217,7 @@ export function LocationPicker({
   )
 
   if (loadError) {
-    return (
-      <div
-        className="flex items-center justify-center bg-gray-200 rounded-2xl"
-        style={{ height }}
-      >
-        <p className="text-gray-500">Error loading maps</p>
-      </div>
-    )
+    return <MapsUnavailable height={height} message="Error loading maps" />
   }
 
   if (!isLoaded) {
@@ -222,5 +250,30 @@ export function LocationPicker({
         />
       )}
     </GoogleMap>
+  )
+}
+
+export function LocationPicker({
+  center = defaultCenter,
+  onLocationSelect,
+  height = '400px',
+}: {
+  center?: { lat: number; lng: number }
+  onLocationSelect?: (lat: number, lng: number) => void
+  height?: string
+}) {
+  const googleMapsApiKey = resolveGoogleMapsApiKey()
+
+  if (!googleMapsApiKey) {
+    return <MapsUnavailable height={height} message="Google Maps API key is missing or invalid" />
+  }
+
+  return (
+    <LocationPickerInner
+      center={center}
+      onLocationSelect={onLocationSelect}
+      height={height}
+      googleMapsApiKey={googleMapsApiKey}
+    />
   )
 }

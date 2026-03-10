@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
@@ -27,6 +27,8 @@ import Modal from '@/components/ui/Modal'
 import GoogleMap from '@/components/ui/GoogleMap'
 import { Property } from '@/types/database'
 import toast from 'react-hot-toast'
+import { useAuth } from '@/lib/auth/AuthContext'
+import { getFirestoreDB } from '@/lib/firebase/database'
 
 // Mock property data
 const mockProperty: Property = {
@@ -109,11 +111,14 @@ const reviews = [
 
 export default function PropertyDetailsPage() {
   const params = useParams()
+  const router = useRouter()
+  const { user } = useAuth()
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [showBookingModal, setShowBookingModal] = useState(false)
+  const [isBooking, setIsBooking] = useState(false)
   const [bookingData, setBookingData] = useState({
     checkIn: '',
     checkOut: '',
@@ -144,14 +149,41 @@ export default function PropertyDetailsPage() {
     return nights * property.price_per_night
   }
 
-  const handleBooking = () => {
+  const handleBooking = async () => {
     if (!bookingData.checkIn || !bookingData.checkOut) {
       toast.error('Please select check-in and check-out dates')
       return
     }
-    // Handle booking logic
-    toast.success('Booking request submitted!')
-    setShowBookingModal(false)
+
+    if (!user) {
+      toast.error('Please log in to book this property')
+      router.push('/auth/login')
+      return
+    }
+
+    try {
+      setIsBooking(true)
+      const db = getFirestoreDB()
+      const newBookingId = await db.createBooking({
+        propertyId: property?.id,
+        guestId: user.id,
+        checkIn: bookingData.checkIn,
+        checkOut: bookingData.checkOut,
+        guests: bookingData.guests,
+        totalPrice: calculateTotal() + Math.round(calculateTotal() * 0.1),
+        status: 'pending',
+        paymentStatus: 'pending',
+      })
+
+      toast.success('Booking created! Redirecting to checkout...')
+      setShowBookingModal(false)
+      router.push(`/checkout?bookingId=${newBookingId}`)
+    } catch (error) {
+      console.error('Error creating booking:', error)
+      toast.error('Failed to create booking')
+    } finally {
+      setIsBooking(false)
+    }
   }
 
   const nextImage = () => {
@@ -229,9 +261,8 @@ export default function PropertyDetailsPage() {
             <button
               key={index}
               onClick={() => setCurrentImageIndex(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentImageIndex ? 'bg-white w-6' : 'bg-white/50'
-              }`}
+              className={`w-2 h-2 rounded-full transition-all ${index === currentImageIndex ? 'bg-white w-6' : 'bg-white/50'
+                }`}
             />
           ))}
         </div>
@@ -243,9 +274,8 @@ export default function PropertyDetailsPage() {
             className="p-2 sm:p-3 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
           >
             <Heart
-              className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-700'
-              }`}
+              className={`w-4 h-4 sm:w-5 sm:h-5 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-700'
+                }`}
             />
           </button>
           <button className="p-2 sm:p-3 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors">
@@ -377,11 +407,10 @@ export default function PropertyDetailsPage() {
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
-                              className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
-                                i < review.rating
-                                  ? 'fill-yellow-400 text-yellow-400'
-                                  : 'text-gray-300'
-                              }`}
+                              className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${i < review.rating
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
+                                }`}
                             />
                           ))}
                         </div>
@@ -504,7 +533,7 @@ export default function PropertyDetailsPage() {
                       {Math.ceil(
                         (new Date(bookingData.checkOut).getTime() -
                           new Date(bookingData.checkIn).getTime()) /
-                          (1000 * 60 * 60 * 24)
+                        (1000 * 60 * 60 * 24)
                       )}{' '}
                       nights
                     </span>
@@ -567,7 +596,7 @@ export default function PropertyDetailsPage() {
             <div className="flex justify-between">
               <span className="text-gray-600">Dates</span>
               <span className="font-medium">
-                {bookingData.checkIn} → {bookingData.checkOut}
+                {bookingData.checkIn} &rarr; {bookingData.checkOut}
               </span>
             </div>
             <div className="flex justify-between">
@@ -600,8 +629,8 @@ export default function PropertyDetailsPage() {
             >
               Cancel
             </Button>
-            <Button variant="primary" className="flex-1" onClick={handleBooking}>
-              Confirm Booking
+            <Button variant="primary" className="flex-1" onClick={handleBooking} disabled={isBooking}>
+              {isBooking ? 'Processing...' : 'Confirm Booking'}
             </Button>
           </div>
         </div>
@@ -609,3 +638,4 @@ export default function PropertyDetailsPage() {
     </div>
   )
 }
+

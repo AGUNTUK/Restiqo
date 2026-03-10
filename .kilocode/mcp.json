@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "apify": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@apify/actors-mcp-server"
+      ],
+      "env": {
+        "APIFY_TOKEN": "Gxg9oMNuPA0aGvDZ7bAsUsCaklEZID1Gn2Lf"
+      }
+    }
+  }
+}

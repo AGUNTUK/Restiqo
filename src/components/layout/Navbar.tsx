@@ -23,6 +23,7 @@ import {
   MessageSquare,
 } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 import { useAuth } from '@/lib/auth'
 
 export default function Navbar() {
@@ -147,6 +148,8 @@ export default function Navbar() {
 
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
+            <ThemeToggle />
+
             {!isLoading && !isHost && !isAdmin && !isHostPending && (
               <Link href={isAuthenticated ? '/host/register' : '/auth/login?redirect=/host/register'}>
                 <Button variant="outline" size="sm">
@@ -360,6 +363,12 @@ export default function Navbar() {
             className="md:hidden bg-[#EEF2F6] neu-dropdown mx-4 mb-4 overflow-hidden z-[60]"
           >
             <div className="px-4 py-4 space-y-4">
+              {/* Theme Toggle */}
+              <div className="flex items-center justify-between px-4 py-2">
+                <span className="text-sm font-medium text-[#1E293B]">Dark Mode</span>
+                <ThemeToggle />
+              </div>
+
               {/* Navigation Links */}
               <div className="space-y-2">
                 {navLinks.map((link) => (
