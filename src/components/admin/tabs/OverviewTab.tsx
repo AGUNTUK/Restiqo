@@ -44,59 +44,59 @@ export function OverviewTab({
         <div className="space-y-6">
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="clay p-6 flex items-center justify-between">
+                <div className="clay p-6 flex items-center justify-between group hover:scale-[1.02] transition-all duration-300">
                     <div>
-                        <p className="text-sm font-medium text-gray-500 mb-1">Total Revenue</p>
-                        <p className="text-2xl font-bold text-gray-900">৳{stats.totalRevenue.toLocaleString()}</p>
-                        <div className="flex items-center gap-1 mt-2 text-sm text-green-600">
-                            <TrendingUp className="w-4 h-4" />
+                        <p className="text-sm font-medium text-gray-400 dark:text-gray-500 mb-1 uppercase tracking-wider">Total Revenue</p>
+                        <p className="text-3xl font-extrabold text-gray-900 dark:text-white">৳{stats.totalRevenue.toLocaleString()}</p>
+                        <div className="flex items-center gap-1.5 mt-2 text-sm font-semibold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full w-fit border border-green-500/20">
+                            <TrendingUp className="w-3.5 h-3.5" />
                             <span>+12.5%</span>
                         </div>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary">
-                        <DollarSign className="w-6 h-6" />
+                    <div className="w-14 h-14 rounded-2xl bg-brand-primary/10 flex items-center justify-center text-brand-primary border border-brand-primary/20 shadow-inner group-hover:bg-brand-primary group-hover:text-white transition-all duration-300">
+                        <DollarSign className="w-7 h-7" />
                     </div>
                 </div>
 
-                <div className="clay p-6 flex items-center justify-between">
+                <div className="clay p-6 flex items-center justify-between group hover:scale-[1.02] transition-all duration-300">
                     <div>
-                        <p className="text-sm font-medium text-gray-500 mb-1">Total Users</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.totalUsers.toLocaleString()}</p>
-                        <div className="flex items-center gap-1 mt-2 text-sm text-green-600">
-                            <TrendingUp className="w-4 h-4" />
+                        <p className="text-sm font-medium text-gray-400 dark:text-gray-500 mb-1 uppercase tracking-wider">Total Users</p>
+                        <p className="text-3xl font-extrabold text-gray-900 dark:text-white">{stats.totalUsers.toLocaleString()}</p>
+                        <div className="flex items-center gap-1.5 mt-2 text-sm font-semibold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full w-fit border border-green-500/20">
+                            <TrendingUp className="w-3.5 h-3.5" />
                             <span>+5.2%</span>
                         </div>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                        <Users className="w-6 h-6" />
+                    <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20 shadow-inner group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                        <Users className="w-7 h-7" />
                     </div>
                 </div>
 
-                <div className="clay p-6 flex items-center justify-between">
+                <div className="clay p-6 flex items-center justify-between group hover:scale-[1.02] transition-all duration-300">
                     <div>
-                        <p className="text-sm font-medium text-gray-500 mb-1">Properties</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.totalProperties.toLocaleString()}</p>
-                        <div className="flex items-center gap-1 mt-2 text-sm text-green-600">
-                            <TrendingUp className="w-4 h-4" />
+                        <p className="text-sm font-medium text-gray-400 dark:text-gray-500 mb-1 uppercase tracking-wider">Properties</p>
+                        <p className="text-3xl font-extrabold text-gray-900 dark:text-white">{stats.totalProperties.toLocaleString()}</p>
+                        <div className="flex items-center gap-1.5 mt-2 text-sm font-semibold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full w-fit border border-green-500/20">
+                            <TrendingUp className="w-3.5 h-3.5" />
                             <span>+8.1%</span>
                         </div>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
-                        <Building className="w-6 h-6" />
+                    <div className="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-500 border border-purple-500/20 shadow-inner group-hover:bg-purple-500 group-hover:text-white transition-all duration-300">
+                        <Building className="w-7 h-7" />
                     </div>
                 </div>
 
-                <div className="clay p-6 flex items-center justify-between">
+                <div className="clay p-6 flex items-center justify-between group hover:scale-[1.02] transition-all duration-300">
                     <div>
-                        <p className="text-sm font-medium text-gray-500 mb-1">Bookings</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.totalBookings.toLocaleString()}</p>
-                        <div className="flex items-center gap-1 mt-2 text-sm text-green-600">
-                            <TrendingUp className="w-4 h-4" />
+                        <p className="text-sm font-medium text-gray-400 dark:text-gray-500 mb-1 uppercase tracking-wider">Bookings</p>
+                        <p className="text-3xl font-extrabold text-gray-900 dark:text-white">{stats.totalBookings.toLocaleString()}</p>
+                        <div className="flex items-center gap-1.5 mt-2 text-sm font-semibold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full w-fit border border-green-500/20">
+                            <TrendingUp className="w-3.5 h-3.5" />
                             <span>+15.3%</span>
                         </div>
                     </div>
-                    <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
-                        <Calendar className="w-6 h-6" />
+                    <div className="w-14 h-14 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500 border border-orange-500/20 shadow-inner group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
+                        <Calendar className="w-7 h-7" />
                     </div>
                 </div>
             </div>
@@ -242,31 +242,31 @@ export function OverviewTab({
                     </div>
 
                     {pendingProperties.length === 0 ? (
-                        <p className="text-gray-500 text-center py-8">No pending approvals</p>
+                        <p className="text-gray-400 dark:text-gray-500 text-center py-8">No pending approvals</p>
                     ) : (
                         <div className="space-y-4">
                             {pendingProperties.slice(0, 5).map((property) => (
-                                <div key={property.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                                <div key={property.id} className="flex items-center justify-between p-4 bg-white/50 dark:bg-slate-800/50 rounded-2xl border border-white/20 dark:border-slate-700/30 shadow-sm hover:shadow-md transition-all duration-300">
                                     <div>
-                                        <h3 className="font-medium text-gray-900">{property.title}</h3>
-                                        <p className="text-sm text-gray-600">{property.location}</p>
+                                        <h3 className="font-semibold text-gray-900 dark:text-white">{property.title}</h3>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{property.location}</p>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Link
                                             href={`/property/${property.id}`}
-                                            className="p-2 text-gray-600 hover:text-brand-primary transition-colors"
+                                            className="p-2 text-gray-400 hover:text-brand-primary dark:hover:text-brand-primary-light transition-colors"
                                         >
                                             <Eye className="w-5 h-5" />
                                         </Link>
                                         <button
                                             onClick={() => approveProperty(property.id)}
-                                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                            className="p-2 text-green-500 hover:bg-green-500/10 rounded-xl transition-all"
                                         >
                                             <Check className="w-5 h-5" />
                                         </button>
                                         <button
                                             onClick={() => rejectProperty(property.id)}
-                                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                            className="p-2 text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
                                         >
                                             <X className="w-5 h-5" />
                                         </button>

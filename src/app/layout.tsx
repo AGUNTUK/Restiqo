@@ -114,6 +114,7 @@ export default async function RootLayout({
         <WebSiteJsonLd />
       </head>
       <body className={`${outfit.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning>
+        <a className="skip-link" href="#main-content">Skip to main content</a>
         <Analytics />
         <SpeedInsights />
         <NextIntlClientProvider messages={messages}>
@@ -129,7 +130,7 @@ export default async function RootLayout({
                   {/* Mobile Header - Hidden on desktop */}
                   <MobileHeader />
 
-                  <main className="min-h-screen pt-16 md:pt-0 has-mobile-nav">
+                  <main id="main-content" className="min-h-screen pt-16 pb-24 md:pt-0 md:pb-0 has-mobile-nav">
                     {children}
                   </main>
 

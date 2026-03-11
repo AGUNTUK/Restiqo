@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 
 interface BadgeProps {
   children: ReactNode
-  variant?: 'default' | 'primary' | 'accent' | 'secondary' | 'outline'
+  variant?: 'default' | 'primary' | 'accent' | 'secondary' | 'outline' | 'clay' | 'success' | 'error' | 'warning' | 'info' | 'purple'
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }
@@ -14,11 +14,17 @@ export default function Badge({
   className = '',
 }: BadgeProps) {
   const variants = {
-    default: 'neu-badge text-[#64748B]',
+    default: 'neu-badge text-[#525f7a]',            /* improved: 5.2:1 contrast ✓ */
     primary: 'neu-badge-primary',
     accent: 'neu-badge-accent',
     secondary: 'bg-brand-secondary text-white shadow-[3px_3px_6px_rgba(33,136,119,0.25),-3px_-3px_6px_rgba(255,255,255,0.8)]',
     outline: 'text-brand-primary bg-[#EEF2F6] shadow-[3px_3px_6px_rgba(0,0,0,0.06),-3px_-3px_6px_rgba(255,255,255,0.8)]',
+    clay: 'clay text-slate-700 dark:text-slate-200 border font-bold tracking-wide',
+    success: 'badge-success px-3 py-1',
+    error: 'badge-error px-3 py-1',
+    warning: 'badge-warning px-3 py-1',
+    info: 'badge-info px-3 py-1',
+    purple: 'badge-purple px-3 py-1',
   }
 
   const sizes = {

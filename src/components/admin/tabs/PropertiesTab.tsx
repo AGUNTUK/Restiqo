@@ -35,46 +35,50 @@ export function PropertiesTab({
     return (
         <div className="space-y-6">
             {/* Filter Bar */}
-            <div className="clay p-4">
-                <div className="flex flex-wrap items-center gap-4">
+            <div className="clay p-5">
+                <div className="flex flex-wrap items-center gap-6">
                     <div className="flex items-center gap-2">
-                        <Filter className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm font-medium text-gray-700">Filters:</span>
+                        <Filter className="w-5 h-5 text-gray-400" />
+                        <span className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Filters</span>
                     </div>
-                    <select
-                        value={propertyFilter.status}
-                        onChange={(e) => setPropertyFilter({ ...propertyFilter, status: e.target.value as typeof propertyFilter.status })}
-                        className="px-3 py-1 text-sm border border-gray-200 rounded-lg"
-                    >
-                        <option value="all">All Status</option>
-                        <option value="approved">Approved</option>
-                        <option value="pending">Pending</option>
-                    </select>
-                    <input
-                        type="text"
-                        placeholder="Search by city..."
-                        value={propertyFilter.city}
-                        onChange={(e) => setPropertyFilter({ ...propertyFilter, city: e.target.value })}
-                        className="px-3 py-1 text-sm border border-gray-200 rounded-lg w-40"
-                    />
-                    <select
-                        value={propertyFilter.type}
-                        onChange={(e) => setPropertyFilter({ ...propertyFilter, type: e.target.value })}
-                        className="px-3 py-1 text-sm border border-gray-200 rounded-lg"
-                    >
-                        <option value="">All Types</option>
-                        <option value="apartment">Apartment</option>
-                        <option value="hotel">Hotel</option>
-                        <option value="tour">Tour</option>
-                        <option value="villa">Villa</option>
-                        <option value="resort">Resort</option>
-                    </select>
-                    <button
-                        onClick={loadAllProperties}
-                        className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
-                    >
-                        Load All Properties
-                    </button>
+                    <div className="flex flex-wrap items-center gap-4 flex-1">
+                        <select
+                            value={propertyFilter.status}
+                            onChange={(e) => setPropertyFilter({ ...propertyFilter, status: e.target.value as typeof propertyFilter.status })}
+                            className="bg-white/50 dark:bg-slate-800/50 px-4 py-2 text-sm font-semibold border border-white/20 dark:border-slate-700/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all cursor-pointer"
+                        >
+                            <option value="all">All Status</option>
+                            <option value="approved">Approved</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                        <div className="relative flex-1 max-w-[200px]">
+                            <input
+                                type="text"
+                                placeholder="Search by city..."
+                                value={propertyFilter.city}
+                                onChange={(e) => setPropertyFilter({ ...propertyFilter, city: e.target.value })}
+                                className="w-full bg-white/50 dark:bg-slate-800/50 px-4 py-2 text-sm font-semibold border border-white/20 dark:border-slate-700/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all"
+                            />
+                        </div>
+                        <select
+                            value={propertyFilter.type}
+                            onChange={(e) => setPropertyFilter({ ...propertyFilter, type: e.target.value })}
+                            className="bg-white/50 dark:bg-slate-800/50 px-4 py-2 text-sm font-semibold border border-white/20 dark:border-slate-700/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all cursor-pointer"
+                        >
+                            <option value="">All Types</option>
+                            <option value="apartment">Apartment</option>
+                            <option value="hotel">Hotel</option>
+                            <option value="tour">Tour</option>
+                            <option value="villa">Villa</option>
+                            <option value="resort">Resort</option>
+                        </select>
+                        <button
+                            onClick={loadAllProperties}
+                            className="ml-auto px-4 py-2 bg-brand-primary text-white text-sm font-bold rounded-xl shadow-lg shadow-brand-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                        >
+                            Refresh All
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -94,79 +98,88 @@ export function PropertiesTab({
                                 return true
                             })
                             .map((property) => (
-                                <div key={property.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+                                <div key={property.id} className="flex items-center justify-between p-5 bg-white/50 dark:bg-slate-800/50 rounded-2xl border border-white/20 dark:border-slate-700/30 shadow-sm hover:shadow-md transition-all duration-300">
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-20 h-20 rounded-2xl overflow-hidden bg-gray-100 dark:bg-slate-700/50 flex-shrink-0 border border-white/20 dark:border-slate-700/30 shadow-inner">
                                             {property.images && property.images[0] ? (
                                                 <Image
                                                     src={property.images[0]}
                                                     alt={property.title}
-                                                    width={64}
-                                                    height={64}
+                                                    width={80}
+                                                    height={80}
                                                     className="w-full h-full object-cover"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center">
-                                                    <Building className="w-6 h-6 text-gray-400" />
+                                                    <Building className="w-8 h-8 text-gray-300 dark:text-slate-600" />
                                                 </div>
                                             )}
                                         </div>
                                         <div>
-                                            <h3 className="font-medium text-gray-900">{property.title}</h3>
-                                            <p className="text-sm text-gray-600">{property.location}</p>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <span className={`px-2 py-0.5 text-xs rounded-full ${property.is_approved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                                            <h3 className="font-bold text-gray-900 dark:text-white text-lg">{property.title}</h3>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{property.location}</p>
+                                            <div className="flex items-center gap-3 mt-2">
+                                                <span className={`px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-lg border ${property.is_approved
+                                                    ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                                                    : 'bg-amber-100 text-amber-700 border-amber-200'
                                                     }`}>
                                                     {property.is_approved ? 'Approved' : 'Pending'}
                                                 </span>
-                                                <span className={`px-2 py-0.5 text-xs rounded-full ${property.is_available ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+                                                <span className={`px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-lg border ${property.is_available
+                                                    ? 'bg-blue-100 text-blue-700 border-blue-200'
+                                                    : 'bg-rose-100 text-rose-700 border-rose-200'
                                                     }`}>
                                                     {property.is_available ? 'Available' : 'Unavailable'}
                                                 </span>
                                                 {property.property_type && (
-                                                    <span className="px-2 py-0.5 text-xs rounded-full bg-purple-100 text-purple-700">
+                                                    <span className="px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-lg bg-purple-100 text-purple-700 border border-purple-200">
                                                         {property.property_type}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <p className="text-lg font-bold text-green-600">
-                                            ৳{property.price_per_night}/night
-                                        </p>
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={() => togglePropertyAvailability(property.id, property.is_available || false)}
-                                                className={`px-3 py-1 text-sm rounded-lg transition-colors ${property.is_available
-                                                    ? 'bg-red-50 text-red-600 hover:bg-red-100'
-                                                    : 'bg-green-50 text-green-600 hover:bg-green-100'
-                                                    }`}
-                                            >
-                                                {property.is_available ? 'Mark Unavailable' : 'Mark Available'}
-                                            </button>
+                                    <div className="flex items-center gap-6">
+                                        <div className="text-right">
+                                            <p className="text-xl font-black text-brand-primary">
+                                                ৳{property.price_per_night}
+                                            </p>
+                                            <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">/ Night</p>
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => togglePropertyAvailability(property.id, property.is_available || false)}
+                                                    className={`px-4 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 border ${property.is_available
+                                                        ? 'bg-rose-500/10 text-rose-600 border-rose-500/20 hover:bg-rose-500 hover:text-white'
+                                                        : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500 hover:text-white'
+                                                        }`}
+                                                >
+                                                    {property.is_available ? 'Deactivate' : 'Activate'}
+                                                </button>
+                                                <Link
+                                                    href={`/property/${property.id}`}
+                                                    className="px-4 py-1.5 text-xs font-bold bg-white/50 dark:bg-slate-800/50 text-gray-500 dark:text-gray-400 rounded-xl border border-white/20 dark:border-slate-700/30 hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all"
+                                                >
+                                                    View
+                                                </Link>
+                                            </div>
                                             {!property.is_approved && (
-                                                <>
+                                                <div className="flex gap-2">
                                                     <button
                                                         onClick={() => approveProperty(property.id)}
-                                                        className="px-3 py-1 text-sm bg-green-50 text-green-600 rounded-lg hover:bg-green-100"
+                                                        className="flex-1 px-4 py-1.5 text-xs font-bold bg-emerald-500 text-white rounded-xl shadow-md shadow-emerald-500/20 hover:bg-emerald-600 transition-all"
                                                     >
                                                         Approve
                                                     </button>
                                                     <button
                                                         onClick={() => rejectProperty(property.id)}
-                                                        className="px-3 py-1 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100"
+                                                        className="px-4 py-1.5 text-xs font-bold bg-rose-500 text-white rounded-xl shadow-md shadow-rose-500/20 hover:bg-rose-600 transition-all"
                                                     >
                                                         Reject
                                                     </button>
-                                                </>
+                                                </div>
                                             )}
-                                            <Link
-                                                href={`/property/${property.id}`}
-                                                className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
-                                            >
-                                                View
-                                            </Link>
                                         </div>
                                     </div>
                                 </div>

@@ -34,9 +34,9 @@ export function BookingsTab({
                             <button
                                 key={filter.id}
                                 onClick={() => setBookingFilter(filter.id as typeof bookingFilter)}
-                                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${bookingFilter === filter.id
-                                    ? 'bg-brand-primary text-white'
-                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                className={`px-4 py-1.5 rounded-xl text-sm font-bold transition-all duration-300 ${bookingFilter === filter.id
+                                    ? 'bg-[#d67f00] text-white shadow-md shadow-orange-500/20 active:scale-[0.95]'
+                                    : 'bg-white/50 dark:bg-slate-800/50 text-gray-500 hover:bg-white dark:hover:bg-slate-800 border border-white/20 dark:border-slate-700/30 hover:text-brand-primary'
                                     }`}
                             >
                                 {filter.label}
@@ -56,19 +56,19 @@ export function BookingsTab({
                         {bookings
                             .filter(b => bookingFilter === 'all' || b.status === bookingFilter)
                             .map((booking) => (
-                                <div key={booking.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                                <div key={booking.id} className="flex items-center justify-between p-5 bg-white/50 dark:bg-slate-800/50 rounded-2xl border border-white/20 dark:border-slate-700/30 shadow-sm hover:shadow-md transition-all duration-300">
                                     <div className="flex-1">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <span className={`px-2 py-1 text-xs rounded-full font-medium ${booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                booking.status === 'confirmed' ? 'bg-blue-100 text-blue-700' :
-                                                    booking.status === 'completed' ? 'bg-green-100 text-green-700' :
-                                                        'bg-red-100 text-red-700'
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <span className={`px-2.5 py-0.5 text-[10px] uppercase tracking-wider rounded-lg font-bold border ${booking.status === 'pending' ? 'bg-amber-100 text-amber-700 border-amber-200' :
+                                                booking.status === 'confirmed' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                                                    booking.status === 'completed' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                                                        'bg-rose-100 text-rose-700 border-rose-200'
                                                 }`}>
                                                 {booking.status}
                                             </span>
-                                            <span className={`px-2 py-1 text-xs rounded-full ${booking.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
-                                                booking.payment_status === 'refunded' ? 'bg-purple-100 text-purple-700' :
-                                                    'bg-gray-100 text-gray-700'
+                                            <span className={`px-2.5 py-0.5 text-[10px] uppercase tracking-wider rounded-lg font-bold border ${booking.payment_status === 'paid' ? 'bg-green-100 text-green-700 border-green-200' :
+                                                booking.payment_status === 'refunded' ? 'bg-purple-100 text-purple-700 border-purple-200' :
+                                                    'bg-gray-100 text-gray-600 border-gray-200'
                                                 }`}>
                                                 {booking.payment_status}
                                             </span>

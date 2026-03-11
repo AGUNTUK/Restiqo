@@ -30,29 +30,33 @@ export function UsersTab({
     return (
         <div className="space-y-6">
             {/* Filter Bar */}
-            <div className="clay p-4">
-                <div className="flex flex-wrap items-center gap-4">
+            <div className="clay p-5">
+                <div className="flex flex-wrap items-center gap-6">
                     <div className="flex items-center gap-2">
-                        <Filter className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm font-medium text-gray-700">Filters:</span>
+                        <Filter className="w-5 h-5 text-gray-400" />
+                        <span className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Filters</span>
                     </div>
-                    <select
-                        value={userFilter.role}
-                        onChange={(e) => setUserFilter({ ...userFilter, role: e.target.value as typeof userFilter.role })}
-                        className="px-3 py-1 text-sm border border-gray-200 rounded-lg"
-                    >
-                        <option value="all">All Roles</option>
-                        <option value="guest">Guest</option>
-                        <option value="host">Host</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                    <input
-                        type="text"
-                        placeholder="Search by name or email..."
-                        value={userFilter.search}
-                        onChange={(e) => setUserFilter({ ...userFilter, search: e.target.value })}
-                        className="px-3 py-1 text-sm border border-gray-200 rounded-lg w-48"
-                    />
+                    <div className="flex flex-wrap items-center gap-4 flex-1">
+                        <select
+                            value={userFilter.role}
+                            onChange={(e) => setUserFilter({ ...userFilter, role: e.target.value as typeof userFilter.role })}
+                            className="bg-white/50 dark:bg-slate-800/50 px-4 py-2 text-sm font-semibold border border-white/20 dark:border-slate-700/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all"
+                        >
+                            <option value="all">All Roles</option>
+                            <option value="guest">Guest</option>
+                            <option value="host">Host</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <div className="relative flex-1 max-w-md">
+                            <input
+                                type="text"
+                                placeholder="Search by name or email..."
+                                value={userFilter.search}
+                                onChange={(e) => setUserFilter({ ...userFilter, search: e.target.value })}
+                                className="w-full bg-white/50 dark:bg-slate-800/50 px-4 py-2 text-sm font-semibold border border-white/20 dark:border-slate-700/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -69,31 +73,31 @@ export function UsersTab({
                 ) : (
                     <div className="space-y-4">
                         {pendingHostRequests.map((user) => (
-                            <div key={user.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center">
-                                        <span className="text-lg font-medium text-brand-primary">
+                            <div key={user.id} className="flex items-center justify-between p-5 bg-white/50 dark:bg-slate-800/50 rounded-2xl border border-white/20 dark:border-slate-700/30 shadow-sm hover:shadow-md transition-all duration-300">
+                                <div className="flex items-center gap-5">
+                                    <div className="w-14 h-14 rounded-2xl bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20">
+                                        <span className="text-xl font-bold text-brand-primary">
                                             {user.full_name?.charAt(0) || user.email.charAt(0).toUpperCase()}
                                         </span>
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900">{user.full_name || 'No name'}</p>
-                                        <p className="text-sm text-gray-600">{user.email}</p>
-                                        <p className="text-xs text-gray-500 mt-1">
+                                        <p className="font-bold text-gray-900 dark:text-white text-lg">{user.full_name || 'No name'}</p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{user.email}</p>
+                                        <p className="text-xs text-gray-400 mt-1 italic">
                                             Requested {user.host_requested_at ? new Date(user.host_requested_at).toLocaleDateString() : 'N/A'}
                                         </p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-3">
                                     <button
                                         onClick={() => approveHostRequest(user.id)}
-                                        className="px-3 py-1 text-sm bg-green-50 text-green-600 rounded-lg hover:bg-green-100"
+                                        className="px-4 py-2 text-sm font-bold bg-green-500/10 text-green-600 rounded-xl hover:bg-green-500 hover:text-white transition-all duration-200 border border-green-500/20"
                                     >
                                         Approve
                                     </button>
                                     <button
                                         onClick={() => rejectHostRequest(user.id)}
-                                        className="px-3 py-1 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100"
+                                        className="px-4 py-2 text-sm font-bold bg-red-500/10 text-red-600 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200 border border-red-500/20"
                                     >
                                         Reject
                                     </button>
@@ -123,37 +127,37 @@ export function UsersTab({
                                 return true
                             })
                             .map((user) => (
-                                <div key={user.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center">
-                                            <span className="text-lg font-medium text-brand-primary">
+                                <div key={user.id} className="flex items-center justify-between p-5 bg-white/50 dark:bg-slate-800/50 rounded-2xl border border-white/20 dark:border-slate-700/30 shadow-sm hover:shadow-md transition-all duration-300">
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-14 h-14 rounded-2xl bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20 shadow-inner">
+                                            <span className="text-xl font-bold text-brand-primary">
                                                 {user.full_name?.charAt(0) || user.email.charAt(0).toUpperCase()}
                                             </span>
                                         </div>
                                         <div>
-                                            <p className="font-medium text-gray-900">{user.full_name || 'No name'}</p>
-                                            <p className="text-sm text-gray-600">{user.email}</p>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <span className={`px-2 py-0.5 text-xs rounded-full ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                                                        user.role === 'host' ? 'bg-blue-100 text-blue-700' :
-                                                            'bg-gray-100 text-gray-700'
+                                            <p className="font-bold text-gray-900 dark:text-white text-lg">{user.full_name || 'No name'}</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{user.email}</p>
+                                            <div className="flex items-center gap-3 mt-2">
+                                                <span className={`px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-lg border ${user.role === 'admin' ? 'bg-purple-100 text-purple-700 border-purple-200' :
+                                                    user.role === 'host' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                                                        'bg-gray-100 text-gray-600 border-gray-200'
                                                     }`}>
                                                     {user.role}
                                                 </span>
                                                 {user.is_verified && (
-                                                    <span className="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700">Verified</span>
+                                                    <span className="px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-lg bg-emerald-100 text-emerald-700 border border-emerald-200">Verified</span>
                                                 )}
                                             </div>
-                                            <p className="text-xs text-gray-500 mt-1">
+                                            <p className="text-[10px] text-gray-400 mt-2 font-medium uppercase tracking-tight">
                                                 Joined {new Date(user.created_at).toLocaleDateString()}
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-3">
                                         <select
                                             value={user.role}
                                             onChange={(e) => updateUserRole(user.id, e.target.value as 'guest' | 'host' | 'admin')}
-                                            className="px-3 py-1 text-sm border border-gray-200 rounded-lg focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                                            className="bg-white/50 dark:bg-slate-800/50 px-3 py-1.5 text-xs font-bold border border-white/20 dark:border-slate-700/30 rounded-xl focus:outline-none transition-all"
                                         >
                                             <option value="guest">Guest</option>
                                             <option value="host">Host</option>
@@ -161,9 +165,9 @@ export function UsersTab({
                                         </select>
                                         <button
                                             onClick={() => banUser(user.id, (user as any).is_banned || false)}
-                                            className={`px-3 py-1 text-sm rounded-lg transition-colors ${(user as any).is_banned
-                                                    ? 'bg-green-50 text-green-600 hover:bg-green-100'
-                                                    : 'bg-red-50 text-red-600 hover:bg-red-100'
+                                            className={`px-4 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 border ${(user as any).is_banned
+                                                ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500 hover:text-white'
+                                                : 'bg-rose-500/10 text-rose-600 border-rose-500/20 hover:bg-rose-500 hover:text-white'
                                                 }`}
                                         >
                                             {(user as any).is_banned ? 'Unban' : 'Ban'}

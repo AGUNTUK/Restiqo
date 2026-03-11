@@ -58,7 +58,7 @@ export default function NotificationsTab() {
 
   return (
     <div className="space-y-4">
-      <div className="clay p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="clay-card p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-white/40 shadow-xl">
         <div>
           <h3 className="text-lg font-semibold text-[#1E293B]">Notifications</h3>
           <p className="text-sm text-[#64748B]">
@@ -70,7 +70,7 @@ export default function NotificationsTab() {
           <button
             onClick={() => setFilter('all')}
             className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-              filter === 'all' ? 'bg-brand-primary text-white' : 'neu-button text-[#64748B]'
+              filter === 'all' ? 'bg-brand-primary text-white shadow-md' : 'clay-button text-[#64748B]'
             }`}
           >
             All
@@ -78,7 +78,7 @@ export default function NotificationsTab() {
           <button
             onClick={() => setFilter('unread')}
             className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-              filter === 'unread' ? 'bg-brand-primary text-white' : 'neu-button text-[#64748B]'
+              filter === 'unread' ? 'bg-brand-primary text-white shadow-md' : 'clay-button text-[#64748B]'
             }`}
           >
             Unread
@@ -86,7 +86,7 @@ export default function NotificationsTab() {
           <button
             onClick={() => markAllAsRead()}
             disabled={unreadCount === 0}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm neu-button text-[#64748B] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="clay-button inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#64748B] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <CheckCheck className="w-4 h-4" />
             Mark all read
@@ -94,7 +94,7 @@ export default function NotificationsTab() {
         </div>
       </div>
 
-      <div className="clay p-2 sm:p-3">
+      <div className="clay-card p-2 sm:p-3 border-white/40 shadow-xl">
         {isLoading ? (
           <div className="p-8 text-center">
             <Loader2 className="w-8 h-8 animate-spin text-brand-primary mx-auto" />

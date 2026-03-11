@@ -99,7 +99,7 @@ export default function InboxTab() {
 
   if (conversationsLoading) {
     return (
-      <div className="clay p-8 text-center">
+      <div className="clay-card p-8 text-center border-white/40 shadow-xl">
         <Loader2 className="w-8 h-8 animate-spin text-brand-primary mx-auto" />
         <p className="text-gray-600 mt-4">Loading inbox...</p>
       </div>
@@ -108,7 +108,7 @@ export default function InboxTab() {
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 min-h-[560px]">
-      <div className="clay p-3 sm:p-4 xl:col-span-1 flex flex-col">
+      <div className="clay-card p-3 sm:p-4 xl:col-span-1 flex flex-col border-white/40 shadow-xl">
         <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Conversations</h3>
 
         {conversations.length === 0 ? (
@@ -159,7 +159,7 @@ export default function InboxTab() {
         )}
       </div>
 
-      <div className="clay p-0 xl:col-span-2 flex flex-col min-h-[560px] overflow-hidden">
+      <div className="clay-card p-0 xl:col-span-2 flex flex-col min-h-[560px] overflow-hidden border-white/40 shadow-xl">
         {!selectedConversation ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
             <MessageSquare className="w-12 h-12 text-gray-300 mb-3" />
@@ -237,13 +237,13 @@ export default function InboxTab() {
                   onChange={(event) => setNewMessage(event.target.value)}
                   onKeyDown={handleMessageInputKeyDown}
                   placeholder="Type a message..."
-                  className="flex-1 px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  className="clay-input flex-1 px-4 py-2 font-medium"
                   disabled={isSending}
                 />
                 <button
                   onClick={handleSend}
                   disabled={!newMessage.trim() || isSending}
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-brand-primary text-white hover:bg-brand-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="clay-button px-4 py-2 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

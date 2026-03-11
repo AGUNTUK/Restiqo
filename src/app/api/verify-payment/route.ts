@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getFirestoreDB } from '@/lib/firebase/database';
 
-const UDDOKTAPAY_API_KEY = process.env.UDDOKTAPAY_API_KEY || 'xNI7FRQFfQjginovEKO4j0M6ubG6CkgY9vx9Ppm8';
-const UDDOKTAPAY_BASE_URL = 'https://restiqa4u.paymently.io/api';
+const UDDOKTAPAY_API_KEY = process.env.UDDOKTAPAY_API_KEY;
+const UDDOKTAPAY_BASE_URL = process.env.UDDOKTAPAY_BASE_URL;
 
 export async function POST(request: Request) {
     try {
@@ -20,7 +20,8 @@ export async function POST(request: Request) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'RT-UDDOKTAPAY-API-KEY': UDDOKTAPAY_API_KEY,
+                'RT-UDDOKTAPAY-API-KEY': UDDOKTAPAY_API_KEY as string,
+                'accept': 'application/json'
             },
             body: JSON.stringify({ invoice_id }),
         });

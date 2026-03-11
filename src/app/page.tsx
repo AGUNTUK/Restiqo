@@ -553,7 +553,7 @@ export default function HomePage() {
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
             className="max-w-5xl mx-auto"
           >
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-sm border border-white/20 p-3 sm:p-6 md:p-8">
+            <div className="clay-card p-3 sm:p-6 md:p-8 border-white/40 shadow-2xl">
               <div className="mb-3 sm:mb-4 overflow-x-auto scrollbar-hide -mx-1 px-1">
                 <div className="flex p-1.5 sm:p-2 gap-1 sm:gap-1.5 min-w-max justify-center rounded-full bg-gray-100/80">
                   {serviceTabs.map((tab) => (
@@ -595,12 +595,12 @@ export default function HomePage() {
                           setIsLocationDropdownOpen(true)
                         }}
                         onFocus={() => setIsLocationDropdownOpen(true)}
-                        className="neu-input w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
+                        className="clay-input font-medium w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
                       />
                     </div>
 
                     {isLocationDropdownOpen && searchData.location.length > 0 && filteredLocations.length > 0 && (
-                      <div className="absolute left-0 right-0 top-full mt-2 neu-dropdown p-2 z-[100] max-h-64 overflow-y-auto" role="listbox">
+                      <div className="absolute left-0 right-0 top-full mt-2 clay-card p-2 z-[100] max-h-64 overflow-y-auto border-white/40 shadow-xl" role="listbox">
                         {filteredLocations.map((loc, index) => (
                           <button
                             key={index}
@@ -638,7 +638,7 @@ export default function HomePage() {
                         onChange={(e) =>
                           setSearchData({ ...searchData, checkIn: e.target.value })
                         }
-                        className="neu-input w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
+                        className="clay-input font-medium w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
                       />
                     </div>
                   </div>
@@ -657,7 +657,7 @@ export default function HomePage() {
                         onChange={(e) =>
                           setSearchData({ ...searchData, checkOut: e.target.value })
                         }
-                        className="neu-input w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
+                        className="clay-input font-medium w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-[#1E293B] text-xs sm:text-base !rounded-full bg-white/90"
                       />
                     </div>
                   </div>
@@ -673,7 +673,7 @@ export default function HomePage() {
                       aria-expanded={isGuestDropdownOpen}
                       aria-haspopup="listbox"
                       aria-labelledby="guests-label"
-                      className="neu-input w-full pl-9 sm:pl-10 pr-8 sm:pr-10 py-2 sm:py-3 text-[#1E293B] text-left flex items-center justify-between text-xs sm:text-base !rounded-full bg-white/90 focus-visible:ring-2 focus-visible:ring-brand-primary"
+                      className="clay-input font-medium w-full pl-9 sm:pl-10 pr-8 sm:pr-10 py-2 sm:py-3 text-[#1E293B] text-left flex items-center justify-between text-xs sm:text-base !rounded-full bg-white/90 focus-visible:ring-2 focus-visible:ring-brand-primary"
                     >
                       <span className="truncate">{getGuestDisplayText()}</span>
                       <ChevronDown className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#64748B] transition-transform ${isGuestDropdownOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
@@ -682,97 +682,95 @@ export default function HomePage() {
 
                     {isGuestDropdownOpen && (
                       <div
-                        className="absolute left-0 right-0 top-full mt-2 neu-dropdown p-4 z-[100]"
+                        className="absolute right-0 bottom-full mb-2 clay-card z-[100] border-white/40 shadow-2xl"
+                        style={{ minWidth: '300px' }}
                         onClick={(e) => e.stopPropagation()}
                         role="listbox"
                         aria-labelledby="guests-label"
                       >
-                        <div className="flex items-center justify-between py-3">
-                          <div>
-                            <p className="font-medium text-[#1E293B]">Adults</p>
-                            <p className="text-sm text-[#64748B]">Ages 13 or above</p>
+                        {/* Adults Row */}
+                        <div className="flex items-center justify-between px-5 py-4">
+                          <div className="flex-1 min-w-0 mr-4">
+                            <p className="font-semibold text-[#1E293B] text-sm">Adults</p>
+                            <p className="text-xs text-[#525f7a] mt-0.5">Ages 13 or above</p>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-0 bg-[#EEF2F6] rounded-full p-1 shrink-0">
                             <button
                               type="button"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                updateGuests('adults', false)
-                              }}
+                              onClick={(e) => { e.stopPropagation(); updateGuests('adults', false) }}
                               aria-label="Decrease adults"
-                              className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-brand-primary"
+                              className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center transition-all hover:bg-gray-50 disabled:opacity-35 disabled:cursor-not-allowed"
                               disabled={guestCounts.adults <= 1}
                             >
-                              <Minus className="w-4 h-4" aria-hidden="true" />
+                              <Minus className="w-3.5 h-3.5 text-[#374151]" aria-hidden="true" />
                             </button>
-                            <div className="w-10 h-8 overflow-hidden relative" aria-live="polite" aria-atomic="true">
-                              <motion.span
-                                key={guestCounts.adults}
-                                initial={{ y: -20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                exit={{ y: 20, opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="absolute inset-0 flex items-center justify-center font-medium text-[#1E293B]"
-                              >
-                                {guestCounts.adults}
-                              </motion.span>
-                            </div>
+                            <span
+                              className="w-10 text-center font-semibold text-[#1E293B] text-sm tabular-nums"
+                              aria-live="polite"
+                              aria-atomic="true"
+                            >
+                              {guestCounts.adults}
+                            </span>
                             <button
                               type="button"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                updateGuests('adults', true)
-                              }}
+                              onClick={(e) => { e.stopPropagation(); updateGuests('adults', true) }}
                               aria-label="Increase adults"
-                              className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-primary"
+                              className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:opacity-90"
+                              style={{ background: '#d67f00' }}
                             >
-                              <Plus className="w-4 h-4" aria-hidden="true" />
+                              <Plus className="w-3.5 h-3.5 text-white" aria-hidden="true" />
                             </button>
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between py-3">
-                          <div>
-                            <p className="font-medium text-[#1E293B]">Children</p>
-                            <p className="text-sm text-[#64748B]">Ages 2-12</p>
+                        {/* Divider */}
+                        <div className="mx-5 border-t border-gray-100" />
+
+                        {/* Children Row */}
+                        <div className="flex items-center justify-between px-5 py-4">
+                          <div className="flex-1 min-w-0 mr-4">
+                            <p className="font-semibold text-[#1E293B] text-sm">Children</p>
+                            <p className="text-xs text-[#525f7a] mt-0.5">Ages 2–12</p>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-0 bg-[#EEF2F6] rounded-full p-1 shrink-0">
                             <button
                               type="button"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                updateGuests('children', false)
-                              }}
+                              onClick={(e) => { e.stopPropagation(); updateGuests('children', false) }}
                               aria-label="Decrease children"
-                              className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-brand-primary"
+                              className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center transition-all hover:bg-gray-50 disabled:opacity-35 disabled:cursor-not-allowed"
                               disabled={guestCounts.children <= 0}
                             >
-                              <Minus className="w-4 h-4" aria-hidden="true" />
+                              <Minus className="w-3.5 h-3.5 text-[#374151]" aria-hidden="true" />
                             </button>
-                            <div className="w-10 h-8 overflow-hidden relative" aria-live="polite" aria-atomic="true">
-                              <motion.span
-                                key={guestCounts.children}
-                                initial={{ y: -20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                exit={{ y: 20, opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="absolute inset-0 flex items-center justify-center font-medium text-[#1E293B]"
-                              >
-                                {guestCounts.children}
-                              </motion.span>
-                            </div>
+                            <span
+                              className="w-10 text-center font-semibold text-[#1E293B] text-sm tabular-nums"
+                              aria-live="polite"
+                              aria-atomic="true"
+                            >
+                              {guestCounts.children}
+                            </span>
                             <button
                               type="button"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                updateGuests('children', true)
-                              }}
+                              onClick={(e) => { e.stopPropagation(); updateGuests('children', true) }}
                               aria-label="Increase children"
-                              className="w-8 h-8 rounded-xl neu-button flex items-center justify-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-brand-primary"
+                              className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:opacity-90"
+                              style={{ background: '#d67f00' }}
                             >
-                              <Plus className="w-4 h-4" aria-hidden="true" />
+                              <Plus className="w-3.5 h-3.5 text-white" aria-hidden="true" />
                             </button>
                           </div>
+                        </div>
+
+                        {/* Done button */}
+                        <div className="px-5 pb-4">
+                          <button
+                            type="button"
+                            onClick={() => setIsGuestDropdownOpen(false)}
+                            className="w-full py-2.5 text-white font-semibold rounded-full text-sm hover:opacity-90 transition-opacity"
+                            style={{ background: '#d67f00' }}
+                          >
+                            Done
+                          </button>
                         </div>
                       </div>
                     )}
@@ -859,7 +857,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 className="h-full"
               >
-                <Card property={property} />
+                <Card property={property} variant="clay" />
               </motion.div>
             )}
             itemWidth="w-[280px] sm:w-[320px] lg:w-[380px]"
@@ -898,7 +896,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 className="h-full"
               >
-                <Card property={property} />
+                <Card property={property} variant="clay" />
               </motion.div>
             )}
             itemWidth="w-[280px] sm:w-[320px] lg:w-[380px]"
@@ -937,7 +935,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 className="h-full"
               >
-                <Card property={property} />
+                <Card property={property} variant="clay" />
               </motion.div>
             )}
             itemWidth="w-[280px] sm:w-[320px] lg:w-[380px]"
@@ -988,7 +986,7 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="neu-card p-3 sm:p-6 text-center"
+                className="clay-card p-4 sm:p-6 text-center border-white/40 shadow-lg"
               >
                 <div className="text-2xl sm:text-4xl mb-2 sm:mb-4">{feature.icon}</div>
                 <h3 className="text-sm sm:text-lg font-semibold text-[#1E293B] mb-1 sm:mb-2">
@@ -1009,7 +1007,7 @@ export default function HomePage() {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="neu-primary p-6 sm:p-8 md:p-12 text-center text-white"
+            className="clay-card bg-brand-primary/90 p-6 sm:p-8 md:p-12 text-center text-white border-white/20 shadow-2xl"
           >
             <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
               Ready to List Your Property?

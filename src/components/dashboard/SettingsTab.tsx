@@ -40,7 +40,7 @@ export default function SettingsTab() {
   return (
     <div className="space-y-6">
       {/* Profile Picture Section */}
-      <div className="clay p-6">
+      <div className="clay-card p-6 border-white/40 shadow-xl">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Picture</h3>
         <div className="flex items-center gap-6">
           <div className="relative">
@@ -88,7 +88,7 @@ export default function SettingsTab() {
                 type="text"
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-all"
+                className="clay-input w-full pl-12 pr-4 py-3 font-medium"
                 placeholder="Your full name"
               />
             </div>
@@ -120,7 +120,7 @@ export default function SettingsTab() {
                 type="tel"
                 value={formData.phone || ''}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-all"
+                className="clay-input w-full pl-12 pr-4 py-3 font-medium"
                 placeholder="Your phone number"
               />
             </div>
@@ -136,7 +136,7 @@ export default function SettingsTab() {
                 type="text"
                 value={formData.address || ''}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-all"
+                className="clay-input w-full pl-12 pr-4 py-3 font-medium"
                 placeholder="Your address"
               />
             </div>
@@ -178,7 +178,7 @@ export default function SettingsTab() {
       </form>
 
       {/* Account Info */}
-      <div className="clay p-6">
+      <div className="clay-card p-6 border-white/40 shadow-xl">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
         <div className="space-y-4">
           <div className="flex items-center justify-between py-3 border-b border-gray-100">

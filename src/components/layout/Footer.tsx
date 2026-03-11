@@ -51,10 +51,10 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="bg-[#EEF2F6] pt-12 sm:pt-16 pb-32 md:pb-6">
+    <footer className="pt-12 sm:pt-16 pb-32 md:pb-6 relative wrapper-container">
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="neu-panel p-6 sm:p-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="clay-card p-6 sm:p-8">
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8">
             {/* Brand Section */}
             <div className="col-span-2 sm:col-span-2 md:col-span-3 lg:col-span-2">
@@ -185,8 +185,8 @@ export default function Footer() {
           </div>
 
           {/* Newsletter */}
-          <div className="mt-8 sm:mt-12 pt-6 sm:pt-8">
-            <div className="neu-inset p-4 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
+          <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 relative z-10">
+            <div className="clay p-4 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
               <div className="text-center md:text-left">
                 <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2 text-[#1E293B]">
                   Subscribe to our newsletter

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
@@ -30,7 +30,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
+  const lastScrollY = useRef(0)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const pathname = usePathname()
 
@@ -51,17 +51,17 @@ export default function Navbar() {
 
       setIsScrolled(currentScrollY > 20)
 
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
         setIsVisible(false)
       } else {
         setIsVisible(true)
       }
 
-      setLastScrollY(currentScrollY)
+      lastScrollY.current = currentScrollY
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+  }, []) // empty dep array — ref updates don't need re-registration
 
   const handleLogout = async () => {
     await signOut()
@@ -108,8 +108,8 @@ export default function Navbar() {
     <nav
       className={`hidden md:block fixed top-0 left-0 right-0 z-50 w-full overflow-visible transition-all duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'
         } ${isScrolled
-          ? 'bg-[#EEF2F6] shadow-[8px_8px_16px_rgba(0,0,0,0.08),-8px_-8px_16px_rgba(255,255,255,0.9)]'
-          : 'bg-[#EEF2F6] shadow-[4px_4px_8px_rgba(0,0,0,0.06),-4px_-4px_8px_rgba(255,255,255,0.8)]'
+          ? 'clay border-x-0 border-t-0 rounded-none'
+          : 'bg-transparent'
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-visible">
@@ -136,7 +136,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${isActive(link.href)
+                className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 text-brand-primary ${isActive(link.href)
                   ? 'neu-nav-item-active'
                   : 'neu-nav-item hover:shadow-[4px_4px_8px_rgba(0,0,0,0.06),-4px_-4px_8px_rgba(255,255,255,0.8)]'
                   }`}
@@ -376,9 +376,9 @@ export default function Navbar() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`block px-4 py-2.5 rounded-xl transition-all duration-200 ${isActive(link.href)
+                    className={`block px-4 py-3 text-base font-medium rounded-xl transition-all duration-200 text-brand-primary ${isActive(link.href)
                       ? 'neu-nav-item-active'
-                      : 'text-[#1E293B] neu-button'
+                      : 'neu-nav-item hover:shadow-[4px_4px_8px_rgba(0,0,0,0.06),-4px_-4px_8px_rgba(255,255,255,0.8)]'
                       }`}
                   >
                     {link.label}

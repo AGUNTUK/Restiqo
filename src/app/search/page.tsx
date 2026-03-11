@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
   SlidersHorizontal,
+  ChevronDown,
+  Check,
 } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -99,7 +101,7 @@ const mockProperties: Property[] = [
     id: '4',
     host_id: 'host4',
     title: 'Sundarbans Adventure',
-    description: 'Explore the world\'s largest mangrove forest',
+    description: "Explore the world's largest mangrove forest",
     property_type: 'tour',
     category: 'adventure',
     price_per_night: 0,
@@ -131,9 +133,9 @@ const mockProperties: Property[] = [
     category: 'resort',
     price_per_night: 18000,
     price_per_tour: null,
-    location: 'Cox\'s Bazar',
+    location: "Cox's Bazar",
     address: 'Beach Road',
-    city: 'Cox\'s Bazar',
+    city: "Cox's Bazar",
     country: 'Bangladesh',
     latitude: null,
     longitude: null,
@@ -190,11 +192,20 @@ const amenities = [
   'WiFi', 'AC', 'Pool', 'Kitchen', 'Parking', 'Washer', 'TV', 'Gym', 'Spa', 'Restaurant'
 ]
 
+const sortOptions = [
+  { value: 'recommended', label: 'Recommended' },
+  { value: 'price-low', label: 'Price: Low to High' },
+  { value: 'price-high', label: 'Price: High to Low' },
+  { value: 'rating', label: 'Highest Rated' },
+]
+
 function SearchContent() {
   const searchParams = useSearchParams()
   const [properties, setProperties] = useState<Property[]>(mockProperties)
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
+  const [sortOpen, setSortOpen] = useState(false)
+  const sortRef = useRef<HTMLDivElement>(null)
   const [filters, setFilters] = useState({
     location: searchParams.get('location') || '',
     type: searchParams.get('type') || 'all',
@@ -263,6 +274,17 @@ function SearchContent() {
     }, 500)
   }, [filters])
 
+  // Close sort dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
+        setSortOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   const toggleAmenity = (amenity: string) => {
     setFilters((prev) => ({
       ...prev,
@@ -289,11 +311,13 @@ function SearchContent() {
     (filters.minRating > 0 ? 1 : 0) +
     filters.amenities.length
 
+  const activeSortLabel = sortOptions.find((o) => o.value === filters.sortBy)?.label ?? 'Recommended'
+
   return (
     <div className="min-h-screen pt-16 sm:pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Search Header */}
-        <div className="neu-xl p-4 sm:p-6 mb-6 sm:mb-8">
+        <div className="clay-card p-4 sm:p-6 mb-6 sm:mb-8 border-white/40 shadow-xl">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <div className="flex-1">
@@ -318,16 +342,68 @@ function SearchContent() {
                     </span>
                   )}
                 </Button>
-                <select
-                  value={filters.sortBy}
-                  onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
-                  className="neu-input px-3 sm:px-4 py-2 appearance-none cursor-pointer text-sm sm:text-base flex-1 sm:flex-initial"
-                >
-                  <option value="recommended">Recommended</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="rating">Highest Rated</option>
-                </select>
+
+                {/* Custom Sort Dropdown */}
+                <div className="relative flex-1 sm:flex-initial" ref={sortRef}>
+                  <button
+                    type="button"
+                    id="sort-dropdown-btn"
+                    aria-label="Sort properties by"
+                    aria-haspopup="listbox"
+                    aria-expanded={sortOpen}
+                    onClick={() => setSortOpen(!sortOpen)}
+                    className="neu-input flex items-center gap-2 px-3 sm:px-4 py-2 cursor-pointer text-sm sm:text-base w-full whitespace-nowrap"
+                  >
+                    <span className="flex-1 text-left text-[#1E293B] font-medium">
+                      {activeSortLabel}
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-[#64748B] transition-transform ${sortOpen ? 'rotate-180' : ''}`}
+                      aria-hidden="true"
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {sortOpen && (
+                      <motion.ul
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 6 }}
+                        transition={{ duration: 0.15 }}
+                        role="listbox"
+                        aria-labelledby="sort-dropdown-btn"
+                        className="absolute right-0 top-full mt-2 w-52 clay-card border-white/40 shadow-xl z-50 overflow-hidden py-1"
+                      >
+                        {sortOptions.map((option) => (
+                          <li
+                            key={option.value}
+                            role="option"
+                            aria-selected={filters.sortBy === option.value}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setFilters({ ...filters, sortBy: option.value })
+                                setSortOpen(false)
+                              }}
+                              className={`w-full text-left px-4 py-2.5 text-sm flex items-center justify-between transition-colors hover:bg-gray-100/60 rounded-xl mx-1 my-0.5 ${
+                                filters.sortBy === option.value
+                                  ? 'text-brand-primary font-semibold'
+                                  : 'text-[#374151]'
+                              }`}
+                              style={{ width: 'calc(100% - 8px)' }}
+                            >
+                              {option.label}
+                              {filters.sortBy === option.value && (
+                                <Check className="w-4 h-4 text-brand-primary flex-shrink-0" aria-hidden="true" />
+                              )}
+                            </button>
+                          </li>
+                        ))}
+                      </motion.ul>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </div>
           </div>
@@ -349,7 +425,8 @@ function SearchContent() {
                   <select
                     value={filters.type}
                     onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-                    className="neu-input w-full px-4 py-2.5 appearance-none text-[#1E293B]"
+                    aria-label="Filter by property type"
+                    className="clay-input w-full px-4 py-2.5 appearance-none text-[#1E293B] font-medium"
                   >
                     <option value="all">All Types</option>
                     <option value="apartment">Apartments</option>
@@ -368,7 +445,8 @@ function SearchContent() {
                     onChange={(e) =>
                       setFilters({ ...filters, priceRange: parseInt(e.target.value) })
                     }
-                    className="neu-input w-full px-4 py-2.5 appearance-none text-[#1E293B]"
+                    aria-label="Filter by price range"
+                    className="clay-input w-full px-4 py-2.5 appearance-none text-[#1E293B] font-medium"
                   >
                     {priceRanges.map((range, index) => (
                       <option key={index} value={index}>
@@ -388,7 +466,8 @@ function SearchContent() {
                     onChange={(e) =>
                       setFilters({ ...filters, minRating: parseFloat(e.target.value) })
                     }
-                    className="neu-input w-full px-4 py-2.5 appearance-none text-[#1E293B]"
+                    aria-label="Filter by minimum rating"
+                    className="clay-input w-full px-4 py-2.5 appearance-none text-[#1E293B] font-medium"
                   >
                     <option value="0">Any Rating</option>
                     <option value="4.5">4.5+ Stars</option>
@@ -458,7 +537,7 @@ function SearchContent() {
           </div>
         ) : properties.length === 0 ? (
           <div className="text-center py-12 sm:py-16">
-            <div className="neu-xl inline-block p-6 sm:p-8">
+            <div className="clay-card inline-block p-6 sm:p-8 border-white/40 shadow-xl">
               <Search className="w-12 sm:w-16 h-12 sm:h-16 text-[#94A3B8] mx-auto mb-4" />
               <h3 className="text-lg sm:text-xl font-semibold text-[#1E293B] mb-2">
                 No properties found
@@ -481,7 +560,7 @@ function SearchContent() {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 className="h-full"
               >
-                <Card property={property} />
+                <Card property={property} variant="clay" />
               </motion.div>
             ))}
           </div>
@@ -498,4 +577,3 @@ export default function SearchPage() {
     </Suspense>
   )
 }
-

@@ -10,7 +10,7 @@ interface CardProps {
   property: Property
   onWishlistToggle?: (propertyId: string) => void
   isWishlisted?: boolean
-  variant?: 'default' | 'compact' | 'horizontal'
+  variant?: 'default' | 'compact' | 'horizontal' | 'clay'
 }
 
 export default function Card({ property, onWishlistToggle, isWishlisted = false, variant = 'default' }: CardProps) {
@@ -31,7 +31,7 @@ export default function Card({ property, onWishlistToggle, isWishlisted = false,
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.4 }}
-        className="neu-card group"
+        className="clay-card group overflow-hidden"
       >
         <Link href={`/property/${property.id}`} className="flex gap-3 p-3">
           {/* Image - Fixed size */}
@@ -40,19 +40,19 @@ export default function Card({ property, onWishlistToggle, isWishlisted = false,
               src={primaryImage}
               alt={property.title}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
             />
             {/* Rating overlay */}
-            <div className="absolute bottom-1 left-1 bg-white/90 backdrop-blur-sm rounded-lg px-1.5 py-0.5 flex items-center gap-1">
-              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-              <span className="text-xs font-semibold">{property.rating.toFixed(1)}</span>
+            <div className="absolute bottom-2 left-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-xl px-2 py-1 flex items-center gap-1.5 shadow-lg border border-white/20">
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-100">{property.rating.toFixed(1)}</span>
             </div>
           </div>
 
           {/* Content */}
           <div className="flex flex-col flex-grow min-w-0 py-1">
             <div className="flex items-start justify-between gap-2 mb-1">
-              <h3 className="text-sm sm:text-base font-semibold text-[#1E293B] line-clamp-1 group-hover:text-brand-primary transition-colors">
+              <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-white line-clamp-1 group-hover:text-brand-primary transition-colors">
                 {property.title}
               </h3>
               <button
@@ -87,7 +87,7 @@ export default function Card({ property, onWishlistToggle, isWishlisted = false,
                   {property.property_type === 'tour' ? '/person' : '/night'}
                 </span>
               </div>
-              <span className="text-xs px-2 py-1 neu-badge-primary uppercase">
+              <span className="text-[10px] px-2.5 py-1 bg-brand-primary/10 text-brand-primary font-bold rounded-lg uppercase tracking-wider border border-brand-primary/20">
                 {property.property_type}
               </span>
             </div>
@@ -160,8 +160,8 @@ export default function Card({ property, onWishlistToggle, isWishlisted = false,
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      whileHover={{ y: -6 }}
-      className="neu-card group h-full"
+      whileHover={{ y: -8, scale: 1.02 }}
+      className={`${variant === 'clay' ? 'clay-card' : 'neu-card'} group h-full overflow-hidden`}
     >
       <Link href={`/property/${property.id}`} className="flex flex-col h-full">
         {/* Image Container - Responsive Height */}
@@ -174,8 +174,8 @@ export default function Card({ property, onWishlistToggle, isWishlisted = false,
           />
 
           {/* Property Type Badge */}
-          <div className="absolute top-2 sm:top-4 left-2 sm:left-4">
-            <span className="neu-badge-primary px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-wide">
+          <div className="absolute top-3 left-3">
+            <span className="bg-brand-primary/20 backdrop-blur-md border border-brand-primary/30 text-brand-primary px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-xl shadow-lg">
               {property.property_type}
             </span>
           </div>
@@ -196,14 +196,14 @@ export default function Card({ property, onWishlistToggle, isWishlisted = false,
           </button>
 
           {/* Rating Badge */}
-          <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
-            <div className="neu-badge flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5">
-              <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-amber-400 text-amber-400" />
-              <span className="text-xs sm:text-sm font-semibold text-[#1E293B]">
+          <div className="absolute bottom-3 left-3">
+            <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/20 shadow-xl">
+              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+              <span className="text-sm font-bold text-slate-800 dark:text-slate-100">
                 {property.rating.toFixed(1)}
               </span>
-              <span className="text-[10px] sm:text-xs text-[#64748B]">
-                ({property.review_count})
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                {property.review_count} REVIEWS
               </span>
             </div>
           </div>

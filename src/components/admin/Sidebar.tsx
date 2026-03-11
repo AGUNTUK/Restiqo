@@ -52,7 +52,7 @@ export function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }
         <motion.aside
             initial={false}
             animate={{ width: isCollapsed ? 80 : 250 }}
-            className="fixed left-0 top-0 h-screen bg-white border-r border-gray-100 z-50 flex flex-col shadow-sm"
+            className="fixed left-0 top-0 h-screen clay border-l-0 border-y-0 rounded-none z-50 flex flex-col"
         >
             {/* Header */}
             <div className="p-6 flex items-center justify-between">

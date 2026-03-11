@@ -1,9 +1,17 @@
 import { NextResponse } from 'next/server';
 import { getFirestoreDB } from '@/lib/firebase/database';
 
-const UDDOKTAPAY_API_KEY = process.env.UDDOKTAPAY_API_KEY || 'xNI7FRQFfQjginovEKO4j0M6ubG6CkgY9vx9Ppm8';
-const UDDOKTAPAY_BASE_URL = 'https://restiqa4u.paymently.io/api';
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const UDDOKTAPAY_API_KEY = process.env.UDDOKTAPAY_API_KEY;
+const UDDOKTAPAY_BASE_URL = process.env.UDDOKTAPAY_BASE_URL;
+
+function getBaseUrl(request: Request) {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    if (siteUrl && siteUrl !== 'http://localhost:3000') return siteUrl;
+
+    const host = request.headers.get('host');
+    const protocol = host?.includes('localhost') ? 'http' : 'https';
+    return `${protocol}://${host}`;
+}
 
 export async function POST(request: Request) {
     try {
@@ -17,6 +25,8 @@ export async function POST(request: Request) {
             );
         }
 
+        const siteUrl = getBaseUrl(request);
+
         const payload = {
             full_name,
             email,
@@ -24,16 +34,17 @@ export async function POST(request: Request) {
             metadata: {
                 booking_id,
             },
-            redirect_url: `${APP_URL}/payment-success`,
-            cancel_url: `${APP_URL}/payment-cancel`,
-            signature_key: UDDOKTAPAY_API_KEY // Optional depending on verification, but safe to include standard fields
+            redirect_url: `${siteUrl}/payment-success`,
+            cancel_url: `${siteUrl}/payment-cancel`,
+            webhook_url: `${siteUrl}/api/webhook/uddoktapay`
         };
 
         const response = await fetch(`${UDDOKTAPAY_BASE_URL}/checkout-v2`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'RT-UDDOKTAPAY-API-KEY': UDDOKTAPAY_API_KEY,
+                'RT-UDDOKTAPAY-API-KEY': UDDOKTAPAY_API_KEY as string,
+                'accept': 'application/json'
             },
             body: JSON.stringify(payload),
         });

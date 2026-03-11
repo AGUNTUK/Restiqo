@@ -155,7 +155,7 @@ export default function MobileBottomNav() {
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             borderRadius: '999px',
-            padding: '10px 8px',
+            padding: '10px 4px',
             boxShadow: `
               6px 6px 12px rgba(0,0,0,0.08),
               -6px -6px 12px rgba(255,255,255,0.9),
@@ -235,21 +235,21 @@ export default function MobileBottomNav() {
             onClick={handleCenterClick}
             whileTap={{ scale: 0.9 }}
             aria-label={centerButton.label}
-            className="relative z-10 flex items-center justify-center flex-shrink-0 focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 rounded-full"
-            style={{ margin: '0 2px', marginTop: '-30px' }}
+            className="relative z-10 flex flex-col items-center justify-center flex-shrink-0 focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 rounded-full pb-1"
+            style={{ margin: '0 6px', marginTop: '-24px' }}
           >
             {/* Glow Effect */}
             <motion.div
               animate={{
-                opacity: [0.4, 0.6, 0.4],
-                scale: [1, 1.1, 1],
+                opacity: [0.3, 0.5, 0.3],
+                scale: [1, 1.08, 1],
               }}
               transition={{
-                duration: 2,
+                duration: 2.5,
                 repeat: Infinity,
                 ease: 'easeInOut',
               }}
-              className="absolute w-16 h-16 rounded-full"
+              className="absolute w-12 h-12 rounded-full"
               style={{
                 background: isHost
                   ? 'radial-gradient(circle, rgba(136, 197, 28, 0.3) 0%, transparent 70%)'

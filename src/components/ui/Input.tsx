@@ -17,13 +17,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-medium text-[#1E293B] mb-2">
+          <label htmlFor={inputId} className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
             {label}
           </label>
         )}
         <div className="relative">
           {leftIcon && (
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#64748B]" aria-hidden="true">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400" aria-hidden="true">
               {leftIcon}
             </div>
           )}
@@ -33,16 +33,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             name={name}
             autoComplete={autoComplete}
             className={`
-              neu-input w-full px-4 py-3.5 text-[#1E293B] placeholder-[#94A3B8]
+              clay-input w-full px-4 py-3.5 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 font-medium
               ${leftIcon ? 'pl-12' : ''}
               ${rightIcon ? 'pr-12' : ''}
-              ${error ? 'shadow-[inset_4px_4px_8px_rgba(220,38,38,0.1),inset_-4px_-4px_8px_rgba(255,255,255,0.8)]' : ''}
+              ${error ? 'border-red-400 shadow-[inset_2px_2px_4px_rgba(220,38,38,0.1)] focus:border-red-500 focus:ring-1 focus:ring-red-500' : ''}
               ${className}
             `}
             {...props}
           />
           {rightIcon && (
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#64748B]" aria-hidden="true">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400" aria-hidden="true">
               {rightIcon}
             </div>
           )}

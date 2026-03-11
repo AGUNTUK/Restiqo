@@ -36,57 +36,82 @@ export function SettingsTab({
 }: SettingsTabProps) {
     return (
         <div className="space-y-6">
-            <div className="clay p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-green-600" />
+            <div className="clay p-6 hover:shadow-lg transition-all duration-300">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <div className="p-2 bg-green-500/10 rounded-lg">
+                        <DollarSign className="w-5 h-5 text-green-500" />
+                    </div>
                     Platform Fee Configuration
                 </h2>
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center">
-                        <span className="text-gray-700 mr-2">Platform Fee:</span>
+                <div className="flex items-center gap-6">
+                    <div className="flex items-center bg-white/50 dark:bg-slate-800/50 px-4 py-2 rounded-xl border border-white/20 dark:border-slate-700/30 shadow-inner">
+                        <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 mr-3 uppercase tracking-wider">Fee:</span>
                         <input
                             type="number"
                             value={platformFee}
                             onChange={(e) => setPlatformFee(Number(e.target.value))}
-                            className="w-24 px-3 py-2 border border-gray-200 rounded-lg text-center"
+                            className="w-20 bg-transparent text-xl font-bold text-gray-900 dark:text-white text-right focus:outline-none"
                             min={0}
                             max={100}
                         />
-                        <span className="ml-2 text-gray-600">%</span>
+                        <span className="ml-2 text-lg font-bold text-gray-400">%</span>
                     </div>
-                    <button onClick={savePlatformFee} className="px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-primary/90">Save</button>
+                    <button
+                        onClick={savePlatformFee}
+                        className="px-6 py-2.5 bg-brand-primary text-white font-bold rounded-xl shadow-lg shadow-brand-primary/20 hover:bg-brand-primary-dark hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                    >
+                        Save Settings
+                    </button>
                 </div>
-                <p className="text-sm text-gray-500 mt-2">This fee is charged on each booking transaction</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 flex items-center gap-2 italic">
+                    <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
+                    This fee is charged on each booking transaction automatically.
+                </p>
             </div>
 
-            <div className="clay p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-blue-600" />
-                    Payment Gateway Configuration
+            <div className="clay p-6 hover:shadow-lg transition-all duration-300">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <div className="p-2 bg-blue-500/10 rounded-lg">
+                        <CreditCard className="w-5 h-5 text-blue-500" />
+                    </div>
+                    Payment Gateways
                 </h2>
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {[
-                        { key: 'stripe_enabled', label: 'Stripe' },
-                        { key: 'paypal_enabled', label: 'PayPal' },
-                        { key: 'razorpay_enabled', label: 'Razorpay' },
-                    ].map(({ key, label }) => (
-                        <label key={key} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer">
-                            <div className="flex items-center gap-3">
+                        { key: 'stripe_enabled', label: 'Stripe', color: 'blue' },
+                        { key: 'paypal_enabled', label: 'PayPal', color: 'indigo' },
+                        { key: 'razorpay_enabled', label: 'Razorpay', color: 'orange' },
+                    ].map(({ key, label, color }) => (
+                        <label key={key} className={`flex flex-col gap-4 p-5 rounded-2xl cursor-pointer transition-all duration-300 border ${(paymentGateway as any)[key]
+                                ? 'bg-white/80 dark:bg-slate-800/80 border-brand-primary shadow-md'
+                                : 'bg-gray-50/50 dark:bg-slate-900/50 border-transparent hover:bg-white/50 dark:hover:bg-slate-800/50'
+                            }`}>
+                            <div className="flex items-center justify-between">
+                                <span className={`font-bold text-lg ${(paymentGateway as any)[key] ? 'text-gray-900 dark:text-white' : 'text-gray-400'}`}>
+                                    {label}
+                                </span>
                                 <input
                                     type="checkbox"
                                     checked={(paymentGateway as any)[key]}
                                     onChange={(e) => setPaymentGateway({ ...paymentGateway, [key]: e.target.checked })}
-                                    className="w-4 h-4 text-brand-primary"
+                                    className="w-5 h-5 rounded-full text-brand-primary focus:ring-brand-primary border-gray-300 transition-all"
                                 />
-                                <span className="font-medium text-gray-900">{label}</span>
                             </div>
-                            <span className={(paymentGateway as any)[key] ? 'text-sm text-green-600' : 'text-sm text-gray-400'}>
-                                {(paymentGateway as any)[key] ? 'Enabled' : 'Disabled'}
-                            </span>
+                            <div className="mt-auto">
+                                <span className={`text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-md ${(paymentGateway as any)[key] ? 'bg-green-500/10 text-green-500' : 'bg-gray-200/50 text-gray-400'
+                                    }`}>
+                                    {(paymentGateway as any)[key] ? 'Active' : 'Inactive'}
+                                </span>
+                            </div>
                         </label>
                     ))}
                 </div>
-                <button onClick={savePaymentGateway} className="mt-4 px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-primary/90">Save Gateway Settings</button>
+                <button
+                    onClick={savePaymentGateway}
+                    className="mt-8 w-full md:w-auto px-6 py-3 bg-brand-primary text-white font-bold rounded-xl shadow-lg shadow-brand-primary/20 hover:bg-brand-primary-dark hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+                >
+                    Update Payment Methods
+                </button>
             </div>
 
             <div className="clay p-6">
