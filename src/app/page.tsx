@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import {
@@ -494,15 +495,20 @@ export default function HomePage() {
       {/* Hero Section with Travel Image Background */}
       <section className="relative min-h-[100vh] overflow-hidden pt-20 sm:pt-28 pb-10 sm:pb-16">
         {/* Background Image */}
-        <div className="absolute inset-0">
-          <img
-            src="/hero.jpg"
-            alt="Beautiful Bangladesh landscape"
-            className="w-full h-full object-cover"
+        {/* Optimized background image replaces the raw CSS background */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="https://images.unsplash.com/photo-1625505826533-5c80aca7d157?w=1600"
+            alt="Beautiful Bangladesh landscape - Find Your Perfect Stay"
+            fill
+            priority
+            quality={90}
+            className="object-cover"
           />
-          {/* 40% dark gradient overlay at top for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/10" />
         </div>
+        
+        {/* 40% dark gradient overlay at top for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/10 z-[5]" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16">
           {/* Headline */}
@@ -1007,12 +1013,12 @@ export default function HomePage() {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="clay-card bg-brand-primary/90 p-6 sm:p-8 md:p-12 text-center text-white border-white/20 shadow-2xl"
+            className="bg-brand-primary rounded-3xl p-6 sm:p-8 md:p-12 text-center text-white shadow-2xl relative overflow-hidden"
           >
-            <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 !text-white">
               Ready to List Your Property?
             </h2>
-            <p className="text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto text-xs sm:text-base">
+            <p className="!text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto text-xs sm:text-base">
               Join thousands of hosts who trust Restiqa to manage their
               properties and connect with travelers from around the world.
             </p>
@@ -1020,7 +1026,7 @@ export default function HomePage() {
               <Button
                 variant="default"
                 size="lg"
-                className="bg-white text-brand-primary text-sm sm:text-base"
+                className="!bg-white !text-brand-primary hover:!bg-gray-100 border-none text-sm sm:text-base font-bold shadow-md"
               >
                 Become a Host
               </Button>
