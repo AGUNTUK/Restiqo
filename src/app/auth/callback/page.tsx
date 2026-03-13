@@ -25,6 +25,8 @@ function AuthCallbackContent() {
       const error = searchParams.get('error')
 
       console.log('Auth callback initiated', { 
+        fullUrl: typeof window !== 'undefined' ? window.location.href : 'SSR',
+        hash: typeof window !== 'undefined' ? window.location.hash : 'SSR',
         code: code ? 'Present' : 'Missing', 
         redirect, 
         error, 
