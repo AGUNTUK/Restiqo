@@ -128,25 +128,6 @@ export default function Carousel<T extends { id: string | number }>({
         setIsDragging(false)
     }
 
-    // Touch handlers for mobile
-    const handleTouchStart = (e: React.TouchEvent) => {
-        if (!containerRef.current) return
-        setIsDragging(true)
-        setStartX(e.touches[0].pageX - containerRef.current.offsetLeft)
-        setScrollLeft(containerRef.current.scrollLeft)
-    }
-
-    const handleTouchMove = (e: React.TouchEvent) => {
-        if (!isDragging || !containerRef.current) return
-        const x = e.touches[0].pageX - containerRef.current.offsetLeft
-        const walk = (x - startX) * 1.5
-        containerRef.current.scrollLeft = scrollLeft - walk
-    }
-
-    const handleTouchEnd = () => {
-        setIsDragging(false)
-    }
-
     return (
         <div className={`relative ${className}`}>
             {/* Navigation Arrows */}
@@ -192,9 +173,6 @@ export default function Carousel<T extends { id: string | number }>({
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
                 className={`
           flex overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing
           scroll-smooth pb-4 -mx-4 px-4
@@ -236,4 +214,3 @@ export default function Carousel<T extends { id: string | number }>({
         </div>
     )
 }
-

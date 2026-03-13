@@ -75,7 +75,7 @@ export default function HostListingsPage() {
     
     const { error } = await supabase
       .from('properties')
-      .update({ is_available: !currentStatus })
+      .update({ is_available: !currentStatus } as never)
       .eq('id', propertyId)
 
     if (error) {

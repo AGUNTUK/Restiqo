@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef, FormEvent, ChangeEvent, KeyboardEvent } from 'react'
-import { useChat, useTypingStatus, ChatMessage } from '@/lib/firebase/chat'
-import { useAuth } from '@/lib/firebase/auth'
+import { useRealtimeChat } from '@/lib/realtime/chat'
+import { SupabaseChatService, TypingStatus } from '@/lib/supabase/chat'
+import { useAuth } from '@/lib/auth/AuthContext'
 import Image from 'next/image'
 
 interface ChatWindowProps {
@@ -19,14 +20,29 @@ export default function ChatWindow({
   onClose 
 }: ChatWindowProps) {
   const { user } = useAuth()
-  const { messages, isLoading, sendMessage } = useChat(chatId, user?.uid || '')
-  const { typingUsers, setTyping } = useTypingStatus(chatId, user?.uid || '', user?.displayName || 'User')
+  const { messages, isLoading, sendMessage } = useRealtimeChat(chatId)
   
   const [inputValue, setInputValue] = useState('')
   const [isSending, setIsSending] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [typingUsers, setTypingUsers] = useState<TypingStatus[]>([])
+  
+  useEffect(() => {
+    if (!user?.id) return
+    const chatService = new SupabaseChatService()
+    const unsubscribe = chatService.subscribeToTyping(chatId, user.id, (users) => {
+        setTypingUsers(users)
+    })
+    return () => unsubscribe()
+  }, [chatId, user?.id])
+
+  const setTyping = (isTyping: boolean) => {
+    if (!user?.id) return
+    const chatService = new SupabaseChatService()
+    chatService.setTyping(chatId, user.id, user?.user_metadata?.full_name || 'User', isTyping)
+  }
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -69,7 +85,11 @@ export default function ChatWindow({
     setTyping(false)
     
     try {
-      await sendMessage(inputValue.trim())
+      if (user?.id) {
+        await sendMessage(inputValue.trim(), user.id)
+      } else {
+        throw new Error('User not authenticated')
+      }
       setInputValue('')
       inputRef.current?.focus()
     } catch (error) {
@@ -86,7 +106,7 @@ export default function ChatWindow({
     }
   }
 
-  const formatTime = (timestamp: number) => {
+  const formatTime = (timestamp: number | string) => {
     const date = new Date(timestamp)
     return date.toLocaleTimeString('en-US', { 
       hour: 'numeric', 
@@ -95,7 +115,7 @@ export default function ChatWindow({
     })
   }
 
-  const formatDate = (timestamp: number) => {
+  const formatDate = (timestamp: number | string) => {
     const date = new Date(timestamp)
     const today = new Date()
     const yesterday = new Date(today)
@@ -115,8 +135,8 @@ export default function ChatWindow({
   }
 
   // Group messages by date
-  const groupedMessages = messages.reduce((groups: { [key: string]: ChatMessage[] }, message) => {
-    const date = formatDate(message.timestamp)
+  const groupedMessages = messages.reduce((groups: { [key: string]: any[] }, message) => {
+    const date = formatDate(message.created_at)
     if (!groups[date]) {
       groups[date] = []
     }
@@ -200,7 +220,7 @@ export default function ChatWindow({
               
               {/* Messages for this date */}
               {dateMessages.map((message) => {
-                const isOwnMessage = message.senderId === user.uid
+                const isOwnMessage = message.sender_id === user.id
                 
                 return (
                   <div
@@ -212,8 +232,8 @@ export default function ChatWindow({
                       {!isOwnMessage && (
                         message.senderAvatar ? (
                           <Image
-                            src={message.senderAvatar}
-                            alt={message.senderName}
+                            src={message.sender_avatar}
+                            alt={message.sender_name}
                             width={32}
                             height={32}
                             className="rounded-full w-8 h-8"
@@ -221,7 +241,7 @@ export default function ChatWindow({
                         ) : (
                           <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
                             <span className="text-xs text-primary-600 font-medium">
-                              {message.senderName.charAt(0).toUpperCase()}
+                              {message.sender_name.charAt(0).toUpperCase()}
                             </span>
                           </div>
                         )
@@ -235,11 +255,11 @@ export default function ChatWindow({
                             : 'bg-gray-100 text-gray-900 rounded-bl-md'
                         }`}
                       >
-                        {message.type === 'system' ? (
+                        {message.message_type === 'system' ? (
                           <p className="text-sm italic text-center text-gray-500">
                             {message.content}
                           </p>
-                        ) : message.type === 'image' ? (
+                        ) : message.message_type === 'image' ? (
                           <Image
                             src={message.content}
                             alt="Shared image"
@@ -253,7 +273,7 @@ export default function ChatWindow({
                           </p>
                         )}
                         <p className={`text-xs mt-1 ${isOwnMessage ? 'text-primary-100' : 'text-gray-400'}`}>
-                          {formatTime(message.timestamp)}
+                          {formatTime(message.created_at)}
                         </p>
                       </div>
                     </div>

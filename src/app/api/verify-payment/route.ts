@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getFirestoreDB } from '@/lib/firebase/database';
+import { SupabaseDBService } from '@/lib/supabase/database';
 
 const UDDOKTAPAY_API_KEY = process.env.UDDOKTAPAY_API_KEY;
 const UDDOKTAPAY_BASE_URL = process.env.UDDOKTAPAY_BASE_URL;
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
         const bookingId = data.metadata?.booking_id;
 
         if (bookingId) {
-            const db = getFirestoreDB();
+            const db = new SupabaseDBService();
             const updateData: any = {
                 invoiceId: invoice_id,
                 paymentStatus: isPaid ? 'paid' : 'pending',

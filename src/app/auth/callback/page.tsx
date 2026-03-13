@@ -15,10 +15,18 @@ function AuthCallbackContent() {
     const handleCallback = async () => {
       const client = createClient()
       const redirect = searchParams.get('redirect') || '/dashboard'
+      const code = searchParams.get('code')
 
       try {
-        // Firebase OAuth uses popup-based auth in this app. This callback page
-        // only checks session state and redirects accordingly.
+        if (code) {
+          // If there's an auth code in the URL, exchange it for a session (PKCE flow)
+          const { error } = await client.auth.exchangeCodeForSession(code)
+          if (error) throw error
+        }
+
+        // Wait a small moment to ensure auth state is settled across the app
+        await new Promise(resolve => setTimeout(resolve, 500))
+
         const {
           data: { session },
         } = await client.auth.getSession()
@@ -33,11 +41,11 @@ function AuthCallbackContent() {
         setStatus('error')
         toast.error('Authentication session not found. Please sign in again.')
         setTimeout(() => router.push('/auth/login'), 1000)
-      } catch (error) {
+      } catch (error: any) {
         console.error('Callback error:', error)
         setStatus('error')
-        toast.error('An unexpected error occurred')
-        setTimeout(() => router.push('/auth/login'), 1000)
+        toast.error(error?.message || 'An unexpected error occurred')
+        setTimeout(() => router.push('/auth/login'), 1500)
       }
     }
 

@@ -69,7 +69,7 @@ export class SearchRecommendationEngine {
           clicked_property_ids: clickedPropertyIds,
           session_id: sessionId,
           created_at: new Date().toISOString()
-        })
+        } as any)
     } catch (error) {
       console.error('Error logging search:', error)
     }
@@ -189,11 +189,12 @@ export class SearchRecommendationEngine {
   async getSimilarProperties(propertyId: string, limit: number = 6): Promise<SearchResult[]> {
     try {
       // Get the reference property
-      const { data: referenceProperty } = await this.supabase
+      const { data: referencePropertyRaw } = await this.supabase
         .from('properties')
         .select('*')
         .eq('id', propertyId)
         .single()
+      const referenceProperty = referencePropertyRaw as any
 
       if (!referenceProperty) return []
 
@@ -204,7 +205,7 @@ export class SearchRecommendationEngine {
         .eq('is_approved', true)
         .eq('is_available', true)
         .neq('id', propertyId)
-        .eq('property_type', referenceProperty.property_type)
+        .eq('property_type', (referenceProperty as any).property_type)
         .limit(limit * 3)
 
       if (!similarProperties) return []

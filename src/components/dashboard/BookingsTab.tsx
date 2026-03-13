@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Loader2, Calendar, MapPin, Users, Clock, X, Check, AlertTriangle, RefreshCw } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
-import { getFirestoreDB } from '@/lib/firebase'
+import { SupabaseDBService } from '@/lib/supabase/database'
 import { Booking, Property } from '@/types/database'
 
 interface BookingWithProperty extends Booking {
@@ -46,7 +46,7 @@ export default function BookingsTab() {
     setError(null)
 
     try {
-      const db = getFirestoreDB()
+      const db = new SupabaseDBService()
       const rawBookings = await db.getBookings(user.id)
 
       const mappedBookings = await Promise.all(
@@ -96,7 +96,7 @@ export default function BookingsTab() {
   const cancelBooking = async (bookingId: string) => {
     setCancelling(true)
     try {
-      const db = getFirestoreDB()
+      const db = new SupabaseDBService()
       await db.cancelBooking(bookingId)
       // Optimistic local update — no full reload needed
       setBookings((prev) =>

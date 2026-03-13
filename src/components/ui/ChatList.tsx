@@ -1,27 +1,27 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getChatService, ChatRoom } from '@/lib/firebase/chat'
-import { useAuth } from '@/lib/firebase/auth'
+import { SupabaseChatService, ChatRoom } from '@/lib/supabase/chat'
+import { useAuth } from '@/lib/auth/AuthContext'
 import Link from 'next/link'
 
 export default function ChatList() {
   const { user } = useAuth()
-  const [chatRooms, setChatRooms] = useState<ChatRoom[]>([])
+  const [chatRooms, setChatRooms] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const chatService = getChatService()
+  const chatService = new SupabaseChatService()
 
   useEffect(() => {
-    if (!user?.uid) return
+    if (!user?.id) return
 
     setIsLoading(true)
-    const unsubscribe = chatService.subscribeToChatRooms(user.uid, (chats) => {
+    const unsubscribe = chatService.subscribeToChatRooms(user.id, (chats) => {
       setChatRooms(chats)
       setIsLoading(false)
     })
 
     return () => unsubscribe()
-  }, [user?.uid, chatService])
+  }, [user?.id])
 
   const formatTime = (timestamp: number) => {
     if (!timestamp) return ''
@@ -40,7 +40,7 @@ export default function ChatList() {
   }
 
   const getOtherParticipant = (participants: string[]) => {
-    return participants.find(p => p !== user?.uid) || 'Unknown'
+    return participants.find(p => p !== user?.id) || 'Unknown'
   }
 
   if (!user) {
@@ -111,7 +111,7 @@ export default function ChatList() {
                   </h3>
                   {chat.lastMessage && (
                     <span className="text-xs text-gray-500">
-                      {formatTime(chat.lastMessage.timestamp)}
+                      {formatTime(chat.lastMessage.created_at || chat.lastMessage.timestamp)}
                     </span>
                   )}
                 </div>
@@ -121,7 +121,7 @@ export default function ChatList() {
               </div>
               
               {/* Unread indicator */}
-              {chat.lastMessage && chat.lastMessage.senderId !== user.uid && !chat.lastMessage.read && (
+              {chat.lastMessage && chat.lastMessage.sender_id !== user.id && !chat.lastMessage.read && (
                 <div className="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0"></div>
               )}
             </Link>

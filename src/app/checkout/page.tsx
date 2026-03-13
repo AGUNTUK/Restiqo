@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { getFirestoreDB } from '@/lib/firebase/database';
+import { SupabaseDBService } from '@/lib/supabase/database';
 import Button from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import { Booking, Property } from '@/types/database';
@@ -28,7 +28,7 @@ export default function CheckoutPage() {
 
         const fetchBookingDetails = async () => {
             try {
-                const db = getFirestoreDB();
+                const db = new SupabaseDBService();
                 const bookingData = await db.getBooking(bookingId);
 
                 if (!bookingData) {
@@ -41,7 +41,7 @@ export default function CheckoutPage() {
 
                 if ((bookingData as any).propertyId || (bookingData as any).property_id) {
                     const propertyData = await db.getProperty((bookingData as any).propertyId || (bookingData as any).property_id);
-                    setProperty(propertyData as Property);
+                    setProperty(propertyData as any as Property);
                 }
             } catch (error) {
                 console.error('Error fetching checkout details:', error);
@@ -60,7 +60,7 @@ export default function CheckoutPage() {
         setPaymentLoading(true);
         try {
             // Default to profile info or user info, otherwise fallback
-            const fullName = profile?.full_name || user?.displayName || 'Guest User';
+            const fullName = profile?.full_name || user?.user_metadata?.full_name || 'Guest User';
             const email = profile?.email || user?.email || 'guest@restiqa.com';
 
             const response = await fetch('/api/create-payment', {

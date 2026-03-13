@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getFirestoreDB } from '@/lib/firebase/database';
+
 
 const UDDOKTAPAY_API_KEY = process.env.UDDOKTAPAY_API_KEY;
 const UDDOKTAPAY_BASE_URL = process.env.UDDOKTAPAY_BASE_URL;

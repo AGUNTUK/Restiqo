@@ -411,43 +411,35 @@ export class EmailService {
         .insert({
           to,
           subject: template.subject,
-          type,
+          type: type as any,
           status: 'pending',
           created_at: new Date().toISOString()
-        })
+        } as any)
 
       if (dbError) {
         console.error('Error logging email:', dbError)
       }
 
-      // Call Firebase HTTP function (example: https://<region>-<project>.cloudfunctions.net)
-      const functionsBaseUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL
-      if (!functionsBaseUrl) {
-        throw new Error('NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL is not configured')
-      }
-      const accessToken = (await this.dbClient.auth.getSession()).data.session?.access_token
-      const response = await fetch(`${functionsBaseUrl.replace(/\/$/, '')}/send-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-        },
-        body: JSON.stringify({
+      // Call Supabase Edge Function
+      const { data: responseData, error: functionError } = await this.dbClient.functions.invoke('send-email', {
+        body: {
           to,
           subject: template.subject,
           html: template.html
-        })
+        }
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to send email')
+      if (functionError) {
+        throw new Error(`Failed to send email: ${functionError.message}`)
       }
+
+
 
       // Update email log status
       if (!dbError) {
         await this.dbClient
           .from('email_logs')
-          .update({ status: 'sent', sent_at: new Date().toISOString() })
+          .update({ status: 'sent', sent_at: new Date().toISOString() } as never)
           .eq('to', to)
           .eq('type', type)
       }

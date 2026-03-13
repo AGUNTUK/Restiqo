@@ -38,10 +38,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/client'
-import { getRealtimeDB, getFirestoreDB } from '@/lib/firebase/database'
-import { getFirebaseFirestore } from '@/lib/firebase/config'
-import { collection, getDocs, query, where, orderBy, limit } from 'firebase/firestore'
-import { useNotifications } from '@/lib/realtime/notifications'
+import { useRealtimeNotifications } from '@/lib/realtime/chat'
 import { User, Property, Booking, BookingStatus, PaymentStatus } from '@/types/database'
 import { AdminStats, BookingTrend, PopularCity, TopProperty } from '@/types/admin'
 import toast from 'react-hot-toast'
@@ -180,7 +177,7 @@ export default function AdminDashboardPage() {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Use realtime notifications for admin
-  const { notifications: adminNotifications, unreadCount: adminUnreadCount } = useNotifications(isAdmin && user?.id ? user.id : undefined)
+  const { notifications: adminNotifications, unreadCount: adminUnreadCount } = useRealtimeNotifications(isAdmin && user?.id ? user.id : null)
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -376,42 +373,18 @@ export default function AdminDashboardPage() {
 
   const loadHostRequests = async () => {
     try {
-      const db = getFirebaseFirestore()
-      const usersRef = collection(db, 'users')
-      // Simplified query - get all users with host requests and filter locally
-      // This avoids needing a composite index
-      const q = query(
-        usersRef,
-        where('hostRequestedAt', '!=', null),
-        orderBy('hostRequestedAt', 'desc'),
-        limit(50)
-      )
+      const supabase = createClient()
+      const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .not('host_requested_at', 'is', null)
+          .is('host_approved_at', null)
+          .order('host_requested_at', { ascending: false })
+          .limit(50)
 
-      const snapshot = await getDocs(q)
-      // Filter locally for pending requests (where hostApprovedAt is null)
-      const users: User[] = snapshot.docs
-        .filter(doc => {
-          const data = doc.data()
-          // Only include users where hostApprovedAt is null/undefined
-          return data.hostApprovedAt === null || data.hostApprovedAt === undefined
-        })
-        .map(doc => ({
-          id: doc.id,
-          email: doc.data().email || '',
-          full_name: doc.data().fullName || null,
-          avatar_url: doc.data().avatarUrl || null,
-          phone: doc.data().phone || null,
-          address: doc.data().address || null,
-          bio: doc.data().bio || null,
-          role: (doc.data().role || 'guest') as 'guest' | 'host' | 'admin',
-          is_verified: Boolean(doc.data().isVerified),
-          host_requested_at: doc.data().hostRequestedAt?.toDate?.()?.toISOString() || null,
-          host_approved_at: doc.data().hostApprovedAt?.toDate?.()?.toISOString() || null,
-          created_at: doc.data().createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
-          updated_at: doc.data().updatedAt?.toDate?.()?.toISOString() || new Date().toISOString(),
-        }))
+      if (error) throw error
 
-      setPendingHostRequests(users)
+      setPendingHostRequests(data as any[])
     } catch (error) {
       console.error('Error loading host requests:', error)
       toast.error('Failed to load host requests')
@@ -424,7 +397,7 @@ export default function AdminDashboardPage() {
 
     const { error } = await supabase
       .from('properties')
-      .update({ is_approved: true })
+      .update({ is_approved: true } as never)
       .eq('id', propertyId)
 
     if (error) {
@@ -456,7 +429,7 @@ export default function AdminDashboardPage() {
 
     const { error } = await supabase
       .from('users')
-      .update({ role: newRole })
+      .update({ role: newRole } as never)
       .eq('id', userId)
 
     if (error) {
@@ -475,7 +448,7 @@ export default function AdminDashboardPage() {
         role: 'host',
         host_approved_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-      })
+      } as never)
       .eq('id', userId)
 
     if (error) {
@@ -483,12 +456,14 @@ export default function AdminDashboardPage() {
       return
     }
 
-    await getRealtimeDB().createNotification(userId, {
+    await supabase.from('notifications').insert({
+      user_id: userId,
       type: 'system',
       title: 'Host Application Approved',
-      body: 'Your host application has been approved.',
+      message: 'Your host application has been approved.',
       data: { status: 'approved' },
-    })
+      created_at: new Date().toISOString()
+    } as never)
 
     toast.success('Host request approved')
     await loadHostRequests()
@@ -504,7 +479,7 @@ export default function AdminDashboardPage() {
         host_requested_at: null,
         host_approved_at: null,
         updated_at: new Date().toISOString(),
-      })
+      } as never)
       .eq('id', userId)
 
     if (error) {
@@ -512,12 +487,14 @@ export default function AdminDashboardPage() {
       return
     }
 
-    await getRealtimeDB().createNotification(userId, {
+    await supabase.from('notifications').insert({
+      user_id: userId,
       type: 'system',
       title: 'Host Application Update',
-      body: 'Your host application was not approved.',
+      message: 'Your host application was not approved.',
       data: { status: 'rejected' },
-    })
+      created_at: new Date().toISOString()
+    } as never)
 
     toast.success('Host request rejected')
     await loadHostRequests()
@@ -529,7 +506,7 @@ export default function AdminDashboardPage() {
 
     const { error } = await supabase
       .from('bookings')
-      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .update({ status: newStatus, updated_at: new Date().toISOString() } as never)
       .eq('id', bookingId)
 
     if (error) {
@@ -545,7 +522,7 @@ export default function AdminDashboardPage() {
 
     const { error } = await supabase
       .from('bookings')
-      .update({ payment_status: newPaymentStatus, updated_at: new Date().toISOString() })
+      .update({ payment_status: newPaymentStatus, updated_at: new Date().toISOString() } as never)
       .eq('id', bookingId)
 
     if (error) {
@@ -561,7 +538,7 @@ export default function AdminDashboardPage() {
 
     const { error } = await supabase
       .from('properties')
-      .update({ is_available: !isAvailable, updated_at: new Date().toISOString() })
+      .update({ is_available: !isAvailable, updated_at: new Date().toISOString() } as never)
       .eq('id', propertyId)
 
     if (error) {
@@ -587,7 +564,7 @@ export default function AdminDashboardPage() {
 
     const { error } = await supabase
       .from('users')
-      .update({ is_banned: !isBanned, updated_at: new Date().toISOString() })
+      .update({ is_banned: !isBanned, updated_at: new Date().toISOString() } as never)
       .eq('id', userId)
 
     if (error) {
@@ -603,7 +580,7 @@ export default function AdminDashboardPage() {
 
     const { error } = await supabase
       .from('users')
-      .update({ ...updates, updated_at: new Date().toISOString() })
+      .update({ ...updates, updated_at: new Date().toISOString() } as never)
       .eq('id', userId)
 
     if (error) {
@@ -629,7 +606,7 @@ export default function AdminDashboardPage() {
 
     const { error } = await supabase
       .from('reviews')
-      .update({ is_approved: status === 'approved', updated_at: new Date().toISOString() })
+      .update({ is_approved: status === 'approved', updated_at: new Date().toISOString() } as never)
       .eq('id', reviewId)
 
     if (error) {
@@ -645,7 +622,7 @@ export default function AdminDashboardPage() {
 
     const { error } = await supabase
       .from('reviews')
-      .update({ host_response: response, updated_at: new Date().toISOString() })
+      .update({ host_response: response, updated_at: new Date().toISOString() } as never)
       .eq('id', reviewId)
 
     if (error) {
@@ -765,7 +742,7 @@ export default function AdminDashboardPage() {
     const supabase = createClient()
     const { error } = await supabase
       .from('properties')
-      .update({ is_available: isAvailable, updated_at: new Date().toISOString() })
+      .update({ is_available: isAvailable, updated_at: new Date().toISOString() } as never)
       .eq('id', propertyId)
 
     if (error) {
@@ -789,7 +766,7 @@ export default function AdminDashboardPage() {
 
     const { error } = await supabase
       .from('properties')
-      .update({ is_available: isAvailable, updated_at: new Date().toISOString() })
+      .update({ is_available: isAvailable, updated_at: new Date().toISOString() } as never)
       .in('id', propertyIds)
 
     if (error) {
@@ -1023,12 +1000,14 @@ export default function AdminDashboardPage() {
 
     await Promise.all(
       recipients.map((user: User) =>
-        getRealtimeDB().createNotification(user.id, {
+        supabase.from('notifications').insert({
+          user_id: user.id,
           type: 'system',
           title: notificationTitle,
-          body: notificationMessage,
+          message: notificationMessage,
           data: { channel: notificationType, target: targetAudience },
-        })
+          created_at: new Date().toISOString()
+        } as any)
       )
     )
 
@@ -1042,7 +1021,7 @@ export default function AdminDashboardPage() {
       sent_at: sentAt,
       status: 'sent',
       created_at: sentAt,
-    })
+    } as any)
 
     if (historyError) {
       toast.error('Notification sent, but history failed to save')
@@ -1078,7 +1057,7 @@ export default function AdminDashboardPage() {
       scheduled_for: scheduledDate,
       status: 'scheduled',
       created_at: createdAt,
-    })
+    } as any)
 
     if (error) {
       toast.error('Failed to schedule notification')

@@ -114,7 +114,8 @@ export default async function RootLayout({
         <WebSiteJsonLd />
       </head>
       <body className={`${outfit.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning>
-        <a className="skip-link" href="#main-content">Skip to main content</a>
+        <div suppressHydrationWarning>
+          <a className="skip-link" href="#main-content">Skip to main content</a>
         <Analytics />
         <SpeedInsights />
         <NextIntlClientProvider messages={messages}>
@@ -170,6 +171,7 @@ export default async function RootLayout({
             </ThemeProvider>
           </QueryProvider>
         </NextIntlClientProvider>
+        </div>
       </body>
     </html>
   )

@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import ChatList from '@/components/ui/ChatList'
-import { useAuth } from '@/lib/firebase/auth'
+import { useAuth } from '@/lib/auth/AuthContext'
 
 export default function ChatInboxPage() {
   const { isAuthenticated, isLoading } = useAuth()

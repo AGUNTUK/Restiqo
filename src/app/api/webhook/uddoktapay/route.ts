@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getFirestoreDB } from '@/lib/firebase/database';
+import { SupabaseDBService } from '@/lib/supabase/database';
 
 export async function POST(request: Request) {
     try {
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
         if (bookingId) {
             const isPaid = status === 'COMPLETED' || status === 'PAID';
-            const db = getFirestoreDB();
+            const db = new SupabaseDBService();
 
             const updateData: any = {
                 invoiceId: invoice_id,

@@ -1,7 +1,5 @@
 import { MetadataRoute } from 'next'
-import { collection, getDocs, query, where } from 'firebase/firestore'
-import { getFirebaseFirestore } from '@/lib/firebase/config'
-
+import { createClient } from '@/lib/supabase/client'
 export const revalidate = 3600
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -29,30 +27,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let propertyPages: MetadataRoute.Sitemap = []
 
   try {
-    const db = getFirebaseFirestore()
-    const propertiesQuery = query(
-      collection(db, 'properties'),
-      where('isApproved', '==', true),
-      where('isAvailable', '==', true)
-    )
+    const supabase = createClient()
+    const { data: properties, error } = await supabase
+        .from('properties')
+        .select('id, updated_at')
+        .eq('is_approved', true)
+        .eq('is_available', true)
 
-    const snapshot = await getDocs(propertiesQuery)
+    if (error) {
+        throw error
+    }
 
-    propertyPages = snapshot.docs.map((docSnap) => {
-      const data = docSnap.data() as { updatedAt?: Date | { toDate?: () => Date } | string }
-      const updatedAt = data.updatedAt && typeof data.updatedAt === 'object' && 'toDate' in data.updatedAt
-        ? data.updatedAt.toDate?.() || new Date()
-        : data.updatedAt
-          ? new Date(data.updatedAt as string)
-          : new Date()
-
-      return {
-        url: `${baseUrl}/property/${docSnap.id}`,
-        lastModified: updatedAt,
-        changeFrequency: 'weekly' as const,
-        priority: 0.7,
-      }
-    })
+    if (properties) {
+        propertyPages = properties.map((prop: any) => {
+          return {
+            url: `${baseUrl}/property/${prop.id}`,
+            lastModified: prop.updated_at ? new Date(prop.updated_at) : new Date(),
+            changeFrequency: 'weekly' as const,
+            priority: 0.7,
+          }
+        })
+    }
   } catch (error) {
     console.error('Error fetching properties for sitemap:', error)
   }

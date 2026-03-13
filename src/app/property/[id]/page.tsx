@@ -28,7 +28,7 @@ import GoogleMap from '@/components/ui/GoogleMap'
 import { Property } from '@/types/database'
 import toast from 'react-hot-toast'
 import { useAuth } from '@/lib/auth/AuthContext'
-import { getFirestoreDB } from '@/lib/firebase/database'
+import { SupabaseDBService } from '@/lib/supabase/database'
 
 // Mock property data
 const mockProperty: Property = {
@@ -163,22 +163,22 @@ export default function PropertyDetailsPage() {
 
     try {
       setIsBooking(true)
-      const db = getFirestoreDB()
+      const db = new SupabaseDBService()
       const totalPrice = calculateTotal() + Math.round(calculateTotal() * 0.1)
       const newBookingId = await db.createBooking({
-        propertyId: property?.id,
-        guestId: user.id,
-        checkIn: bookingData.checkIn,
-        checkOut: bookingData.checkOut,
+        property_id: property?.id || '',
+        guest_id: user.id || '',
+        check_in: bookingData.checkIn,
+        check_out: bookingData.checkOut,
         guests: bookingData.guests,
-        totalPrice: totalPrice,
+        total_price: totalPrice,
         status: 'pending',
-        paymentStatus: 'pending',
+        payment_status: 'pending',
       })
 
       // Initiate Payment directly
       try {
-        const fullName = profile?.full_name || user.displayName || 'Guest User'
+        const fullName = profile?.full_name || user.user_metadata?.full_name || 'Guest User'
         const email = profile?.email || user.email || ''
 
         const response = await fetch('/api/create-payment', {

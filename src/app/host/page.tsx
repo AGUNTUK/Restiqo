@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -16,13 +16,46 @@ import {
   Edit,
 } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
-import { useHostData, getHostService } from '@/lib/firebase/host'
+import { SupabaseDBService } from '@/lib/supabase/database'
 import toast from 'react-hot-toast'
 
 export default function HostDashboardPage() {
   const router = useRouter()
-  const { isLoading: authLoading, isAuthenticated, isHost, isHostPending } = useAuth()
-  const { properties, bookings, stats, isLoading } = useHostData()
+  const { user, isLoading: authLoading, isAuthenticated, isHost, isHostPending } = useAuth()
+  const [properties, setProperties] = useState<any[]>([])
+  const [bookings, setBookings] = useState<any[]>([])
+  const [stats, setStats] = useState<any>({})
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    if (!isAuthenticated || !isHost || !user?.id) return
+
+    const db = new SupabaseDBService()
+    setIsLoading(true)
+
+    // Parallel fetch for host data
+    Promise.all([
+      db.getProperties({ hostId: user.id } as any).then((res: any) => res?.properties || res || []),
+      // For now we get generic bookings. Ideally we query by properties' IDs.
+      db.getBookings(user.id)
+    ])
+    .then(([hostProps, hostBookings]) => {
+      setProperties(hostProps || [])
+      setBookings(hostBookings || [])
+      setStats({
+          totalProperties: hostProps.length,
+          activeListings: hostProps.filter((p: any) => p.isAvailable && p.isApproved).length,
+          pendingBookings: hostBookings.filter((b: any) => b.status === 'pending').length,
+          totalEarnings: hostBookings.filter((b: any) => b.status === 'completed').reduce((sum: number, b: any) => sum + (b.totalPrice || 0), 0)
+      })
+      setIsLoading(false)
+    })
+    .catch((err) => {
+        console.error('Failed to load host data:', err)
+        setIsLoading(false)
+    })
+
+  }, [isAuthenticated, isHost, user])
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -33,17 +66,17 @@ export default function HostDashboardPage() {
   }, [authLoading, isAuthenticated, isHost, isHostPending, router])
 
   const togglePropertyAvailability = async (propertyId: string, currentStatus: boolean) => {
-    const hostService = getHostService()
+    const db = new SupabaseDBService()
     
     try {
-      await hostService.updatePropertyStatus(propertyId, currentStatus ? 'inactive' : 'approved')
+      await db.updateProperty(propertyId, { isAvailable: !currentStatus })
       toast.success('Property updated successfully')
     } catch {
       toast.error('Failed to update property')
     }
   }
 
-  if (authLoading || isLoading || !isHost) {
+  if (authLoading || isLoading || !isHost || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
@@ -173,7 +206,7 @@ export default function HostDashboardPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {properties.slice(0, 5).map((property) => (
+                  {properties.slice(0, 5).map((property: any) => (
                     <div
                       key={property.id}
                       className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
@@ -259,7 +292,7 @@ export default function HostDashboardPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {bookings.slice(0, 5).map((booking) => (
+                  {bookings.slice(0, 5).map((booking: any) => (
                     <div key={booking.id} className="p-3 bg-gray-50 rounded-xl">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-medium text-gray-900 text-sm">

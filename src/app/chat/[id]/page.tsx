@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import ChatWindow from '@/components/ui/ChatWindow'
-import { useAuth } from '@/lib/firebase/auth'
+import { useAuth } from '@/lib/auth/AuthContext'
 
 export default function ChatRoomPage() {
   const params = useParams()

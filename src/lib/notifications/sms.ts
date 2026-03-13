@@ -1,6 +1,7 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
+import { useState } from 'react'
 
 export interface SMSVerification {
   id: string
@@ -47,7 +48,7 @@ export class SMSService {
     this.dbClient = createClient()
   }
 
-  // Send SMS via Firebase function endpoint
+  // Send SMS via Supabase Edge Function endpoint
   async sendSMS(phoneNumber: string, message: string): Promise<{ success: boolean; error?: string }> {
     try {
       // Store SMS in database for logging
@@ -58,33 +59,25 @@ export class SMSService {
           message,
           status: 'pending',
           created_at: new Date().toISOString()
-        })
+        } as any)
 
       if (logError) {
         console.error('Error logging SMS:', logError)
       }
 
-      // Call Firebase HTTP function (example: https://<region>-<project>.cloudfunctions.net)
-      const functionsBaseUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL
-      if (!functionsBaseUrl) {
-        throw new Error('NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL is not configured')
-      }
-      const accessToken = (await this.dbClient.auth.getSession()).data.session?.access_token
-      const response = await fetch(`${functionsBaseUrl.replace(/\/$/, '')}/send-sms`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-        },
-        body: JSON.stringify({
+      // Call Supabase Edge Function
+      const { data: responseData, error: functionError } = await this.dbClient.functions.invoke('send-sms', {
+        body: {
           to: phoneNumber,
           message
-        })
+        }
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to send SMS')
+      if (functionError) {
+        throw new Error(`Failed to send SMS: ${functionError.message}`)
       }
+
+
 
       return { success: true }
     } catch (error) {
@@ -116,7 +109,7 @@ export class SMSService {
 
       if (recentVerification) {
         // Rate limit - don't send another code yet
-        const timeSinceLastSent = Date.now() - new Date(recentVerification.created_at).getTime()
+        const timeSinceLastSent = Date.now() - new Date((recentVerification as any).created_at).getTime()
         const cooldownPeriod = 60 * 1000 // 1 minute cooldown
         
         if (timeSinceLastSent < cooldownPeriod) {
@@ -140,7 +133,7 @@ export class SMSService {
           expires_at: expiresAt.toISOString(),
           attempts: 0,
           created_at: new Date().toISOString()
-        })
+        } as any)
 
       if (insertError) {
         console.error('Error storing verification:', insertError)
@@ -188,18 +181,18 @@ export class SMSService {
       }
 
       // Check attempts
-      if (verification.attempts >= 5) {
+      if ((verification as any).attempts >= 5) {
         return { success: false, error: 'Too many attempts. Please request a new code' }
       }
 
       // Increment attempts
       await this.dbClient
         .from('sms_verifications')
-        .update({ attempts: verification.attempts + 1 })
-        .eq('id', verification.id)
+        .update({ attempts: (verification as any).attempts + 1 } as never)
+        .eq('id', (verification as any).id)
 
       // Verify code
-      if (verification.verification_code !== code) {
+      if ((verification as any).verification_code !== code) {
         return { success: false, error: 'Invalid verification code' }
       }
 
@@ -209,8 +202,8 @@ export class SMSService {
         .update({ 
           is_verified: true, 
           verified_at: new Date().toISOString() 
-        })
-        .eq('id', verification.id)
+        } as never)
+        .eq('id', (verification as any).id)
 
       return { success: true }
     } catch (error) {
@@ -310,6 +303,3 @@ export function useSMSVerification() {
     verifyCode
   }
 }
-
-// Import useState
-import { useState } from 'react'

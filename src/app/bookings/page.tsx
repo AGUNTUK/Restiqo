@@ -77,7 +77,7 @@ export default function BookingsPage() {
     
     const { error } = await supabase
       .from('bookings')
-      .update({ status: 'cancelled' })
+      .update({ status: 'cancelled' } as never)
       .eq('id', bookingId)
 
     if (error) {

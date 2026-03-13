@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { onValue, ref } from 'firebase/database'
-import { getFirebaseRealtimeDB } from '@/lib/firebase/config'
-import { getChatService } from '@/lib/firebase/chat'
-import { getRealtimeDB } from '@/lib/firebase/database'
+import { getChatService } from '@/lib/supabase/chat'
+import { createClient } from '@/lib/supabase/client'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { Database } from '@/types/database'
 
 export interface Message {
   id: string
@@ -57,50 +57,19 @@ export interface Notification {
   created_at: string
 }
 
-function toIso(value: unknown): string {
-  if (typeof value === 'number') return new Date(value).toISOString()
-  if (typeof value === 'string') {
-    const asNumber = Number(value)
-    if (!Number.isNaN(asNumber)) return new Date(asNumber).toISOString()
-    return new Date(value).toISOString()
-  }
-  return new Date().toISOString()
-}
-
-function mapMessage(conversationId: string, message: any): Message {
+function mapMessage(msg: any): Message {
   return {
-    id: message.id,
-    conversation_id: conversationId,
-    sender_id: message.senderId,
-    content: message.content,
-    read_at: message.read ? toIso(message.timestamp) : null,
-    created_at: toIso(message.timestamp),
+    id: msg.id,
+    conversation_id: msg.chatId,
+    sender_id: msg.senderId,
+    content: msg.content,
+    read_at: msg.read ? new Date(msg.timestamp).toISOString() : null,
+    created_at: new Date(msg.timestamp).toISOString(),
     sender: {
-      id: message.senderId,
-      full_name: message.senderName || null,
-      avatar_url: message.senderAvatar || null,
+      id: msg.senderId,
+      full_name: msg.senderName || null,
+      avatar_url: msg.senderAvatar || null,
     },
-  }
-}
-
-function mapNotification(userId: string, notification: any): Notification {
-  const typeMap: Record<string, Notification['type']> = {
-    booking: 'booking',
-    message: 'message',
-    review: 'review',
-    payment: 'payment',
-    system: 'system',
-  }
-
-  return {
-    id: notification.id,
-    user_id: userId,
-    type: typeMap[notification.type] || 'system',
-    title: notification.title || 'Notification',
-    message: notification.body || notification.message || '',
-    data: (notification.data as Record<string, unknown>) || null,
-    read_at: notification.read ? toIso(notification.timestamp) : null,
-    created_at: toIso(notification.timestamp),
   }
 }
 
@@ -118,12 +87,12 @@ export function useRealtimeChat(conversationId: string | null) {
     } catch (error) {
       return { error: error instanceof Error ? error.message : 'Failed to send message' }
     }
-  }, [conversationId, chatService])
+  }, [conversationId])
 
   const markAsRead = useCallback(async (userId: string) => {
     if (!conversationId) return
     await chatService.markAsRead(conversationId, userId)
-  }, [conversationId, chatService])
+  }, [conversationId])
 
   useEffect(() => {
     if (!conversationId) {
@@ -134,12 +103,12 @@ export function useRealtimeChat(conversationId: string | null) {
 
     setIsLoading(true)
     const unsubscribe = chatService.subscribeToMessages(conversationId, (nextMessages) => {
-      setMessages(nextMessages.map((m: any) => mapMessage(conversationId, m)))
+      setMessages(nextMessages.map((m: any) => mapMessage(m)))
       setIsLoading(false)
     })
 
     return () => unsubscribe()
-  }, [conversationId, chatService])
+  }, [conversationId])
 
   return {
     messages,
@@ -150,65 +119,10 @@ export function useRealtimeChat(conversationId: string | null) {
   }
 }
 
-export function useRealtimeNotifications(userId: string | null) {
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [unreadCount, setUnreadCount] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
-
-  const markAsRead = useCallback(async (notificationId: string) => {
-    if (!userId) return
-
-    await getRealtimeDB().markNotificationRead(userId, notificationId)
-
-    setNotifications((prev) =>
-      prev.map((item) =>
-        item.id === notificationId ? { ...item, read_at: new Date().toISOString() } : item
-      )
-    )
-    setUnreadCount((prev) => Math.max(0, prev - 1))
-  }, [userId])
-
-  const markAllAsRead = useCallback(async () => {
-    if (!userId) return
-
-    const unread = notifications.filter((item) => !item.read_at)
-    await Promise.all(unread.map((item) => getRealtimeDB().markNotificationRead(userId, item.id)))
-
-    setNotifications((prev) => prev.map((item) => ({ ...item, read_at: item.read_at || new Date().toISOString() })))
-    setUnreadCount(0)
-  }, [notifications, userId])
-
-  useEffect(() => {
-    if (!userId) {
-      setNotifications([])
-      setUnreadCount(0)
-      setIsLoading(false)
-      return
-    }
-
-    setIsLoading(true)
-    const unsubscribe = getRealtimeDB().subscribeToNotifications(userId, (items: any[]) => {
-      const mapped = items.map((item) => mapNotification(userId, item))
-      setNotifications(mapped)
-      setUnreadCount(mapped.filter((item) => !item.read_at).length)
-      setIsLoading(false)
-    })
-
-    return () => unsubscribe()
-  }, [userId])
-
-  return {
-    notifications,
-    unreadCount,
-    isLoading,
-    markAsRead,
-    markAllAsRead,
-  }
-}
-
 export function useConversations(userId: string | null) {
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClient()
 
   const fetchConversations = useCallback(async () => {
     if (!userId) {
@@ -217,102 +131,59 @@ export function useConversations(userId: string | null) {
       return
     }
 
-    const db = getFirebaseRealtimeDB()
-    const chatsRef = ref(db, 'chats')
+    setIsLoading(true)
+    const { data: chats, error } = await supabase
+        .from('chats')
+        .select('*')
+        .contains('participants', [userId])
+        .order('updated_at', { ascending: false })
 
-    const snapshotPromise = new Promise<any>((resolve) => {
-      onValue(chatsRef, (snapshot) => resolve(snapshot.val() || {}), { onlyOnce: true })
-    })
+    if (!error && chats) {
+        // Here we'd map to Conversation. We need user info.
+        // For a full implementation, we should JOIN with users table or fetch profiles here.
+        // To keep this simple and matching previous mock data structure:
+        const mapped: Conversation[] = chats.map(chat => {
+            const participants = (chat as any).participants as string[]
+            const guestId = participants[0] || userId
+            const hostId = participants[1] || userId
 
-    const data = await snapshotPromise
-
-    const mapped: Conversation[] = Object.entries(data)
-      .map(([id, raw]: [string, any]) => {
-        const participants: string[] = Array.isArray(raw.participants) ? raw.participants : []
-        if (!participants.includes(userId)) return null
-
-        const guestId = participants[0] || userId
-        const hostId = participants[1] || userId
-
-        return {
-          id,
-          property_id: null,
-          guest_id: guestId,
-          host_id: hostId,
-          last_message: raw.lastMessage?.content || null,
-          last_message_at: raw.lastMessage?.timestamp ? toIso(raw.lastMessage.timestamp) : null,
-          created_at: toIso(raw.createdAt),
-          updated_at: toIso(raw.updatedAt),
-          guest: {
-            id: guestId,
-            full_name: guestId,
-            avatar_url: null,
-          },
-          host: {
-            id: hostId,
-            full_name: hostId,
-            avatar_url: null,
-          },
-        }
-      })
-      .filter(Boolean) as Conversation[]
-
-    mapped.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-
-    setConversations(mapped)
+            return {
+                id: (chat as any).id,
+                property_id: null,
+                guest_id: guestId,
+                host_id: hostId,
+                last_message: null, // Would require joining last message
+                last_message_at: null,
+                created_at: (chat as any).created_at,
+                updated_at: (chat as any).updated_at,
+                guest: { id: guestId, full_name: guestId, avatar_url: null },
+                host: { id: hostId, full_name: hostId, avatar_url: null },
+            }
+        })
+        setConversations(mapped)
+    }
     setIsLoading(false)
-  }, [userId])
+  }, [userId, supabase])
 
   useEffect(() => {
-    if (!userId) {
-      setConversations([])
-      setIsLoading(false)
-      return
-    }
+    fetchConversations()
 
-    const db = getFirebaseRealtimeDB()
-    const chatsRef = ref(db, 'chats')
+    if (!userId) return
 
-    const unsubscribe = onValue(chatsRef, (snapshot) => {
-      const data = snapshot.val() || {}
-      const mapped: Conversation[] = Object.entries(data)
-        .map(([id, raw]: [string, any]) => {
-          const participants: string[] = Array.isArray(raw.participants) ? raw.participants : []
-          if (!participants.includes(userId)) return null
-
-          const guestId = participants[0] || userId
-          const hostId = participants[1] || userId
-
-          return {
-            id,
-            property_id: null,
-            guest_id: guestId,
-            host_id: hostId,
-            last_message: raw.lastMessage?.content || null,
-            last_message_at: raw.lastMessage?.timestamp ? toIso(raw.lastMessage.timestamp) : null,
-            created_at: toIso(raw.createdAt),
-            updated_at: toIso(raw.updatedAt),
-            guest: {
-              id: guestId,
-              full_name: guestId,
-              avatar_url: null,
-            },
-            host: {
-              id: hostId,
-              full_name: hostId,
-              avatar_url: null,
-            },
+    const channel = supabase
+      .channel('public:chats')
+      .on('postgres_changes', 
+          { event: '*', schema: 'public', table: 'chats', filter: `participants=cs.{${userId}}` }, 
+          () => {
+             fetchConversations()
           }
-        })
-        .filter(Boolean) as Conversation[]
+      )
+      .subscribe()
 
-      mapped.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-      setConversations(mapped)
-      setIsLoading(false)
-    })
-
-    return () => unsubscribe()
-  }, [userId])
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [userId, fetchConversations, supabase])
 
   const createConversation = useCallback(async (propertyId: string, hostId: string) => {
     if (!userId) return { conversation: null, error: 'Not authenticated' }
@@ -346,5 +217,93 @@ export function useConversations(userId: string | null) {
     isLoading,
     createConversation,
     refreshConversations: fetchConversations,
+  }
+}
+
+// Notifications will need a `notifications` table in Supabase.
+// For now, this is a basic shell using the Supabase client.
+export function useRealtimeNotifications(userId: string | null) {
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [unreadCount, setUnreadCount] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClient()
+
+  const fetchNotifications = useCallback(async () => {
+      if (!userId) return
+
+      setIsLoading(true)
+      const { data, error } = await supabase
+          .from('notifications')
+          .select('*')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false })
+
+      if (!error && data) {
+          setNotifications(data as Notification[])
+          setUnreadCount(data.filter((n: any) => !n.read_at).length)
+      }
+      setIsLoading(false)
+  }, [userId, supabase])
+
+  const markAsRead = useCallback(async (notificationId: string) => {
+    if (!userId) return
+
+    await supabase
+        .from('notifications')
+        .update({ read_at: new Date().toISOString() } as never)
+        .eq('id', notificationId)
+
+    setNotifications((prev) =>
+      prev.map((item) =>
+        item.id === notificationId ? { ...item, read_at: new Date().toISOString() } : item
+      )
+    )
+    setUnreadCount((prev) => Math.max(0, prev - 1))
+  }, [userId, supabase])
+
+  const markAllAsRead = useCallback(async () => {
+    if (!userId) return
+
+    await supabase
+        .from('notifications')
+        .update({ read_at: new Date().toISOString() } as never)
+        .eq('user_id', userId)
+        .is('read_at', null)
+
+    setNotifications((prev) => prev.map((item) => ({ ...item, read_at: item.read_at || new Date().toISOString() })))
+    setUnreadCount(0)
+  }, [userId, supabase])
+
+  useEffect(() => {
+    if (!userId) {
+      setNotifications([])
+      setUnreadCount(0)
+      setIsLoading(false)
+      return
+    }
+
+    fetchNotifications()
+
+    const channel = supabase
+      .channel('public:notifications')
+      .on('postgres_changes', 
+          { event: '*', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` }, 
+          () => {
+             fetchNotifications()
+          }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [userId, fetchNotifications, supabase])
+
+  return {
+    notifications,
+    unreadCount,
+    isLoading,
+    markAsRead,
+    markAllAsRead,
   }
 }
