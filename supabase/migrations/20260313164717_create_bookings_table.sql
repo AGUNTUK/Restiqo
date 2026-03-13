@@ -1,4 +1,4 @@
-create table bookings (
+create table if not exists bookings (
   id uuid primary key default uuid_generate_v4(),
   user_id uuid,
   property_id uuid,

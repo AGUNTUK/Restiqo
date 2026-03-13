@@ -8,7 +8,12 @@ add column if not exists commission_rate numeric default 10;
 -- Ensure transaction_id in payments is unique for idempotency
 -- First, make transaction_id not null if there are no existing nulls or handle them
 alter table payments alter column transaction_id set not null;
-alter table payments add constraint unique_transaction_id unique (transaction_id);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'unique_transaction_id') THEN
+        alter table payments add constraint unique_transaction_id unique (transaction_id);
+    END IF;
+END $$;
 
 -- Add index for performance on transaction searches
 create index if not exists idx_payments_transaction_id on payments(transaction_id);
