@@ -8,6 +8,7 @@ import { SupabaseDBService } from '@/lib/supabase/database';
 import Button from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import { Booking, Property } from '@/types/database';
+import { Clock, AlertTriangle } from 'lucide-react';
 
 export default function CheckoutPage() {
     const searchParams = useSearchParams();
@@ -15,10 +16,12 @@ export default function CheckoutPage() {
     const { user, profile } = useAuth();
     const bookingId = searchParams.get('bookingId');
 
-    const [booking, setBooking] = useState<Booking | null>(null);
+    const [booking, setBooking] = useState<any | null>(null);
     const [property, setProperty] = useState<Property | null>(null);
     const [loading, setLoading] = useState(true);
     const [paymentLoading, setPaymentLoading] = useState(false);
+    const [timeLeft, setTimeLeft] = useState<string>('');
+    const [isExpired, setIsExpired] = useState(false);
 
     useEffect(() => {
         if (!bookingId) {
@@ -37,11 +40,22 @@ export default function CheckoutPage() {
                     return;
                 }
 
-                setBooking(bookingData as Booking);
+                setBooking(bookingData);
 
-                if ((bookingData as any).propertyId || (bookingData as any).property_id) {
-                    const propertyData = await db.getProperty((bookingData as any).propertyId || (bookingData as any).property_id);
+                const pid = (bookingData as any).propertyId || (bookingData as any).property_id;
+                if (pid) {
+                    const propertyData = await db.getProperty(pid);
                     setProperty(propertyData as any as Property);
+                }
+
+                // Check initial expiry
+                if ((bookingData as any).payment_expires_at) {
+                    const now = new Date().getTime();
+                    const expiry = new Date((bookingData as any).payment_expires_at).getTime();
+                    if (expiry - now <= 0) {
+                        setIsExpired(true);
+                        setTimeLeft('Expired');
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching checkout details:', error);
@@ -54,12 +68,34 @@ export default function CheckoutPage() {
         fetchBookingDetails();
     }, [bookingId, router]);
 
+    useEffect(() => {
+        if (!booking?.payment_expires_at || isExpired) return;
+
+        const timer = setInterval(() => {
+            const now = new Date().getTime();
+            const expiry = new Date(booking.payment_expires_at).getTime();
+            const difference = expiry - now;
+
+            if (difference <= 0) {
+                clearInterval(timer);
+                setTimeLeft('Expired');
+                setIsExpired(true);
+                return;
+            }
+
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            setTimeLeft(`${minutes}:${seconds < 10 ? '0' : ''}${seconds}`);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [booking?.payment_expires_at, isExpired]);
+
     const handlePayment = async () => {
-        if (!booking) return;
+        if (!booking || isExpired) return;
 
         setPaymentLoading(true);
         try {
-            // Default to profile info or user info, otherwise fallback
             const fullName = profile?.full_name || user?.user_metadata?.full_name || 'Guest User';
             const email = profile?.email || user?.email || 'guest@restiqa.com';
 
@@ -69,7 +105,7 @@ export default function CheckoutPage() {
                 body: JSON.stringify({
                     full_name: fullName,
                     email: email,
-                    amount: (booking as any).totalPrice || (booking as any).total_price, // handle both cases based on db schema naming
+                    amount: booking.totalPrice || booking.total_price,
                     booking_id: booking.id,
                 })
             });
@@ -100,11 +136,9 @@ export default function CheckoutPage() {
         );
     }
 
-    if (!booking) {
-        return null;
-    }
+    if (!booking) return null;
 
-    const amountToPay = (booking as any).totalPrice || (booking as any).total_price;
+    const amountToPay = booking.totalPrice || booking.total_price;
 
     return (
         <div className="min-h-screen pt-24 pb-12 bg-gray-50 flex items-center justify-center">
@@ -135,7 +169,7 @@ export default function CheckoutPage() {
                         <div className="flex justify-between text-gray-600">
                             <span>Dates</span>
                             <span className="font-medium">
-                                {new Date((booking as any).checkIn || (booking as any).check_in).toLocaleDateString()} &rarr; {new Date((booking as any).checkOut || (booking as any).check_out).toLocaleDateString()}
+                                {new Date(booking.checkIn || booking.check_in).toLocaleDateString()} &rarr; {new Date(booking.checkOut || booking.check_out).toLocaleDateString()}
                             </span>
                         </div>
 
@@ -144,16 +178,36 @@ export default function CheckoutPage() {
                             <span>BDT {amountToPay?.toLocaleString()}</span>
                         </div>
                     </div>
+
+                    {booking.payment_expires_at && !isExpired && (
+                        <div className="flex items-center justify-center gap-2 py-3 bg-amber-50 rounded-2xl text-amber-700 font-bold border border-amber-100 animate-pulse">
+                            <Clock className="w-5 h-5" />
+                            <span>Payment expires in: {timeLeft}</span>
+                        </div>
+                    )}
+
+                    {isExpired && (
+                        <div className="flex items-center justify-center gap-2 py-3 bg-red-50 rounded-2xl text-red-600 font-bold border border-red-100">
+                            <AlertTriangle className="w-5 h-5" />
+                            <span>This booking has expired.</span>
+                        </div>
+                    )}
                 </div>
 
                 <Button
                     variant="primary"
                     className="w-full text-lg py-4"
                     onClick={handlePayment}
-                    disabled={paymentLoading}
+                    disabled={paymentLoading || isExpired}
                 >
-                    {paymentLoading ? 'Processing...' : 'Pay Now'}
+                    {paymentLoading ? 'Processing...' : isExpired ? 'Booking Expired' : 'Pay Now'}
                 </Button>
+                
+                {isExpired && (
+                    <p className="text-center text-sm text-gray-500 mt-4">
+                        Please go back to the property page to start a new booking.
+                    </p>
+                )}
             </motion.div>
         </div>
     );

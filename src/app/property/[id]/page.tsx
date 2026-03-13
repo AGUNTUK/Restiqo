@@ -165,6 +165,9 @@ export default function PropertyDetailsPage() {
       setIsBooking(true)
       const db = new SupabaseDBService()
       const totalPrice = calculateTotal() + Math.round(calculateTotal() * 0.1)
+      const expiryDate = new Date()
+      expiryDate.setMinutes(expiryDate.getMinutes() + 15) // 15 minutes expiry
+
       const newBookingId = await db.createBooking({
         property_id: property?.id || '',
         guest_id: user.id || '',
@@ -174,23 +177,22 @@ export default function PropertyDetailsPage() {
         total_price: totalPrice,
         status: 'pending',
         payment_status: 'pending',
+        payment_expires_at: expiryDate.toISOString(),
       })
 
       // Initiate Payment directly
       try {
-        const fullName = profile?.full_name || user.user_metadata?.full_name || 'Guest User'
-        const email = profile?.email || user.email || ''
-
-        const response = await fetch('/api/create-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            full_name: fullName,
-            email: email,
-            amount: totalPrice,
-            booking_id: newBookingId,
-          })
-        })
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/create-payment`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              amount: totalPrice,
+              bookingId: newBookingId
+            })
+          }
+        )
 
         const data = await response.json()
 

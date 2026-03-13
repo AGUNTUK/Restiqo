@@ -1,5 +1,6 @@
 import { Filter, MapPin, Users, CreditCard } from 'lucide-react'
 import { Booking, BookingStatus } from '@/types/database'
+import toast from 'react-hot-toast'
 
 interface BookingsTabProps {
     bookings: Booking[]
@@ -113,6 +114,36 @@ export function BookingsTab({
                                             >
                                                 View Details
                                             </button>
+                                            {(booking.status === 'confirmed' || (booking.status as string) === 'paid' || booking.payment_status === 'paid') && booking.status !== 'cancelled' && (
+                                                <button
+                                                    onClick={async () => {
+                                                        if (confirm('Are you sure you want to refund this booking?')) {
+                                                            try {
+                                                                const { createClient } = await import('@/lib/supabase/client');
+                                                                const supabase = createClient();
+                                                                
+                                                                toast.loading('Processing refund...');
+                                                                
+                                                                const { data, error } = await supabase.functions.invoke('refund-payment', {
+                                                                    body: { booking_id: booking.id }
+                                                                });
+
+                                                                if (error) throw error;
+                                                                
+                                                                toast.dismiss();
+                                                                toast.success('Refund processed successfully!');
+                                                                window.location.reload(); // Refresh to show new status
+                                                            } catch (err: any) {
+                                                                toast.dismiss();
+                                                                toast.error(err.message || 'Failed to process refund');
+                                                            }
+                                                        }
+                                                    }}
+                                                    className="px-3 py-1 text-sm border border-red-200 text-red-600 rounded-lg hover:bg-red-50"
+                                                >
+                                                    Refund
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

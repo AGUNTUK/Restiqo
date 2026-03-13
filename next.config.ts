@@ -27,6 +27,22 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/:path(en|bn)?/pay/:rest*',
+          destination: 'http://restiqa.unaux.com/pay/:rest*',
+        },
+      ],
+      afterFiles: [
+        {
+          source: '/:path(en|bn)?/pay/:rest*',
+          destination: 'http://restiqa.unaux.com/pay/:rest*',
+        },
+      ],
+    };
+  },
 };
 
 export default withNextIntl(nextConfig);

@@ -10,34 +10,42 @@ import toast from 'react-hot-toast';
 export default function PaymentSuccessPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const invoiceId = searchParams.get('invoice_id');
+    const bookingId = searchParams.get('order_id') || searchParams.get('booking_id') || searchParams.get('invoice_id');
 
     const [verifying, setVerifying] = useState(true);
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
-        if (!invoiceId) {
+        if (!bookingId) {
             router.push('/');
             return;
         }
 
         const verifyPayment = async () => {
             try {
-                const response = await fetch('/api/verify-payment', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ invoice_id: invoiceId }),
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.isPaid) {
-                    setSuccess(true);
-                    toast.success('Payment verified successfully!');
-                } else {
-                    toast.error('Payment verification failed. If you were charged, contact support.');
-                    setSuccess(false);
+                const { getDatabaseService } = await import('@/lib/supabase/database');
+                const db = getDatabaseService();
+                
+                // Poll for booking status (webhook might take a few seconds)
+                let attempts = 0;
+                const maxAttempts = 5;
+                
+                while (attempts < maxAttempts) {
+                    const booking = await db.getBooking(bookingId) as any;
+                    if (booking && (booking.status === 'confirmed' || booking.status === 'paid')) {
+                        setSuccess(true);
+                        setVerifying(false);
+                        toast.success('Payment verified successfully!');
+                        return;
+                    }
+                    
+                    // Wait 2 seconds before next poll
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    attempts++;
                 }
+
+                toast.error('Payment verification is taking longer than expected. Please check your bookings page.');
+                setSuccess(false);
             } catch (error) {
                 console.error('Verify error:', error);
                 toast.error('Something went wrong during verification.');
@@ -48,7 +56,7 @@ export default function PaymentSuccessPage() {
         };
 
         verifyPayment();
-    }, [invoiceId, router]);
+    }, [bookingId, router]);
 
     if (verifying) {
         return (
@@ -89,9 +97,9 @@ export default function PaymentSuccessPage() {
                     </p>
                 </div>
 
-                {invoiceId && (
+                {bookingId && (
                     <div className="inline-block px-4 py-2 bg-gray-50 rounded-lg text-sm text-gray-500 font-medium my-4 border border-gray-100">
-                        Invoice ID: {invoiceId}
+                        Booking ID: {bookingId}
                     </div>
                 )}
 
