@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     root: projectRoot,
   },
   outputFileTracingRoot: projectRoot,
-  images: {
+   images: {
     remotePatterns: [
       {
         protocol: 'https',
@@ -26,22 +26,6 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-  },
-  async rewrites() {
-    return {
-      beforeFiles: [
-        {
-          source: '/:path(en|bn)?/pay/:rest*',
-          destination: 'http://restiqa.unaux.com/pay/:rest*',
-        },
-      ],
-      afterFiles: [
-        {
-          source: '/:path(en|bn)?/pay/:rest*',
-          destination: 'http://restiqa.unaux.com/pay/:rest*',
-        },
-      ],
-    };
   },
 };
 
