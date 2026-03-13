@@ -18,10 +18,15 @@ function AuthCallbackContent() {
       const code = searchParams.get('code')
 
       try {
+        console.log('Auth callback initiated', { code, redirect })
         if (code) {
-          // If there's an auth code in the URL, exchange it for a session (PKCE flow)
+          console.log('Exchanging code for session...')
           const { error } = await client.auth.exchangeCodeForSession(code)
-          if (error) throw error
+          if (error) {
+            console.error('Exchange error:', error)
+            throw error
+          }
+          console.log('Exchange successful')
         }
 
         // Wait a small moment to ensure auth state is settled across the app
@@ -29,11 +34,20 @@ function AuthCallbackContent() {
 
         const {
           data: { session },
+          error: sessionError,
         } = await client.auth.getSession()
+
+        if (sessionError) {
+          console.error('Get session error:', sessionError)
+          throw sessionError
+        }
+
+        console.log('Session retrieved:', session ? 'Found' : 'Not Found', { user: session?.user?.id })
 
         if (session?.user) {
           setStatus('success')
           toast.success('Successfully signed in!')
+          console.log('Redirecting to:', redirect)
           setTimeout(() => router.push(redirect), 500)
           return
         }
