@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     root: projectRoot,
   },
   outputFileTracingRoot: projectRoot,
-   images: {
+  images: {
     remotePatterns: [
       {
         protocol: 'https',
