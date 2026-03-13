@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useState, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -11,40 +11,58 @@ function AuthCallbackContent() {
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
 
+  const handled = useRef(false)
+
   useEffect(() => {
     const handleCallback = async () => {
+      if (handled.current) return
+      handled.current = true
+
       const client = createClient()
       const redirect = searchParams.get('redirect') || '/dashboard'
       const code = searchParams.get('code')
+      const error_description = searchParams.get('error_description')
+      const error = searchParams.get('error')
+
+      console.log('Auth callback initiated', { 
+        code: code ? 'Present' : 'Missing', 
+        redirect, 
+        error, 
+        error_description,
+        allParams: Object.fromEntries(searchParams.entries())
+      })
 
       try {
-        console.log('Auth callback initiated', { code, redirect })
+        let currentSession = null
+
         if (code) {
           console.log('Exchanging code for session...')
-          const { error } = await client.auth.exchangeCodeForSession(code)
-          if (error) {
-            console.error('Exchange error:', error)
-            throw error
+          const { data, error: exchangeError } = await client.auth.exchangeCodeForSession(code)
+          if (exchangeError) {
+            console.error('Exchange error:', exchangeError)
+            throw exchangeError
           }
-          console.log('Exchange successful')
+          console.log('Exchange successful', { userId: data.session?.user?.id })
+          currentSession = data.session
         }
 
-        // Wait a small moment to ensure auth state is settled across the app
-        await new Promise(resolve => setTimeout(resolve, 500))
+        if (!currentSession) {
+          console.log('No session from exchange, checking active session...')
+          const {
+            data: { session },
+            error: sessionError,
+          } = await client.auth.getSession()
 
-        const {
-          data: { session },
-          error: sessionError,
-        } = await client.auth.getSession()
-
-        if (sessionError) {
-          console.error('Get session error:', sessionError)
-          throw sessionError
+          if (sessionError) {
+            console.error('Get session error:', sessionError)
+            throw sessionError
+          }
+          currentSession = session
         }
 
-        console.log('Session retrieved:', session ? 'Found' : 'Not Found', { user: session?.user?.id })
+        console.log('Final session check:', currentSession ? 'Found' : 'Not Found', { user: currentSession?.user?.id })
 
-        if (session?.user) {
+        if (currentSession?.user) {
           setStatus('success')
           toast.success('Successfully signed in!')
           console.log('Redirecting to:', redirect)
