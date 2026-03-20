@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient, createStaticClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { type Blog } from "@/lib/types/database";
-import { getDictionary } from "@/lib/i18n";
+import { getDictionary, getLocale } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -36,12 +36,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!data) return { title: "Blog Not Found" };
 
   return {
-    title: `${data.title} | Restiqa Blog`,
-    description: data.excerpt,
+    title: `${data.title} | Restiqa Travel Blog`,
+    description: data.excerpt || `Read about ${data.title} on Restiqa.`,
+    keywords: [
+      data.title, "bangladesh travel", "travel guide", "restiqa blog",
+      "বাংলাদেশ ভ্রমণ", "ভ্রমণ গাইড", "রেস্টিকা ব্লগ", "ভ্রমণ টিপস"
+    ],
     openGraph: {
       title: data.title,
       description: data.excerpt,
-      images: data.cover_image ? [{ url: data.cover_image, width: 1200, height: 630 }] : [],
+      images: [data.cover_image || "/og-blog.jpg"],
       type: "article",
     },
     twitter: {
@@ -58,6 +62,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BlogDetailsPage({ params }: PageProps) {
   const { slug } = await params;
+  const dict = await getDictionary();
+  const locale = await getLocale();
 
   if (!isSupabaseConfigured()) {
     return notFound();
@@ -120,7 +126,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
         href="/blog" 
         className="inline-flex items-center gap-2 mb-10 text-[#6c63ff] font-extrabold text-sm no-underline hover:underline group"
       >
-        <span className="transition-transform group-hover:-translate-x-1">←</span> Back to Blog
+        <span className="transition-transform group-hover:-translate-x-1">←</span> {dict.blog?.backToList || "Back to Blog"}
       </Link>
 
       {/* Header */}
@@ -142,12 +148,18 @@ export default async function BlogDetailsPage({ params }: PageProps) {
             </div>
             <div>
               <p className="font-extrabold text-sm text-[#1a202c]">{post.author_name || "Restiqa Editor"}</p>
-              <p className="text-xs font-bold text-[#a0aec0]">Published on {new Date(post.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+              <p className="text-xs font-bold text-[#a0aec0]">
+                {dict.blog?.publishedOn || "Published on"} {new Date(post.created_at).toLocaleDateString(locale === 'bn' ? 'bn-BD' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              </p>
             </div>
           </div>
           <div className="ml-auto flex items-center gap-3">
-             <span className="bg-[#f0fff4] text-[#2f855a] px-3 py-1 rounded-full text-[10px] font-bold border border-[#68d391]/30">Verified Guide</span>
-             <span className="bg-[#ebf8ff] text-[#3182ce] px-3 py-1 rounded-full text-[10px] font-bold border border-[#90cdf4]/30">Travel Tips</span>
+             <span className="bg-[#f0fff4] text-[#2f855a] px-3 py-1 rounded-full text-[10px] font-bold border border-[#68d391]/30">
+               {dict.blog?.verifiedGuide || "Verified Guide"}
+             </span>
+             <span className="bg-[#ebf8ff] text-[#3182ce] px-3 py-1 rounded-full text-[10px] font-bold border border-[#90cdf4]/30">
+               {dict.blog?.travelTips || "Travel Tips"}
+             </span>
           </div>
         </div>
       </header>
@@ -182,7 +194,9 @@ export default async function BlogDetailsPage({ params }: PageProps) {
           />
         </div>
         <div className="text-center md:text-left">
-          <h3 className="font-extrabold text-xl mb-2 text-[#2d3748]">About {post.author_name || "the Author"}</h3>
+          <h3 className="font-extrabold text-xl mb-2 text-[#2d3748]">
+            {dict.blog?.aboutAuthor || "About the Author"}
+          </h3>
           <p className="text-[#718096] leading-relaxed text-sm font-medium">
             {post.author_bio || "Restiqa is Bangladesh's premier travel marketplace. We bring you handpicked rentals and expert travel guides to make your journey extraordinary."}
           </p>
@@ -242,9 +256,11 @@ async function FeaturedStays({ blogTitle }: { blogTitle: string }) {
   return (
     <section className="max-w-4xl mx-auto mt-20 pt-16 border-t border-[#e2e8f0]">
       <h2 className="text-2xl md:text-3xl font-extrabold text-[#1a202c] mb-8 text-center tracking-tight">
-        Plan your trip to {city}
+        {dict.blog?.planTrip || "Plan your trip to"} {city}
       </h2>
-      <p className="text-[#718096] text-center mb-10 font-medium">Verified stays recommended for this guide</p>
+      <p className="text-[#718096] text-center mb-10 font-medium">
+        {dict.blog?.recommendedStays || "Verified stays recommended for this guide"}
+      </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
         {listings.map((item) => (
           <ListingCard key={item.id} listing={item} dict={dict} />

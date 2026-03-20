@@ -65,13 +65,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     : `Book this beautiful ${data.type} in ${data.city}, ${data.country} on Restiqa. Premium stays and verified hosts.`;
 
   return {
-    title: seoTitle,
-    description: seoDescription,
+    title: `${data.title} in ${data.city} | Restiqa`,
+    description: data.description?.substring(0, 160) || `Book ${data.title} in ${data.city}, Bangladesh.`,
+    keywords: [
+      data.title, data.city, "bangladesh rentals", "restiqa",
+      "বাংলাদেশ রেন্টাল", "ঢাকা অ্যাপার্টমেন্ট", "কক্সবাজার হোটেল", "সিলেট রিসোর্ট", data.city + " হোটেল"
+    ],
     openGraph: {
-      title: seoTitle,
-      description: seoDescription,
+      title: data.title,
+      description: data.description,
       type: "website",
-      images: data.images?.[0] ? [{ url: data.images[0], width: 1200, height: 630 }] : [],
+      images: data.images?.[0] ? [data.images[0]] : ["/og-listing.jpg"],
     },
     twitter: {
       card: "summary_large_image",

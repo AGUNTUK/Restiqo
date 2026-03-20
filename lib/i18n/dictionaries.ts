@@ -135,6 +135,15 @@ export const dictionaries = {
       privacy: "Privacy Policy",
       terms: "Terms of Service"
     },
+    blog: {
+      planTrip: "Plan your trip to",
+      recommendedStays: "Verified stays recommended for this guide",
+      backToList: "Back to Blog",
+      publishedOn: "Published on",
+      aboutAuthor: "About the Author",
+      verifiedGuide: "Verified Guide",
+      travelTips: "Travel Tips"
+    },
     featured: {
       "bd-1": { title: "Cox's Bazar Sea View Apartment", location: "Kolatoli Beach, Cox's Bazar", type: "Apartment" },
       "bd-2": { title: "Sajek Valley Eco Resort", location: "Ruilui Para, Sajek", type: "Resort" },
@@ -299,6 +308,15 @@ export const dictionaries = {
       helpCenter: "হেল্প সেন্টার",
       privacy: "গোপনীয়তা নীতি",
       terms: "ব্যবহারের শর্তাবলী"
+    },
+    blog: {
+      planTrip: "আপনার ভ্রমণের পরিকল্পনা করুন",
+      recommendedStays: "এই গাইডের জন্য ভেরিফাইড প্রপার্টি",
+      backToList: "ব্লগে ফিরে যান",
+      publishedOn: "প্রকাশিত হয়েছে",
+      aboutAuthor: "লেখক সম্পর্কে",
+      verifiedGuide: "ভেরিফাইড গাইড",
+      travelTips: "ভ্রমণ টিপস"
     },
     featured: {
       "bd-1": { title: "কক্সবাজার সি ভিউ অ্যাপার্টমেন্ট", location: "কলাতলী বিচ, কক্সবাজার", type: "অ্যাপার্টমেন্ট" },

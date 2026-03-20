@@ -18,7 +18,10 @@ export const metadata: Metadata = {
   },
   description:
     "Discover unique stays across Bangladesh. From Cox's Bazar sea views to Sajek Valley resorts, find your perfect home away from home with Restiqa.",
-  keywords: ["bangladesh travel", "dhaka rentals", "cox's bazar hotels", "sajek resorts", "villas in sylhet", "restiqa"],
+  keywords: [
+    "bangladesh travel", "dhaka rentals", "cox's bazar hotels", "sajek resorts", "villas in sylhet", "restiqa",
+    "বাংলাদেশ ভ্রমণ", "ঢাকা রেন্টাল", "কক্সবাজার হোটেল", "সাজেক রিসোর্ট", "সিলেট ভিলা", "রেস্টিকা"
+  ],
   authors: [{ name: "Restiqa Team" }],
   openGraph: {
     title: "Restiqa — Premium Travel Marketplace in Bangladesh",
