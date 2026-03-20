@@ -2,11 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { confirmPayment } from "@/app/actions/payment";
-import PaymentSubmitButton from "./PaymentSubmitButton";
-
+import ClientCheckoutForm from "./ClientCheckoutForm";
 import { getDictionary, getLocale } from "@/lib/i18n";
-import PaymentMethodSelector from "@/components/PaymentMethodSelector";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -114,20 +111,11 @@ export default async function PaymentPage({ params }: PageProps) {
 
         {/* Right Side: Payment Form */}
         <div className="flex flex-col justify-center">
-          <form action={confirmPayment} className="w-full">
-            <input type="hidden" name="bookingId" value={booking.id} />
-            
-            <PaymentMethodSelector 
-              dict={dict} 
-              onSelect={(method) => console.log("Selected method:", method)} 
-            />
-
-            <div className="text-center mb-8">
-              <h3 className="text-lg font-bold text-[#2d3748] mb-2">{dict.payment.ready}</h3>
-            </div>
-
-            <PaymentSubmitButton amount={booking.total_price} dict={dict} />
-          </form>
+          <ClientCheckoutForm 
+            bookingId={booking.id} 
+            amount={booking.total_price} 
+            dict={dict} 
+          />
 
           <p className="text-center text-xs text-[#a0aec0] mt-6 font-semibold">
             {dict.payment.simulated}

@@ -2,8 +2,17 @@
 
 import { useFormStatus } from "react-dom";
 
-export default function PaymentSubmitButton({ amount, dict }: { amount: number; dict: any }) {
-  const { pending } = useFormStatus();
+interface PaymentSubmitButtonProps {
+  amount: number;
+  dict: any;
+  isLoading?: boolean;
+}
+
+export default function PaymentSubmitButton({ amount, dict, isLoading }: PaymentSubmitButtonProps) {
+  const { pending: formPending } = useFormStatus();
+  
+  // Combine native form status with manually controlled isLoading prop
+  const pending = formPending || isLoading;
 
   return (
     <button

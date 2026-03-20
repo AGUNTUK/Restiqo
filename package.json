@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "mock:gateway": "node scripts/mock-piprapay-server.mjs",
+    "test:payment": "node scripts/test-payment-flow.mjs --base-url http://localhost:3000"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
