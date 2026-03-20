@@ -1,75 +1,63 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 
 // Top tier travel/real-estate photography from Unsplash
 const ITEMS = [
   { 
-    id: 1, 
-    type: "image", 
-    src: "https://images.unsplash.com/photo-1522083165195-344cbdf9a454?q=80&w=300&auto=format&fit=crop", 
-    top: "12%", 
-    left: "6%", 
-    delay: "0s", 
-    rotate: "-rotate-6",
-    size: "w-40 h-48",
-    speed: 1.5
-  },
-  { 
     id: 2, 
     type: "glass", 
     icon: "🌴", 
-    top: "65%", 
-    left: "4%", 
+    top: "15%", 
+    left: "10%", 
     delay: "2s", 
     rotate: "rotate-12",
     size: "w-24 h-24 text-4xl",
     speed: 2.5
   },
   { 
-    id: 3, 
-    type: "image", 
-    src: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=300&auto=format&fit=crop", 
-    top: "18%", 
-    left: "78%", 
-    delay: "1s", 
-    rotate: "rotate-6",
-    size: "w-44 h-56",
-    speed: 1.2
-  },
-  { 
     id: 4, 
     type: "glass", 
     icon: "🗼", 
-    top: "75%", 
-    left: "85%", 
+    top: "70%", 
+    left: "80%", 
     delay: "3s", 
     rotate: "-rotate-12",
     size: "w-20 h-20 text-3xl",
     speed: 2
   },
   { 
-    id: 5, 
-    type: "image", 
-    src: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?q=80&w=300&auto=format&fit=crop", 
-    top: "80%", 
-    left: "25%", 
-    delay: "1.5s", 
-    rotate: "-rotate-3",
-    size: "w-32 h-32 rounded-full", // Circular image for variety
-    speed: 1.8
-  },
-  { 
     id: 6, 
     type: "glass", 
     icon: "✈️", 
-    top: "5%", 
-    left: "55%", 
+    top: "10%", 
+    left: "75%", 
     delay: "4s", 
     rotate: "rotate-45",
     size: "w-16 h-16 text-2xl",
     speed: 3
+  },
+  { 
+    id: 7, 
+    type: "glass", 
+    icon: "🏨", 
+    top: "80%", 
+    left: "15%", 
+    delay: "1s", 
+    rotate: "-rotate-6",
+    size: "w-28 h-28 text-4xl",
+    speed: 1.5
+  },
+  { 
+    id: 8, 
+    type: "glass", 
+    icon: "🗺️", 
+    top: "40%", 
+    left: "5%", 
+    delay: "5s", 
+    rotate: "rotate-3",
+    size: "w-20 h-20 text-2xl",
+    speed: 2.2
   },
 ];
 
@@ -143,33 +131,11 @@ export default function InteractiveHeroBg() {
                   animationDelay: item.delay 
                 }}
               >
-              {item.type === "image" ? (
                 <div 
-                  className={`neo-card overflow-hidden p-2 bg-white/40 backdrop-blur-md shadow-xl ${item.size} ${item.rotate} ${item.id > 3 ? 'hidden sm:block' : ''}`}
-                  style={{
-                    borderRadius: item.size.includes("rounded-full") ? "9999px" : "18px",
-                  }}
-                >
-                  <div className="relative w-full h-full overflow-hidden" 
-                       style={{ borderRadius: item.size.includes("rounded-full") ? "9999px" : "10px" }}
-                  >
-                    <Image 
-                      src={item.src!} 
-                      alt={`Travel destination inspiration - ${item.id}`} 
-                      fill 
-                      priority={item.id === 3}
-                      sizes="300px"
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div 
-                  className={`neo-card flex items-center justify-center bg-white/50 backdrop-blur-xl shadow-lg border border-white/60 ${item.size} ${item.rotate} rounded-[20px] ${item.id > 3 ? 'hidden sm:block' : ''}`}
+                  className={`neo-card flex items-center justify-center bg-white/50 backdrop-blur-xl shadow-lg border border-white/60 ${item.size} ${item.rotate} rounded-[20px] ${item.id > 4 ? 'hidden sm:block' : ''}`}
                 >
                   {item.icon}
                 </div>
-              )}
             </div>
           </div>
         </div>
