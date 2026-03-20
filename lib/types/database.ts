@@ -30,6 +30,7 @@ export interface Listing {
   baths: number;
   max_guests: number;
   amenities: string[];
+  slug: string;
   is_available: boolean;
   host_id: string;
   created_at: string;

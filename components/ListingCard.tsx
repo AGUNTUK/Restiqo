@@ -18,7 +18,7 @@ export default function ListingCard({ listing, dict }: ListingCardProps) {
     : "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800";
 
   return (
-    <Link href={`/listing/${listing.id}`} className="block group no-underline">
+    <Link href={`/listing/${listing.slug || listing.id}`} className="block group no-underline">
       <div className="neo-card rounded-[24px] p-4 transition-all duration-300 hover:-translate-y-2 hover:shadow-[8px_8px_20px_#c4c9ce,-8px_-8px_20px_#ffffff]">
         {/* Thumbnail */}
         <div className="relative aspect-[4/3] rounded-[16px] overflow-hidden mb-4">

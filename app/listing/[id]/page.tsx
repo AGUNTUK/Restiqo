@@ -14,32 +14,52 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { id } = await params;
+  const { id: slugOrId } = await params;
   
   if (!isSupabaseConfigured()) return { title: "Listing - Restiqa" };
 
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("listings_with_stats")
-    .select("title, city, country, images")
-    .eq("id", id)
-    .single();
+  
+  // Try ID lookup first, then Slug lookup
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slugOrId);
+  
+  let query = supabase.from("listings_with_stats").select("title, description, city, country, images, type");
+  
+  if (isUuid) {
+    query = query.eq("id", slugOrId);
+  } else {
+    query = query.eq("slug", slugOrId);
+  }
+
+  const { data } = await query.single();
 
   if (!data) return { title: "Listing Not Found" };
 
+  const seoTitle = `${data.title} in ${data.city} | Restiqa`;
+  const seoDescription = data.description 
+    ? data.description.substring(0, 160) + "..."
+    : `Book this beautiful ${data.type} in ${data.city}, ${data.country} on Restiqa. Premium stays and verified hosts.`;
+
   return {
-    title: `${data.title} in ${data.city} | Restiqa`,
-    description: `Book these beautiful properties and stays in ${data.city}, Bangladesh on Restiqa. Verified hosts and secure mobile payments.`,
+    title: seoTitle,
+    description: seoDescription,
     openGraph: {
-      title: `${data.title} in ${data.city}`,
-      description: `Book these beautiful properties and stays in ${data.city}, Bangladesh on Restiqa.`,
-      images: data.images?.[0] ? [{ url: data.images[0] }] : [],
+      title: seoTitle,
+      description: seoDescription,
+      type: "website",
+      images: data.images?.[0] ? [{ url: data.images[0], width: 1200, height: 630 }] : [],
     },
+    twitter: {
+      card: "summary_large_image",
+      title: seoTitle,
+      description: seoDescription,
+      images: data.images?.[0] ? [data.images[0]] : [],
+    }
   };
 }
 
 export default async function ListingDetailsPage({ params }: PageProps) {
-  const { id } = await params;
+  const { id: slugOrId } = await params;
   const dict = await getDictionary();
   const locale = await getLocale();
 
@@ -55,12 +75,18 @@ export default async function ListingDetailsPage({ params }: PageProps) {
 
   const supabase = await createClient();
 
-  // 1. Fetch listing details (joined with host summary via the view)
-  const { data: listingData, error } = await supabase
-    .from("listings_with_stats")
-    .select("*")
-    .eq("id", id)
-    .single();
+  // 1. Fetch listing details by ID or Slug
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slugOrId);
+  
+  let query = supabase.from("listings_with_stats").select("*");
+  
+  if (isUuid) {
+    query = query.eq("id", slugOrId);
+  } else {
+    query = query.eq("slug", slugOrId);
+  }
+
+  const { data: listingData, error } = await query.single();
 
   if (error || !listingData) {
     notFound();
@@ -86,7 +112,7 @@ export default async function ListingDetailsPage({ params }: PageProps) {
       user_id,
       users ( name, avatar_url )
     `)
-    .eq("listing_id", id)
+    .eq("listing_id", listing.id)
     .order("created_at", { ascending: false });
 
   // Add type assert since the join shape doesn't perfectly match the raw Review interface

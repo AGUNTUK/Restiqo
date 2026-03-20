@@ -20,6 +20,15 @@ export default function Footer({ dict, locale }: { dict: typeof dictionaries["en
       ],
     },
     {
+      heading: dict.common.popularDest,
+      links: [
+        { href: "/dhaka", label: dict.search.cities.dhaka },
+        { href: "/coxs-bazar", label: dict.search.cities.coxsBazar },
+        { href: "/sylhet", label: dict.search.cities.sylhet },
+        { href: "/sajek", label: dict.search.cities.sajek },
+      ],
+    },
+    {
       heading: dict.footer.support,
       links: [
         { href: "#", label: dict.footer.helpCenter },
