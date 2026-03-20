@@ -142,9 +142,9 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
               <p className="text-[#718096] mb-6 font-medium">
                 {locale === "bn" ? "আপনার ফিল্টারের সাথে মিলে এমন কোনো জায়গা পাওয়া যায়নি।" : "We couldn't find any properties matching your criteria at the moment."}
               </p>
-              <button className="neo-btn neo-btn-primary px-6 py-3 rounded-xl font-bold" onClick={() => (window.location.href = "/listings")}>
+              <a href="/listings" className="neo-btn neo-btn-primary px-6 py-3 rounded-xl font-bold inline-block">
                 {locale === "bn" ? "ফিল্টার মুছুন" : "Clear Filters"}
-              </button>
+              </a>
             </div>
           )}
         </div>
