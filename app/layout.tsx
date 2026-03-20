@@ -63,6 +63,7 @@ export const viewport = {
 
 import { getDictionary, getLocale } from "@/lib/i18n";
 import Script from "next/script";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default async function RootLayout({
   children,
@@ -102,6 +103,7 @@ export default async function RootLayout({
         <Navbar />
         <main style={{ flex: 1 }}>{children}</main>
         <Footer dict={dict} locale={locale} />
+        <SpeedInsights />
       </body>
     </html>
   );
