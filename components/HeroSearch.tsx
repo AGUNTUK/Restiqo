@@ -8,36 +8,12 @@ import LocationAutocomplete from "./LocationAutocomplete";
 import GuestSelector from "./GuestSelector";
 import { GUEST_OPTIONS } from "@/lib/constants";
 import { useRecentSearches } from "@/lib/hooks/useRecentSearches";
-import Image from "next/image";
-
-const POPULAR_LOCATIONS = [
-  { 
-    name: "Cox’s Bazar", 
-    image: "https://images.unsplash.com/photo-1590001158193-790130ae8f2a?q=80&w=300&auto=format&fit=crop" 
-  },
-  { 
-    name: "Dhaka", 
-    image: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?q=80&w=300&auto=format&fit=crop" 
-  },
-  { 
-    name: "Sajek", 
-    image: "https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?q=80&w=300&auto=format&fit=crop" 
-  },
-  { 
-    name: "Sylhet", 
-    image: "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?q=80&w=300&auto=format&fit=crop" 
-  },
-  { 
-    name: "Bandarban", 
-    image: "https://images.unsplash.com/photo-1623944889288-cd147dbb517c?q=80&w=300&auto=format&fit=crop" 
-  },
-];
 
 type Guests = { adults: number; children: number; infants: number };
 
 export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }) {
   const router = useRouter();
-  const { searches, addSearch, clearSearches } = useRecentSearches();
+  const { addSearch } = useRecentSearches();
 
   const [location, setLocation] = useState("");
   const [checkIn, setCheckIn] = useState("");
@@ -112,7 +88,16 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
             <LocationAutocomplete
               placeholder={dict.search.where}
               defaultValue={location}
-              onSelect={(loc) => setLocation(loc.name)}
+              onSelect={(item) => {
+                if ('name' in item) {
+                  setLocation(item.name);
+                } else {
+                  setLocation(item.location);
+                  setCheckIn(item.checkin);
+                  setCheckOut(item.checkout);
+                  setGuests(item.guests);
+                }
+              }}
             />
           </div>
         </div>
@@ -179,80 +164,6 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
           </button>
         </div>
       </div>
-
-      {/* Popular Locations Discovery */}
-      <div className="mt-4 pt-3 border-t border-[#d1d9e0]">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[#a0aec0] mb-3 block px-1">
-          Popular Destinations
-        </span>
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
-          {POPULAR_LOCATIONS.map((loc) => (
-            <button
-              key={loc.name}
-              type="button"
-              onClick={() => setLocation(loc.name)}
-              className="flex-shrink-0 group relative overflow-hidden neo-card-sm w-32 h-20 rounded-xl transition-all active:scale-95 border border-white/40"
-            >
-              <Image 
-                src={loc.image} 
-                alt={loc.name}
-                fill
-                className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-              <div className="absolute bottom-2 left-2 right-2 text-left">
-                <p className="text-[10px] font-black text-white uppercase tracking-wider drop-shadow-md">
-                  {loc.name}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Recent Searches */}
-      {searches.length > 0 && (
-        <div className="mt-4 pt-3 border-t border-[#d1d9e0]">
-          <div className="flex items-center justify-between mb-2 px-1">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#a0aec0]">
-              Recent Searches
-            </span>
-            <button 
-              type="button" 
-              onClick={clearSearches}
-              className="text-[10px] font-bold uppercase tracking-widest text-[#6c63ff] hover:opacity-70 transition-opacity"
-            >
-              Clear all
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {searches.map((s, i) => (
-              <button
-                key={`${s.location}-${s.timestamp}`}
-                type="button"
-                onClick={() => {
-                  setLocation(s.location);
-                  setCheckIn(s.checkin);
-                  setCheckOut(s.checkout);
-                  setGuests(s.guests);
-                }}
-                className="neo-card-sm flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a5568] hover:bg-white/40 transition-all border border-white/40"
-              >
-                <span className="opacity-60 text-sm">🕒</span>
-                <span>{s.location || "Anywhere"}</span>
-                {s.checkin && (
-                  <span className="text-[10px] text-[#a0aec0] font-medium border-l border-[#d1d9e0] pl-2 ml-1">
-                    {new Date(s.checkin).toLocaleDateString([], { month: 'short', day: 'numeric' })}
-                  </span>
-                )}
-                <span className="text-[10px] text-[#a0aec0] font-medium border-l border-[#d1d9e0] pl-2 ml-1">
-                  {s.guests.adults + s.guests.children} guest{(s.guests.adults + s.guests.children) !== 1 ? 's' : ''}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Advanced Filters */}
       <div className="flex flex-wrap items-center gap-4 pt-3 mt-3 border-t border-[#d1d9e0]">

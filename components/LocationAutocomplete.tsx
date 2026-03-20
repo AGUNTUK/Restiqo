@@ -2,10 +2,13 @@
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { locations, Location } from "@/lib/data/locations";
+import { useRecentSearches, RecentSearch } from "@/lib/hooks/useRecentSearches";
+import { POPULAR_LOCATIONS } from "@/lib/constants";
+import Image from "next/image";
 
 interface LocationAutocompleteProps {
   placeholder?: string;
-  onSelect: (location: Location) => void;
+  onSelect: (location: Location | RecentSearch) => void;
   defaultValue?: string;
 }
 
@@ -21,6 +24,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { searches, clearSearches } = useRecentSearches();
 
   // 1. Debounce Logic
   useEffect(() => {
@@ -222,10 +227,75 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
             </div>
           </button>
 
-          {suggestions.length === 0 && !isLocating && !query.trim() && (
+          {/* Discovery View (when query is empty) */}
+          {!query.trim() && (
+            <div className="animate-in fade-in duration-300">
+              {/* Recent Searches */}
+              {searches.length > 0 && (
+                <div className="mb-4">
+                  <div className="px-4 py-2 flex items-center justify-between">
+                    <span className="text-[10px] font-extrabold text-[#a0aec0] uppercase tracking-widest">
+                      Recent Searches
+                    </span>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); clearSearches(); }}
+                      className="text-[10px] font-bold text-[#6c63ff] uppercase hover:underline"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 gap-1 px-1">
+                    {searches.map((s) => (
+                      <button
+                        key={`${s.location}-${s.timestamp}`}
+                        onClick={() => {
+                          setQuery(s.location);
+                          setIsOpen(false);
+                          onSelect(s);
+                        }}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-left transition-all"
+                      >
+                        <span className="text-base opacity-60">🕒</span>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-[#4a5568]">{s.location || "Anywhere"}</span>
+                          <span className="text-[10px] text-[#a0aec0]">{s.guests.adults + s.guests.children} guests • {s.checkin ? new Date(s.checkin).toLocaleDateString() : 'No dates'}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Popular Destinations */}
+              <div>
+                <div className="px-4 py-2 text-[10px] font-extrabold text-[#a0aec0] uppercase tracking-widest">
+                  Popular Destinations
+                </div>
+                <div className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide">
+                  {POPULAR_LOCATIONS.map((loc) => (
+                    <button
+                      key={loc.name}
+                      onClick={() => {
+                        const match = locations.find(l => l.name === loc.name);
+                        if (match) handleSelect(match);
+                      }}
+                      className="flex-shrink-0 group relative w-28 h-20 rounded-xl overflow-hidden shadow-sm"
+                    >
+                      <Image src={loc.image} alt={loc.name} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
+                      <span className="absolute bottom-2 left-2 right-2 text-[9px] font-black text-white uppercase tracking-wider">{loc.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Suggestions List (when grouping is available and query exists) */}
+          {query.trim() && suggestions.length === 0 && !isLocating && (
             <div className="px-4 py-6 text-center text-[#a0aec0]">
               <p className="text-xl mb-1">🔍</p>
-              <p className="text-xs font-bold uppercase tracking-widest">Start typing to find locations</p>
+              <p className="text-xs font-bold uppercase tracking-widest">No results found</p>
             </div>
           )}
           
