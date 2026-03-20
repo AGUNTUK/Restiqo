@@ -15,6 +15,6 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: "https://restiqa-market.vercel.app/sitemap.xml",
+    sitemap: "https://www.restiqa.com/sitemap.xml",
   };
 }
