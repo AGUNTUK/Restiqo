@@ -18,6 +18,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   const [debouncedQuery, setDebouncedQuery] = useState(defaultValue);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // 1. Debounce Logic
@@ -75,6 +77,66 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
     setIsOpen(false);
     onSelect(location);
   }, [onSelect]);
+
+  const handleDetectLocation = async () => {
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation not supported");
+      return;
+    }
+
+    setIsLocating(true);
+    setLocationError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          
+          // Reverse Geocoding via Nominatim
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`
+          );
+          const data = await res.json();
+          
+          const cityName = data.address.city || data.address.town || data.address.village || data.address.state_district || "Dhaka";
+          
+          // Try to find a match in our locations dataset
+          const match = locations.find(l => 
+            l.name.toLowerCase().includes(cityName.toLowerCase()) || 
+            cityName.toLowerCase().includes(l.name.toLowerCase())
+          );
+
+          if (match) {
+            handleSelect(match);
+          } else {
+            // If no match in dataset, just set the text and try to match dummy location or similar
+            const cityLoc: Location = {
+              name: cityName,
+              name_bn: "আপনার এলাকা", // Generic "Your Area" in Bangla
+              type: "area",
+              district: "Detected",
+              lat: latitude,
+              lng: longitude
+            };
+            handleSelect(cityLoc);
+          }
+        } catch (error) {
+          console.error("Geocoding failed", error);
+          setLocationError("Could not detect city");
+          handleSelect(locations.find(l => l.name === "Dhaka")!);
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error", error);
+        setLocationError("Permission denied");
+        setIsLocating(false);
+        handleSelect(locations.find(l => l.name === "Dhaka")!);
+      },
+      { timeout: 10000 }
+    );
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
@@ -137,8 +199,35 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       </div>
 
       {/* Suggestion Dropdown */}
-      {isOpen && suggestions.length > 0 && (
+      {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-3 z-50 neo-card overflow-hidden bg-white/90 backdrop-blur-xl border border-white/60 rounded-[24px] shadow-2xl p-2 animate-in fade-in slide-in-from-top-2 duration-200">
+          
+          {/* Geo-location Button */}
+          <button
+            type="button"
+            onClick={handleDetectLocation}
+            disabled={isLocating}
+            className="w-full flex items-center gap-3 px-4 py-4 rounded-xl transition-all text-left group hover:bg-[#6c63ff]/5 text-[#6c63ff] border-b border-gray-100 mb-2"
+          >
+            <span className={`text-xl transition-transform duration-300 ${isLocating ? "animate-spin" : "group-hover:scale-125"}`}>
+              {isLocating ? "⏳" : "📍"}
+            </span>
+            <div className="flex flex-col">
+              <span className="font-extrabold text-sm uppercase tracking-wider">
+                {isLocating ? "Detecting location..." : "Use my current location"}
+              </span>
+              <span className="text-[10px] text-[#a0aec0] font-medium">
+                {locationError || "Near you • Bangladesh"}
+              </span>
+            </div>
+          </button>
+
+          {suggestions.length === 0 && !isLocating && !query.trim() && (
+            <div className="px-4 py-6 text-center text-[#a0aec0]">
+              <p className="text-xl mb-1">🔍</p>
+              <p className="text-xs font-bold uppercase tracking-widest">Start typing to find locations</p>
+            </div>
+          )}
           
           {/* Districts Group */}
           {groupedSuggestions.districts.length > 0 && (
