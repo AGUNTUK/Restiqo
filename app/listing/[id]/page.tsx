@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getDictionary, getLocale } from "@/lib/i18n";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { createClient, createStaticClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { type ListingWithStats } from "@/lib/types/database";
 import BookingCard from "@/components/BookingCard";
 import ListingCard from "@/components/ListingCard";
@@ -17,7 +17,7 @@ interface PageProps {
 export async function generateStaticParams() {
   if (!isSupabaseConfigured()) return [];
 
-  const supabase = await createClient();
+  const supabase = await createStaticClient();
   const { data } = await supabase
     .from("listings")
     .select("id, slug")
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   
   if (!isSupabaseConfigured()) return { title: "Listing - Restiqa" };
 
-  const supabase = await createClient();
+  const supabase = await createStaticClient();
   
   // Try ID lookup first, then Slug lookup
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slugOrId);

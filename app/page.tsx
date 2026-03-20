@@ -4,12 +4,7 @@ import Link from "next/link";
 import HeroSearch from "@/components/HeroSearch";
 import ListingCard from "@/components/ListingCard";
 import { getDictionary, getLocale } from "@/lib/i18n";
-import dynamic from "next/dynamic";
-
-const InteractiveHeroBg = dynamic(() => import("@/components/InteractiveHeroBg"), {
-  ssr: false,
-  loading: () => <div className="absolute inset-0 bg-[#e8edf2] -z-10" />,
-});
+import { DynamicHeroBg } from "@/components/LazyWrappers";
 
 export const metadata: Metadata = {
   title: "Restiqa — Find Your Perfect Stay",
@@ -105,7 +100,7 @@ export default async function HomePage() {
       ═══════════════════════════════════════════ */}
       <section className="relative overflow-hidden min-h-[90vh] flex flex-col justify-center">
         {/* Interactive Travel Parallax Background */}
-        <InteractiveHeroBg />
+        <DynamicHeroBg />
 
         <div className="relative max-w-6xl mx-auto px-6 pt-16 pb-12 w-full text-center pointer-events-none [&>*]:pointer-events-auto">
           {/* Pill badge */}

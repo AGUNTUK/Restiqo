@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { createClient, createStaticClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { type Blog } from "@/lib/types/database";
 import { getDictionary } from "@/lib/i18n";
 
@@ -13,7 +13,7 @@ interface PageProps {
 export async function generateStaticParams() {
   if (!isSupabaseConfigured()) return [];
 
-  const supabase = await createClient();
+  const supabase = await createStaticClient();
   const { data } = await supabase.from("blogs").select("slug");
 
   return (data || []).map((post) => ({
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   
   if (!isSupabaseConfigured()) return { title: "Blog - Restiqa" };
 
-  const supabase = await createClient();
+  const supabase = await createStaticClient();
   const { data } = await supabase
     .from("blogs")
     .select("title, excerpt, cover_image")

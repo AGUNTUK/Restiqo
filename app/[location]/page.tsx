@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { createClient, createStaticClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { type ListingWithStats } from "@/lib/types/database";
 import ListingCard from "@/components/ListingCard";
 import { getDictionary } from "@/lib/i18n";

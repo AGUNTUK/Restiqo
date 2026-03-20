@@ -2,19 +2,7 @@ import type { Metadata } from "next";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { type ListingWithStats } from "@/lib/types/database";
 import ListingCard from "@/components/ListingCard";
-import dynamic from "next/dynamic";
-
-const ListingsMap = dynamic(() => import("@/components/ListingsMap"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full bg-[#e8edf2] rounded-3xl flex items-center justify-center animate-pulse">
-      <div className="text-center">
-        <span className="text-3xl mb-2 block">🗺️</span>
-        <p className="text-xs font-bold text-[#a0aec0]">Loading Interactive Map...</p>
-      </div>
-    </div>
-  ),
-});
+import { DynamicListingsMap } from "@/components/LazyWrappers";
 
 export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
@@ -164,7 +152,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
         {/* Right Side: Sticky Interactive Map */}
         <div className="hidden lg:block lg:w-[45%] xl:w-[40%] relative">
           <div className="sticky top-24 h-[calc(100vh-140px)] w-full">
-            <ListingsMap listings={listings as ListingWithStats[]} />
+            <DynamicListingsMap listings={listings as ListingWithStats[]} />
           </div>
         </div>
       </div>

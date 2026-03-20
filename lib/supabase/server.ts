@@ -49,3 +49,20 @@ export async function createClient() {
     },
   });
 }
+
+/**
+ * Static Supabase client for build-time operations (e.g. generateStaticParams).
+ * Does NOT use cookies to avoid errors during static site generation.
+ */
+export async function createStaticClient() {
+  if (!isSupabaseConfigured()) {
+    throw new Error("Supabase credentials are not configured.");
+  }
+
+  return createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    cookies: {
+      getAll() { return []; },
+      setAll() { /* No-op in static context */ },
+    },
+  });
+}

@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { createClient, createStaticClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 const BASE_URL = "https://restiqa-market.vercel.app";
 
@@ -17,7 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   if (!isSupabaseConfigured()) return staticRoutes;
 
-  const supabase = await createClient();
+  const supabase = await createStaticClient();
 
   // 1. Fetch Listings
   const { data: listings } = await supabase
