@@ -207,30 +207,10 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-3 z-50 neo-card overflow-hidden bg-white/90 backdrop-blur-xl border border-white/60 rounded-[24px] shadow-2xl p-2 animate-in fade-in slide-in-from-top-2 duration-200">
           
-          {/* Geo-location Button */}
-          <button
-            type="button"
-            onClick={handleDetectLocation}
-            disabled={isLocating}
-            className="w-full flex items-center gap-3 px-4 py-4 rounded-xl transition-all text-left group hover:bg-[#6c63ff]/5 text-[#6c63ff] border-b border-gray-100 mb-2"
-          >
-            <span className={`text-xl transition-transform duration-300 ${isLocating ? "animate-spin" : "group-hover:scale-125"}`}>
-              {isLocating ? "⏳" : "📍"}
-            </span>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-sm uppercase tracking-wider">
-                {isLocating ? "Detecting location..." : "Use my current location"}
-              </span>
-              <span className="text-[10px] text-[#a0aec0] font-medium">
-                {locationError || "Near you • Bangladesh"}
-              </span>
-            </div>
-          </button>
-
           {/* Discovery View (when query is empty) */}
           {!query.trim() && (
             <div className="animate-in fade-in duration-300">
-              {/* Recent Searches */}
+              {/* 1. Recent Searches */}
               {searches.length > 0 && (
                 <div className="mb-4">
                   <div className="px-4 py-2 flex items-center justify-between">
@@ -266,8 +246,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
                 </div>
               )}
 
-              {/* Popular Destinations */}
-              <div>
+              {/* 2. Popular Destinations */}
+              <div className="mb-4">
                 <div className="px-4 py-2 text-[10px] font-extrabold text-[#a0aec0] uppercase tracking-widest">
                   Popular Destinations
                 </div>
@@ -288,6 +268,26 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
                   ))}
                 </div>
               </div>
+
+              {/* 3. Geo-location Button (at bottom of discovery) */}
+              <button
+                type="button"
+                onClick={handleDetectLocation}
+                disabled={isLocating}
+                className="w-full flex items-center gap-3 px-4 py-4 rounded-xl transition-all text-left group hover:bg-[#6c63ff]/5 text-[#6c63ff] border-t border-gray-100"
+              >
+                <span className={`text-xl transition-transform duration-300 ${isLocating ? "animate-spin" : "group-hover:scale-125"}`}>
+                  {isLocating ? "⏳" : "📍"}
+                </span>
+                <div className="flex flex-col">
+                  <span className="font-extrabold text-sm uppercase tracking-wider">
+                    {isLocating ? "Detecting location..." : "Use my current location"}
+                  </span>
+                  <span className="text-[10px] text-[#a0aec0] font-medium">
+                    {locationError || "Near you • Bangladesh"}
+                  </span>
+                </div>
+              </button>
             </div>
           )}
 
