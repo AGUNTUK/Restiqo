@@ -5,12 +5,8 @@ import { useRouter } from "next/navigation";
 
 import { dictionaries } from "@/lib/i18n/dictionaries";
 import LocationAutocomplete from "./LocationAutocomplete";
-
-const GUEST_OPTIONS = [
-  { key: "adults", label: "Adults", sub: "Ages 13+", min: 0 },
-  { key: "children", label: "Children", sub: "Ages 2–12", min: 0 },
-  { key: "infants", label: "Infants", sub: "Under 2", min: 0 },
-];
+import GuestSelector from "./GuestSelector";
+import { GUEST_OPTIONS } from "@/lib/constants";
 
 type Guests = { adults: number; children: number; infants: number };
 
@@ -19,8 +15,7 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
   const [location, setLocation] = useState("");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState<Guests>({ adults: 0, children: 0, infants: 0 });
-  const [guestOpen, setGuestOpen] = useState(false);
+  const [guests, setGuests] = useState<Guests>({ adults: 1, children: 0, infants: 0 });
 
   // Advanced Filters
   const [ac, setAc] = useState(false);
@@ -34,9 +29,10 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
   const totalGuests = guests.adults + guests.children;
 
   function changeGuest(key: keyof Guests, delta: number) {
+    const min = GUEST_OPTIONS.find(o => o.key === key)?.min ?? 0;
     setGuests((g) => ({
       ...g,
-      [key]: Math.max(GUEST_OPTIONS.find((o) => o.key === key)!.min, g[key] + delta),
+      [key]: Math.max(min, g[key] + delta),
     }));
   }
 
@@ -130,65 +126,12 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="hidden lg:block w-px self-stretch" style={{ background: "#d1d9e0" }} />
-
-        {/* Guests */}
-        <div className="flex-1 min-w-0 relative">
-          <label className="block text-[10px] font-bold uppercase tracking-widest mb-1 pl-1" style={{ color: "#a0aec0" }}>
-            {dict.search.guests}
-          </label>
-          <button
-            type="button"
-            onClick={() => setGuestOpen(!guestOpen)}
-            className="neo-inset w-full flex items-center gap-2 px-3 py-4 rounded-xl text-left"
-            id="hero-guests-btn"
-          >
-            <span className="text-base">👥</span>
-            <span className="text-sm flex-1" style={{ color: totalGuests > 0 ? "#2d3748" : "#a0aec0" }}>
-              {totalGuests > 0 ? `${totalGuests} ${dict.search.guests.toLowerCase()}` : dict.search.addGuests}
-            </span>
-            <span className="text-xs transition-transform" style={{ transform: guestOpen ? "rotate(180deg)" : "none", color: "#a0aec0" }}>▾</span>
-          </button>
-
-          {/* Guest dropdown */}
-          {guestOpen && (
-            <div
-              className="absolute top-full right-0 mt-2 w-72 neo-card rounded-2xl p-4 z-50"
-              style={{ background: "#e8edf2" }}
-            >
-              {GUEST_OPTIONS.map(({ key, label, sub }) => (
-                <div key={key} className="flex items-center justify-between py-3 border-b last:border-0" style={{ borderColor: "#d1d9e0" }}>
-                  <div>
-                    <p className="font-semibold text-sm" style={{ color: "#2d3748" }}>{label}</p>
-                    <p className="text-xs" style={{ color: "#a0aec0" }}>{sub}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => changeGuest(key as keyof Guests, -1)}
-                      className="neo-btn w-8 h-8 rounded-lg text-lg font-bold"
-                      style={{ color: "#6c63ff" }}
-                    >
-                      −
-                    </button>
-                    <span className="w-5 text-center font-bold text-sm" style={{ color: "#2d3748" }}>
-                      {guests[key as keyof Guests]}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => changeGuest(key as keyof Guests, 1)}
-                      className="neo-btn w-8 h-8 rounded-lg text-lg font-bold"
-                      style={{ color: "#6c63ff" }}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Guests via Portal */}
+        <GuestSelector 
+          guests={guests} 
+          onGuestsChange={changeGuest} 
+          dict={dict} 
+        />
 
         {/* Search button */}
         <div className="flex items-end">
