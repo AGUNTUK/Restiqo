@@ -7,11 +7,14 @@ import { dictionaries } from "@/lib/i18n/dictionaries";
 import LocationAutocomplete from "./LocationAutocomplete";
 import GuestSelector from "./GuestSelector";
 import { GUEST_OPTIONS } from "@/lib/constants";
+import { useRecentSearches } from "@/lib/hooks/useRecentSearches";
 
 type Guests = { adults: number; children: number; infants: number };
 
 export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }) {
   const router = useRouter();
+  const { searches, addSearch, clearSearches } = useRecentSearches();
+
   const [location, setLocation] = useState("");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
@@ -57,6 +60,14 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
     if (filters.length > 0) {
       params.set("amenities", filters.join(","));
     }
+
+    // Save to Recent Searches
+    addSearch({
+      location,
+      checkin: checkIn,
+      checkout: checkOut,
+      guests
+    });
 
     router.push(`/listings?${params.toString()}`);
   }
@@ -144,6 +155,50 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
           </button>
         </div>
       </div>
+
+      {/* Recent Searches */}
+      {searches.length > 0 && (
+        <div className="mt-4 pt-3 border-t border-[#d1d9e0]">
+          <div className="flex items-center justify-between mb-2 px-1">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#a0aec0]">
+              Recent Searches
+            </span>
+            <button 
+              type="button" 
+              onClick={clearSearches}
+              className="text-[10px] font-bold uppercase tracking-widest text-[#6c63ff] hover:opacity-70 transition-opacity"
+            >
+              Clear all
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {searches.map((s, i) => (
+              <button
+                key={`${s.location}-${s.timestamp}`}
+                type="button"
+                onClick={() => {
+                  setLocation(s.location);
+                  setCheckIn(s.checkin);
+                  setCheckOut(s.checkout);
+                  setGuests(s.guests);
+                }}
+                className="neo-card-sm flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a5568] hover:bg-white/40 transition-all border border-white/40"
+              >
+                <span className="opacity-60 text-sm">🕒</span>
+                <span>{s.location || "Anywhere"}</span>
+                {s.checkin && (
+                  <span className="text-[10px] text-[#a0aec0] font-medium border-l border-[#d1d9e0] pl-2 ml-1">
+                    {new Date(s.checkin).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                  </span>
+                )}
+                <span className="text-[10px] text-[#a0aec0] font-medium border-l border-[#d1d9e0] pl-2 ml-1">
+                  {s.guests.adults + s.guests.children} guest{(s.guests.adults + s.guests.children) !== 1 ? 's' : ''}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Advanced Filters */}
       <div className="flex flex-wrap items-center gap-4 pt-3 mt-3 border-t border-[#d1d9e0]">
