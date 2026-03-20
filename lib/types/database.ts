@@ -100,3 +100,17 @@ export interface PayoutMethod {
   is_default: boolean;
   created_at: string;
 }
+
+export interface Blog {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  cover_image: string | null;
+  author_id: string;
+  created_at: string;
+  updated_at: string;
+  author_name?: string;
+  author_avatar?: string;
+}

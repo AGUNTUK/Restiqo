@@ -16,7 +16,7 @@ export default function Footer({ dict, locale }: { dict: typeof dictionaries["en
       links: [
         { href: "#", label: dict.footer.aboutUs },
         { href: "#", label: dict.footer.careers },
-        { href: "#", label: dict.footer.blog },
+        { href: "/blog", label: dict.footer.blog },
       ],
     },
     {
