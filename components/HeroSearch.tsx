@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { dictionaries } from "@/lib/i18n/dictionaries";
+import LocationAutocomplete from "./LocationAutocomplete";
 
 const GUEST_OPTIONS = [
   { key: "adults", label: "Adults", sub: "Ages 13+", min: 0 },
@@ -76,16 +77,11 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
           <label className="block text-[10px] font-bold uppercase tracking-widest mb-1 pl-1" style={{ color: "#a0aec0" }}>
             {dict.search.location}
           </label>
-          <div className="neo-inset flex items-center gap-2 px-3 rounded-xl">
-            <span className="text-base">📍</span>
-            <input
-              type="text"
+          <div className="relative">
+            <LocationAutocomplete
               placeholder={dict.search.where}
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="bg-transparent border-none outline-none py-4 text-sm w-full"
-              style={{ color: "#2d3748", fontFamily: "inherit" }}
-              id="hero-location"
+              defaultValue={location}
+              onSelect={(loc) => setLocation(loc.name)}
             />
           </div>
         </div>
