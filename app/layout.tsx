@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://restiqa-market.vercel.app"),
+  metadataBase: new URL("https://www.restiqa.com"),
   title: {
     default: "Restiqa — Premium Travel Marketplace in Bangladesh",
     template: "%s | Restiqa",
