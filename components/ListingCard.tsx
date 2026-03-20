@@ -24,7 +24,7 @@ export default function ListingCard({ listing, dict }: ListingCardProps) {
         <div className="relative aspect-[4/3] rounded-[16px] overflow-hidden mb-4">
           <Image
             src={imageSrc}
-            alt={listing.title}
+            alt={`${listing.title} in ${listing.city}, Bangladesh`}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

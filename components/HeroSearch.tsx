@@ -83,7 +83,7 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
               placeholder={dict.search.where}
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="bg-transparent border-none outline-none py-3 text-sm w-full"
+              className="bg-transparent border-none outline-none py-4 text-sm w-full"
               style={{ color: "#2d3748", fontFamily: "inherit" }}
               id="hero-location"
             />
@@ -105,7 +105,7 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
               type="date"
               value={checkIn}
               onChange={(e) => setCheckIn(e.target.value)}
-              className="bg-transparent border-none outline-none py-3 text-sm flex-1"
+              className="bg-transparent border-none outline-none py-4 text-sm flex-1"
               style={{ color: checkIn ? "#2d3748" : "#a0aec0", fontFamily: "inherit", minWidth: 0 }}
               min={new Date().toISOString().split("T")[0]}
             />
@@ -127,7 +127,7 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
               type="date"
               value={checkOut}
               onChange={(e) => setCheckOut(e.target.value)}
-              className="bg-transparent border-none outline-none py-3 text-sm flex-1"
+              className="bg-transparent border-none outline-none py-4 text-sm flex-1"
               style={{ color: checkOut ? "#2d3748" : "#a0aec0", fontFamily: "inherit", minWidth: 0 }}
               min={checkIn || new Date().toISOString().split("T")[0]}
             />
@@ -145,7 +145,7 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
           <button
             type="button"
             onClick={() => setGuestOpen(!guestOpen)}
-            className="neo-inset w-full flex items-center gap-2 px-3 py-3 rounded-xl text-left"
+            className="neo-inset w-full flex items-center gap-2 px-3 py-4 rounded-xl text-left"
             id="hero-guests-btn"
           >
             <span className="text-base">👥</span>

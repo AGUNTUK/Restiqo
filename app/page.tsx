@@ -3,8 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import HeroSearch from "@/components/HeroSearch";
 import ListingCard from "@/components/ListingCard";
-import InteractiveHeroBg from "@/components/InteractiveHeroBg";
 import { getDictionary, getLocale } from "@/lib/i18n";
+import dynamic from "next/dynamic";
+
+const InteractiveHeroBg = dynamic(() => import("@/components/InteractiveHeroBg"), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0 bg-[#e8edf2] -z-10" />,
+});
 
 export const metadata: Metadata = {
   title: "Restiqa — Find Your Perfect Stay",

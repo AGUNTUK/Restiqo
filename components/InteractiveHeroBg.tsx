@@ -155,7 +155,7 @@ export default function InteractiveHeroBg() {
                   >
                     <Image 
                       src={item.src!} 
-                      alt="Travel Aesthetic" 
+                      alt={`Travel destination inspiration - ${item.id}`} 
                       fill 
                       priority={item.id === 3}
                       sizes="300px"

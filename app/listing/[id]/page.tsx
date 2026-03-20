@@ -6,11 +6,35 @@ import { getDictionary, getLocale } from "@/lib/i18n";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { type ListingWithStats } from "@/lib/types/database";
 import BookingCard from "@/components/BookingCard";
+import ListingCard from "@/components/ListingCard";
 
 export const revalidate = 60;
 
 interface PageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateStaticParams() {
+  if (!isSupabaseConfigured()) return [];
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("listings")
+    .select("id, slug")
+    .eq("status", "approved")
+    .eq("is_available", true);
+
+  if (!data) return [];
+
+  // Generate params for both ID and Slug to support both URL types
+  const params = [];
+  for (const item of data) {
+    params.push({ id: item.id });
+    if (item.slug) {
+      params.push({ id: item.slug });
+    }
+  }
+  return params;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -164,10 +188,11 @@ export default async function ListingDetailsPage({ params }: PageProps) {
           >
             <Image
               src={img}
-              alt={`${listing.title} - View ${index + 1}`}
+              alt={`${listing.title} in ${listing.city} - Gallery Image ${index + 1}`}
               fill
               className="object-cover transition-transform duration-700 hover:scale-105"
               sizes="(max-width: 768px) 100vw, 50vw"
+              priority={index === 0}
             />
           </div>
         ))}
@@ -199,7 +224,7 @@ export default async function ListingDetailsPage({ params }: PageProps) {
               >
                 <Image
                   src={host?.avatar_url || "https://i.pravatar.cc/150"}
-                  alt={host?.name || "Host"}
+                  alt={`Host ${host?.name || "at Restiqa"}`}
                   width={80}
                   height={80}
                   className="w-full h-full object-cover"
@@ -313,6 +338,53 @@ export default async function ListingDetailsPage({ params }: PageProps) {
           {dict.booking.reserve}
         </button>
       </div>
+
+      {/* Internal Linking: More in this city */}
+      <section className="mt-16 p-8 rounded-[32px] neo-inset text-center border border-white">
+        <h2 className="text-xl font-extrabold text-[#1a202c] mb-3">Love {listing.city}?</h2>
+        <p className="text-[#718096] font-medium mb-6">Discover more unique stays and travel guides for your next trip to {listing.city}.</p>
+        <Link 
+          href={`/${listing.city.toLowerCase().replace(/\s+/g, '-')}`}
+          className="neo-btn neo-btn-primary px-8 py-3 rounded-xl font-extrabold inline-block no-underline"
+        >
+          Explore all stays in {listing.city} →
+        </Link>
+      </section>
+
+      {/* Related Stays */}
+      <RelatedStays currentId={listing.id} city={listing.city} dict={dict} />
     </div>
+  );
+}
+
+async function RelatedStays({ currentId, city, dict }: { currentId: string; city: string; dict: any }) {
+  let related: any[] = [];
+  
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("listings_with_stats")
+      .select("*")
+      .eq("city", city)
+      .eq("status", "approved")
+      .neq("id", currentId)
+      .limit(3);
+    
+    related = data || [];
+  }
+
+  if (related.length === 0) return null;
+
+  return (
+    <section className="mt-20 border-t border-[#d1d9e0]/50 pt-16">
+      <h2 className="text-2xl md:text-3xl font-extrabold text-[#1a202c] mb-8 tracking-tight">
+        You might also like...
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {related.map((item) => (
+          <ListingCard key={item.id} listing={item} dict={dict} />
+        ))}
+      </div>
+    </section>
   );
 }

@@ -258,34 +258,36 @@ export default function NavbarClient({
               key={href}
               href={href}
               onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-4 rounded-2xl transition-all active:scale-95"
+              className="flex items-center gap-4 px-5 py-5 rounded-2xl transition-all active:scale-95 border border-transparent active:border-[#6c63ff]/20"
               style={{
                 fontWeight: 700,
                 textDecoration: "none",
+                minHeight: "64px",
                 color: pathname === href ? "#6c63ff" : "#4a5568",
                 background: pathname === href ? "rgba(108, 99, 255, 0.08)" : "transparent",
-                marginBottom: "0.25rem",
+                marginBottom: "0.4rem",
               }}
             >
-              <span className="text-xl">{icon}</span>
-              {label}
+              <span className="text-2xl">{icon}</span>
+              <span className="text-[1.1rem]">{label}</span>
             </Link>
           ))}
           {user && (
             <Link
               href="/dashboard"
               onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-4 rounded-2xl transition-all active:scale-95"
+              className="flex items-center gap-4 px-5 py-5 rounded-2xl transition-all active:scale-95 border border-transparent active:border-[#6c63ff]/20"
               style={{ 
                 fontWeight: 700, 
                 textDecoration: "none", 
+                minHeight: "64px",
                 color: pathname === "/dashboard" ? "#6c63ff" : "#4a5568",
                 background: pathname === "/dashboard" ? "rgba(108, 99, 255, 0.08)" : "transparent",
-                marginBottom: "0.25rem",
+                marginBottom: "0.4rem",
               }}
             >
-              <span className="text-xl">📊</span>
-              {dict.dashboard}
+              <span className="text-2xl">📊</span>
+              <span className="text-[1.1rem]">{dict.dashboard}</span>
             </Link>
           )}
           <div className="px-4 py-4 border-t border-b border-[#d1d9e0]/50 my-2">

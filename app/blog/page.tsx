@@ -55,7 +55,7 @@ export default async function BlogListingPage() {
                 <div className="relative aspect-[16/10] rounded-[24px] overflow-hidden mb-5">
                   <Image
                     src={post.cover_image || "https://images.unsplash.com/photo-1544333323-537ffecaa8c3?w=800"}
-                    alt={post.title}
+                    alt={`${post.title} - Travel Guide | Restiqa`}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

@@ -51,7 +51,15 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport = {
+  themeColor: "#6c63ff",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5, // Allow zooming for accessibility but starting at 1
+};
+
 import { getDictionary, getLocale } from "@/lib/i18n";
+import Script from "next/script";
 
 export default async function RootLayout({
   children,
@@ -61,6 +69,23 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className={inter.variable}>
+      <head>
+        {/* Google tag (gtag.js) */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-7PJEXZ6FWJ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-7PJEXZ6FWJ');
+          `}
+        </Script>
+      </head>
       <body
         style={{
           background: "var(--bg)",

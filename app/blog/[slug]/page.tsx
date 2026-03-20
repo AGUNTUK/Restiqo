@@ -4,9 +4,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { type Blog } from "@/lib/types/database";
+import { getDictionary } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateStaticParams() {
+  if (!isSupabaseConfigured()) return [];
+
+  const supabase = await createClient();
+  const { data } = await supabase.from("blogs").select("slug");
+
+  return (data || []).map((post) => ({
+    slug: post.slug,
+  }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -145,7 +157,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
         <div className="relative w-full h-full rounded-[32px] overflow-hidden">
           <Image
             src={post.cover_image || "https://images.unsplash.com/photo-1544333323-537ffecaa8c3?w=1200"}
-            alt={post.title}
+            alt={`${post.title} - Travel Guide | Restiqa`}
             fill
             className="object-cover"
             priority
@@ -163,7 +175,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
         <div className="w-24 h-24 rounded-[32px] overflow-hidden neo-shadow-sm flex-shrink-0 rotate-3">
           <Image
             src={post.author_avatar || "https://i.pravatar.cc/150"}
-            alt={post.author_name || "Author"}
+            alt={`Author ${post.author_name || "at Restiqa"}`}
             width={96}
             height={96}
             className="w-full h-full object-cover"
@@ -176,6 +188,9 @@ export default async function BlogDetailsPage({ params }: PageProps) {
           </p>
         </div>
       </div>
+      
+      {/* Featured Stays for this Post */}
+      <FeaturedStays blogTitle={post.title} />
       
       {/* Newsletter / CTA */}
       <div className="max-w-3xl mx-auto mt-20 text-center">
@@ -200,3 +215,48 @@ export default async function BlogDetailsPage({ params }: PageProps) {
     </article>
   );
 }
+
+async function FeaturedStays({ blogTitle }: { blogTitle: string }) {
+  let listings: any[] = [];
+  
+  // Extract potential city from title
+  const cities = ["Cox's Bazar", "Dhaka", "Sylhet", "Sajek"];
+  const city = cities.find(c => blogTitle.includes(c)) || "Cox's Bazar";
+
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("listings_with_stats")
+      .select("*")
+      .ilike("city", `%${city}%`)
+      .eq("status", "approved")
+      .limit(3);
+    
+    listings = data || [];
+  }
+
+  if (listings.length === 0) return null;
+
+  const dict = await getDictionary();
+
+  return (
+    <section className="max-w-4xl mx-auto mt-20 pt-16 border-t border-[#e2e8f0]">
+      <h2 className="text-2xl md:text-3xl font-extrabold text-[#1a202c] mb-8 text-center tracking-tight">
+        Plan your trip to {city}
+      </h2>
+      <p className="text-[#718096] text-center mb-10 font-medium">Verified stays recommended for this guide</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        {listings.map((item) => (
+          <ListingCard key={item.id} listing={item} dict={dict} />
+        ))}
+      </div>
+      <div className="text-center">
+        <Link href={`/${city.toLowerCase().replace(/\s+/g, '-')}`} className="neo-btn px-8 py-3 rounded-xl font-extrabold inline-block no-underline" style={{ background: "#e8edf2", color: "#6c63ff", boxShadow: "4px 4px 10px #c4c9ce, -4px -4px 10px #ffffff" }}>
+          View all stays in {city} →
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+import ListingCard from "@/components/ListingCard";

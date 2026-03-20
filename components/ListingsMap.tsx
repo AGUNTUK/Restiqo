@@ -79,7 +79,7 @@ export default function ListingsMap({ listings }: ListingsMapProps) {
             <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden relative">
               <Image 
                 src={activeListing.images?.[0] || "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=200"}
-                alt={activeListing.title}
+                alt={`${activeListing.title} in ${activeListing.city}`}
                 fill
                 className="object-cover"
               />

@@ -41,6 +41,12 @@ interface Props {
   params: Promise<{ location: string }>;
 }
 
+export async function generateStaticParams() {
+  return Object.keys(LOCATION_MAP).map((location) => ({
+    location: location,
+  }));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { location } = await params;
   const config = LOCATION_MAP[location.toLowerCase()];
@@ -156,8 +162,26 @@ export default async function LocationPage({ params }: Props) {
               <li className="flex items-center gap-2">✅ 24/7 customer support for bookings</li>
             </ul>
           </div>
-        </div>
+          </div>
       </div>
+
+      {/* Related Blog/Guides */}
+      <section className="mt-24 text-center">
+        <div className="neo-card p-12 rounded-[40px] bg-white max-w-3xl mx-auto border border-white">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-[#1a202c] mb-4">
+            Travel Guide: {config.city}
+          </h2>
+          <p className="text-[#718096] font-medium mb-8">
+            Check out our latest tips, top attractions, and hidden gems in {config.city} to make your trip unforgettable.
+          </p>
+          <a
+            href="/blog" 
+            className="neo-btn neo-btn-primary px-10 py-4 rounded-2xl font-extrabold inline-block shadow-lg no-underline"
+          >
+            Read {config.city} Guides →
+          </a>
+        </div>
+      </section>
     </div>
   );
 }
