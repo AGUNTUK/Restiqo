@@ -114,7 +114,7 @@ export default async function PaymentPage({ params }: PageProps) {
 
         {/* Right Side: Payment Form */}
         <div className="flex flex-col justify-center">
-          <form action={async (formData) => { "use server"; await confirmPayment(formData); }} className="w-full">
+          <form action={confirmPayment} className="w-full">
             <input type="hidden" name="bookingId" value={booking.id} />
             
             <PaymentMethodSelector 

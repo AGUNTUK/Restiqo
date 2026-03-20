@@ -26,7 +26,7 @@ function isSupabaseConfigured(): boolean {
  * When Supabase is not yet configured (.env.local missing), middleware
  * passes all requests through without auth checks.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Gracefully skip auth when Supabase is not configured yet
   if (!isSupabaseConfigured()) {
     return NextResponse.next({ request });

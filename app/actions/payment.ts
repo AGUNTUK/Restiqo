@@ -4,19 +4,19 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export async function confirmPayment(formData: FormData) {
+export async function confirmPayment(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const bookingId = formData.get("bookingId") as string;
 
   if (!bookingId) {
-    return { error: "Missing booking ID." };
+    throw new Error("Missing booking ID.");
   }
 
   // 1. Authenticate user
   const { data: { user }, error: authError } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    return { error: "You must be logged in to confirm a payment." };
+    throw new Error("You must be logged in to confirm a payment.");
   }
 
   // 2. Security Check: ensure this user owns the pending booking
@@ -28,7 +28,7 @@ export async function confirmPayment(formData: FormData) {
     .single();
 
   if (fetchError || !booking) {
-    return { error: "Booking not found or access denied." };
+    throw new Error("Booking not found or access denied.");
   }
 
   if (booking.status !== "pending") {
@@ -53,7 +53,7 @@ export async function confirmPayment(formData: FormData) {
 
   if (updateError) {
     console.error("Payment confirmation error:", updateError.message);
-    return { error: "Failed to confirm payment. Please try again." };
+    throw new Error("Failed to confirm payment. Please try again.");
   }
 
   // 4. Redirect to Dashboard with fresh data
