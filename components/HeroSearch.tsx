@@ -8,6 +8,30 @@ import LocationAutocomplete from "./LocationAutocomplete";
 import GuestSelector from "./GuestSelector";
 import { GUEST_OPTIONS } from "@/lib/constants";
 import { useRecentSearches } from "@/lib/hooks/useRecentSearches";
+import Image from "next/image";
+
+const POPULAR_LOCATIONS = [
+  { 
+    name: "Cox’s Bazar", 
+    image: "https://images.unsplash.com/photo-1590001158193-790130ae8f2a?q=80&w=300&auto=format&fit=crop" 
+  },
+  { 
+    name: "Dhaka", 
+    image: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?q=80&w=300&auto=format&fit=crop" 
+  },
+  { 
+    name: "Sajek", 
+    image: "https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?q=80&w=300&auto=format&fit=crop" 
+  },
+  { 
+    name: "Sylhet", 
+    image: "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?q=80&w=300&auto=format&fit=crop" 
+  },
+  { 
+    name: "Bandarban", 
+    image: "https://images.unsplash.com/photo-1623944889288-cd147dbb517c?q=80&w=300&auto=format&fit=crop" 
+  },
+];
 
 type Guests = { adults: number; children: number; infants: number };
 
@@ -153,6 +177,36 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
           >
             🔍 {dict.search.searchBtn}
           </button>
+        </div>
+      </div>
+
+      {/* Popular Locations Discovery */}
+      <div className="mt-4 pt-3 border-t border-[#d1d9e0]">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-[#a0aec0] mb-3 block px-1">
+          Popular Destinations
+        </span>
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+          {POPULAR_LOCATIONS.map((loc) => (
+            <button
+              key={loc.name}
+              type="button"
+              onClick={() => setLocation(loc.name)}
+              className="flex-shrink-0 group relative overflow-hidden neo-card-sm w-32 h-20 rounded-xl transition-all active:scale-95 border border-white/40"
+            >
+              <Image 
+                src={loc.image} 
+                alt={loc.name}
+                fill
+                className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute bottom-2 left-2 right-2 text-left">
+                <p className="text-[10px] font-black text-white uppercase tracking-wider drop-shadow-md">
+                  {loc.name}
+                </p>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 
