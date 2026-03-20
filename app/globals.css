@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+/* ===================================================================
+   Tailwind v4 @theme — Design Tokens
+   =================================================================== */
+@theme {
+  /* Colors */
+  --color-neo-bg:       #e8edf2;
+  --color-neo-surface:  #e8edf2;
+  --color-primary:      #6c63ff;
+  --color-primary-dark: #574fd8;
+  --color-accent:       #ff6584;
+  --color-text:         #2d3748;
+  --color-muted:        #718096;
+
+  /* Border radius */
+  --radius-neo:    18px;
+  --radius-neo-sm: 12px;
+  --radius-neo-xs: 8px;
+
+  /* Font */
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* ===================================================================
+   Custom Utilities — Neomorphic shadows
+   (Tailwind v4 @utility syntax)
+   =================================================================== */
+@utility neo-shadow {
+  box-shadow:
+    8px  8px 16px #c4c9ce,
+    -8px -8px 16px #ffffff;
+}
+@utility neo-shadow-sm {
+  box-shadow:
+    4px  4px 10px #c4c9ce,
+    -4px -4px 10px #ffffff;
+}
+@utility neo-shadow-inset {
+  box-shadow:
+    inset 4px 4px 10px #c4c9ce,
+    inset -4px -4px 10px #ffffff;
+}
+@utility neo-shadow-hover {
+  box-shadow:
+    12px 12px 24px #c4c9ce,
+    -12px -12px 24px #ffffff;
+}
+@utility neo-shadow-primary {
+  box-shadow:
+    4px  4px 14px rgba(108, 99, 255, 0.45),
+    -2px -2px 8px  rgba(255, 255, 255, 0.7);
+}
+
+/* ===================================================================
+   Base
+   =================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: #e8edf2;
+  color: #2d3748;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================================================================
+   Reusable component classes
+   =================================================================== */
+
+/* Cards */
+.neo-card {
+  background: #e8edf2;
+  border-radius: 18px;
+  box-shadow: 8px 8px 16px #c4c9ce, -8px -8px 16px #ffffff;
+  transition: box-shadow 0.3s ease, transform 0.25s ease;
+}
+.neo-card:hover {
+  box-shadow: 12px 12px 24px #c4c9ce, -12px -12px 24px #ffffff;
+  transform: translateY(-3px);
+}
+.neo-card-sm {
+  background: #e8edf2;
+  border-radius: 12px;
+  box-shadow: 4px 4px 10px #c4c9ce, -4px -4px 10px #ffffff;
+}
+
+/* Inset (pressed) surface */
+.neo-inset {
+  background: #e8edf2;
+  border-radius: 12px;
+  box-shadow: inset 4px 4px 10px #c4c9ce, inset -4px -4px 10px #ffffff;
+}
+
+/* Buttons */
+.neo-btn {
+  background: #e8edf2;
+  border-radius: 12px;
+  box-shadow: 4px 4px 10px #c4c9ce, -4px -4px 10px #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  color: #2d3748;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.neo-btn:hover {
+  box-shadow: 6px 6px 14px #c4c9ce, -6px -6px 14px #ffffff;
+  transform: translateY(-1px);
+}
+.neo-btn:active {
+  box-shadow: inset 4px 4px 10px #c4c9ce, inset -4px -4px 10px #ffffff;
+  transform: scale(0.98);
+}
+
+.neo-btn-primary {
+  background: linear-gradient(135deg, #6c63ff, #574fd8);
+  color: #fff !important;
+  box-shadow: 4px 4px 14px rgba(108, 99, 255, 0.45), -2px -2px 8px rgba(255,255,255,0.7);
+}
+.neo-btn-primary:hover {
+  box-shadow: 6px 6px 18px rgba(108, 99, 255, 0.55), -2px -2px 8px rgba(255,255,255,0.7);
+  transform: translateY(-2px);
+}
+
+/* Inputs */
+.neo-input {
+  background: #e8edf2;
+  border: none;
+  border-radius: 12px;
+  box-shadow: inset 4px 4px 10px #c4c9ce, inset -4px -4px 10px #ffffff;
+  padding: 0.75rem 1rem;
+  font-size: 0.92rem;
+  color: #2d3748;
+  width: 100%;
+  outline: none;
+  transition: box-shadow 0.2s ease;
+  font-family: inherit;
+}
+.neo-input:focus {
+  box-shadow:
+    inset 4px 4px 10px #c4c9ce,
+    inset -4px -4px 10px #ffffff,
+    0 0 0 2px rgba(108, 99, 255, 0.25);
+}
+.neo-input::placeholder { color: #a0aec0; }
+
+/* Badge */
+.neo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 999px;
+  background: #e8edf2;
+  box-shadow: 3px 3px 7px #c4c9ce, -3px -3px 7px #ffffff;
+  color: #6c63ff;
+  letter-spacing: 0.02em;
+}
+
+/* Destination hover effect */
+.dest-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.dest-card:hover { transform: translateY(-5px) scale(1.02); }
+
+/* Footer links */
+.footer-link { transition: color 0.2s; }
+.footer-link:hover { color: #6c63ff !important; }
+
+/* Scrollbar hidden for horizontal scroll */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
