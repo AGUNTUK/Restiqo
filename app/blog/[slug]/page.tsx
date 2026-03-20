@@ -37,6 +37,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: data.title,
       description: data.excerpt,
       images: data.cover_image ? [data.cover_image] : [],
+    },
+    alternates: {
+      canonical: `/blog/${slug}`,
     }
   };
 }

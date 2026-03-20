@@ -54,6 +54,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: seoTitle,
       description: seoDescription,
       images: data.images?.[0] ? [data.images[0]] : [],
+    },
+    alternates: {
+      canonical: `/listing/${slugOrId}`,
     }
   };
 }

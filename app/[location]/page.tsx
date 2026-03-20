@@ -54,6 +54,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: config.title,
       description: config.description,
       type: "website",
+    },
+    alternates: {
+      canonical: `/${location.toLowerCase()}`,
     }
   };
 }
