@@ -70,6 +70,7 @@ export const viewport = {
 import { getDictionary, getLocale } from "@/lib/i18n";
 import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 import PWAProvider from "@/components/PWAProvider";
 
 export default async function RootLayout({
@@ -115,6 +116,7 @@ export default async function RootLayout({
           <main style={{ flex: 1 }}>{children}</main>
           <Footer dict={dict} locale={locale} />
           <SpeedInsights />
+          <Analytics />
         </PWAProvider>
       </body>
     </html>
