@@ -45,7 +45,7 @@ export default async function HostListingsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {listings.map((listing) => {
             const ratings = listing.reviews?.map((r: any) => r.rating) || [];
-            const avgRating = ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
+            const avgRating = ratings.length > 0 ? ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length : 0;
 
             return (
               <div key={listing.id} className="neo-card p-5 rounded-[32px] group hover:scale-[1.02] transition-all border border-white/40">
