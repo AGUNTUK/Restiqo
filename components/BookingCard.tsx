@@ -78,8 +78,13 @@ export default function BookingCard({ listingId, pricePerNight, maxGuests, dict 
     }
   }
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Generate today's date for standard 'min' attributes
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = mounted ? new Date().toISOString().split("T")[0] : "";
 
   return (
     <div

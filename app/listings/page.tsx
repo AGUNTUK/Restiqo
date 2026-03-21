@@ -3,8 +3,12 @@ import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { type ListingWithStats } from "@/lib/types/database";
 import ListingCard from "@/components/ListingCard";
 import { DynamicListingsMap } from "@/components/LazyWrappers";
+import { getDictionary, getLocale } from "@/lib/i18n";
+import FilterSection from "@/components/FilterSection";
 
 export const revalidate = 60; // Revalidate every 60 seconds (ISR)
+
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
   const params = await searchParams;
@@ -18,10 +22,6 @@ export async function generateMetadata({ searchParams }: { searchParams: SearchP
   };
 }
 
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
-
-import { getDictionary, getLocale } from "@/lib/i18n";
-
 export default async function ListingsPage({ searchParams }: { searchParams: SearchParams }) {
   let listings: ListingWithStats[] = [];
   const dict = await getDictionary();
@@ -31,6 +31,9 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
   const city = typeof rawParams.city === "string" ? rawParams.city : null;
   const guests = typeof rawParams.guests === "string" ? parseInt(rawParams.guests, 10) : null;
   const amenitiesStr = typeof rawParams.amenities === "string" ? rawParams.amenities : null;
+  const minPrice = typeof rawParams.minPrice === "string" ? parseInt(rawParams.minPrice, 10) : null;
+  const maxPrice = typeof rawParams.maxPrice === "string" ? parseInt(rawParams.maxPrice, 10) : null;
+  const type = typeof rawParams.type === "string" ? rawParams.type : null;
 
   if (isSupabaseConfigured()) {
     const supabase = await createClient();
@@ -41,7 +44,6 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
       .eq("status", "approved");
 
     if (city) {
-      // Basic text match for city or location
       query = query.or(`city.ilike.%${city}%,location.ilike.%${city}%`);
     }
 
@@ -49,9 +51,20 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
       query = query.gte("max_guests", guests);
     }
 
+    if (minPrice !== null) {
+      query = query.gte("price", minPrice);
+    }
+
+    if (maxPrice !== null) {
+      query = query.lte("price", maxPrice);
+    }
+
+    if (type && type !== 'all') {
+      query = query.eq("type", type);
+    }
+
     if (amenitiesStr) {
       const filters = amenitiesStr.split(",").filter(Boolean);
-      // Ensure all requested amenities exist in the array
       if (filters.length > 0) {
         query = query.contains("amenities", filters);
       }
@@ -78,62 +91,28 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
         <div className="w-full lg:w-[55%] xl:w-[60%] flex flex-col">
           {/* Page Header */}
           <div className="mb-8">
-            <h1
-              className="font-extrabold text-3xl md:text-4xl mb-3"
-              style={{ color: "#1a202c", letterSpacing: "-0.03em" }}
-            >
-              {dict.nav.listings}
+            <h1 className="font-extrabold text-3xl md:text-4xl mb-3 text-[#1a202c] tracking-tight">
+              {city ? `${dict.nav.listings} in ${city}` : dict.nav.listings}
             </h1>
             <p className="text-[#718096] text-lg font-medium">
-              {dict.hero.subtitle}
+              {listings.length} {listings.length === 1 ? 'property' : 'properties'} found
             </p>
           </div>
 
-          {/* Filter strip */}
-          <div
-            className="neo-inset rounded-2xl p-4 mb-8 flex gap-3 overflow-x-auto hide-scrollbar"
-            style={{ scrollbarWidth: "none" }}
-          >
-            {["All", "Villas", "Apartments", "Studios", "Penthouses"].map((filter, i) => (
-              <button
-                key={filter}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all flex items-center gap-2"
-                style={
-                  i === 0
-                    ? {
-                        background: "#e8edf2",
-                        color: "#6c63ff",
-                        boxShadow: "4px 4px 10px #c4c9ce, -4px -4px 10px #ffffff",
-                      }
-                    : {
-                        background: "transparent",
-                        color: "#718096",
-                      }
-                }
-              >
-                {i === 1 ? "🌴" : i === 2 ? "🏙️" : i === 3 ? "🎨" : i === 4 ? "🌆" : "🏠"}{" "}
-                {filter}
-              </button>
-            ))}
-          </div>
+          {/* New Advanced Filter Section */}
+          <FilterSection dict={dict} />
 
           {/* Grid */}
           {hasListings ? (
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 pb-8">
-              {(listings as ListingWithStats[]).map((listing) => (
+              {listings.map((listing) => (
                 <ListingCard key={listing.id} listing={listing} dict={dict} />
               ))}
             </div>
           ) : (
             /* Empty State */
-            <div className="neo-card p-12 rounded-[24px] text-center max-w-xl mx-auto">
-              <div
-                className="w-20 h-20 rounded-[20px] shadow-sm flex items-center justify-center text-4xl mx-auto mb-6"
-                style={{
-                  background: "linear-gradient(135deg, #e8edf2, #ffffff)",
-                  boxShadow: "inset 4px 4px 10px #c4c9ce, inset -4px -4px 10px #ffffff",
-                }}
-              >
+            <div className="neo-card p-12 rounded-[24px] text-center max-w-xl mx-auto border border-white/40">
+              <div className="w-20 h-20 rounded-[24px] shadow-sm flex items-center justify-center text-4xl mx-auto mb-6 neo-inset">
                 🌍
               </div>
               <h3 className="font-extrabold text-xl text-[#1a202c] mb-2">
@@ -142,8 +121,8 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
               <p className="text-[#718096] mb-6 font-medium">
                 {locale === "bn" ? "আপনার ফিল্টারের সাথে মিলে এমন কোনো জায়গা পাওয়া যায়নি।" : "We couldn't find any properties matching your criteria at the moment."}
               </p>
-              <a href="/listings" className="neo-btn neo-btn-primary px-6 py-3 rounded-xl font-bold inline-block">
-                {locale === "bn" ? "ফিল্টার মুছুন" : "Clear Filters"}
+              <a href="/listings" className="neo-btn-primary px-8 py-3 rounded-xl font-extrabold inline-block shadow-lg">
+                {locale === "bn" ? "ফিল্টার মুছুন" : "Clear All Filters"}
               </a>
             </div>
           )}
@@ -151,7 +130,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
 
         {/* Right Side: Sticky Interactive Map */}
         <div className="hidden lg:block lg:w-[45%] xl:w-[40%] relative">
-          <div className="sticky top-24 h-[calc(100vh-140px)] w-full">
+          <div className="sticky top-24 h-[calc(100vh-140px)] w-full rounded-[32px] overflow-hidden shadow-2xl border border-white/20">
             <DynamicListingsMap listings={listings as ListingWithStats[]} />
           </div>
         </div>

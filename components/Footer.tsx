@@ -173,7 +173,7 @@ export default function Footer({ dict, locale }: { dict: typeof dictionaries["en
             gap: "0.5rem",
           }}
         >
-          <p style={{ color: "var(--text-muted)", fontSize: "0.83rem" }}>
+          <p style={{ color: "var(--text-muted)", fontSize: "0.83rem" }} suppressHydrationWarning>
             © {new Date().getFullYear()} Restiqa. {dict.footer.rights}
           </p>
           <p style={{ color: "var(--text-muted)", fontSize: "0.83rem" }}>

@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     }
 
     // 1. First, verify the transaction_id to cleanly lookup the associated order_id (booking ID)
-    const verifyResponse = await fetch(`${pipraBaseUrl}/pay/api/verify`, {
+    const verifyResponse = await fetch(`${pipraBaseUrl}/verify`, {
       method: "POST",
       headers: {
         "x-api-key": pipraApiKey,
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Issue the actual external refund command
-    const refundResponse = await fetch(`${pipraBaseUrl}/pay/api/refund`, {
+    const refundResponse = await fetch(`${pipraBaseUrl}/refund`, {
       method: "POST",
       headers: {
         "x-api-key": pipraApiKey,

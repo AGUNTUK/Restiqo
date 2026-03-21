@@ -12,65 +12,7 @@ export const metadata: Metadata = {
     "Discover handpicked rentals — apartments, villas, and more — on Restiqa. Book instantly.",
 };
 
-/* ── Data ─────────────────────────────────────────── */
-const FEATURED = [
-  {
-    id: "bd-1",
-    title: "Cox's Bazar Sea View Apartment",
-    location: "Kolatoli Beach, Cox's Bazar",
-    price: 4500,
-    rating: 4.9,
-    reviews: 124,
-    type: "Apartment",
-    beds: 3,
-    baths: 2,
-    image: "https://images.unsplash.com/photo-1590603732440-236ca969c364?w=800",
-    tag: "Superhost",
-    gradient: "from-blue-400 to-cyan-500",
-  },
-  {
-    id: "bd-2",
-    title: "Sajek Valley Eco Resort",
-    location: "Ruilui Para, Sajek",
-    price: 3200,
-    rating: 4.8,
-    reviews: 89,
-    type: "Resort",
-    beds: 2,
-    baths: 1,
-    image: "https://images.unsplash.com/photo-1594738504031-74488182b133?w=800",
-    tag: "Top Rated",
-    gradient: "from-emerald-400 to-teal-500",
-  },
-  {
-    id: "bd-3",
-    title: "Dhaka Luxury Suite (Gulshan)",
-    location: "Gulshan 2, Dhaka",
-    price: 8500,
-    rating: 5.0,
-    reviews: 242,
-    type: "Suite",
-    beds: 2,
-    baths: 2,
-    image: "https://images.unsplash.com/photo-1518173946687-a4c8a07d7e02?w=800",
-    tag: null,
-    gradient: "from-rose-400 to-pink-500",
-  },
-  {
-    id: "bd-4",
-    title: "Sylhet Tea Garden Cottage",
-    location: "Srimangal, Sylhet",
-    price: 2500,
-    rating: 4.7,
-    reviews: 67,
-    type: "Cottage",
-    beds: 1,
-    baths: 1,
-    image: "https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=800",
-    tag: "Rare find",
-    gradient: "from-green-400 to-lime-500",
-  },
-];
+import { FEATURED_LISTINGS } from "@/lib/constants";
 
 const DESTINATIONS = [
   { cityKey: "coxsBazar", country: "Bangladesh", listings: 340, emoji: "🏖️", color: "from-blue-400 to-cyan-600" },
@@ -191,30 +133,13 @@ export default async function HomePage() {
 
         {/* Grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURED.map((l) => {
-            const fDict = (dict as any).featured?.[l.id] || { title: l.title, location: l.location, type: l.type };
-            return (
-              <ListingCard 
-                key={l.id} 
-                listing={{
-                  ...l,
-                  title: fDict.title,
-                  location: fDict.location,
-                  type: fDict.type,
-                  images: [l.image], // Using Unsplash URL
-                  price: l.price,
-                  latitude: 23, // Mock coords
-                  longitude: 90,
-                  is_available: true,
-                  host_id: "mock",
-                  created_at: new Date().toISOString(),
-                  avg_rating: l.rating,
-                  review_count: l.reviews
-                } as any} 
-                dict={dict} 
-              />
-            );
-          })}
+          {FEATURED_LISTINGS.map((l) => (
+            <ListingCard 
+              key={l.id} 
+              listing={l as any} 
+              dict={dict} 
+            />
+          ))}
         </div>
 
       </section>

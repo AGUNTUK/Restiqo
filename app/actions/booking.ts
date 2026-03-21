@@ -4,6 +4,11 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+export async function checkAvailability(listingId: string, checkin: string, checkout: string) {
+  // Always return true as per user request to make all dates available
+  return { available: true };
+}
+
 export async function createBooking(formData: FormData) {
   const supabase = await createClient();
 
@@ -44,6 +49,9 @@ export async function createBooking(formData: FormData) {
   if (nights < 1) {
     return { error: "Minimum stay is 1 night." };
   }
+
+  // 2.5 Availability check (Bypassed as per user request)
+  // All dates are open for demo purposes
 
   // 3. Fetch canonical price from the database to prevent pricing tampering
   const { data: listing, error: listingError } = await supabase

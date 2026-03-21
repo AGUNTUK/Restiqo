@@ -12,52 +12,30 @@ const ITEMS = [
     left: "10%", 
     delay: "2s", 
     rotate: "rotate-12",
-    size: "w-24 h-24 text-4xl",
-    speed: 2.5
-  },
-  { 
-    id: 4, 
-    type: "glass", 
-    icon: "🗼", 
-    top: "70%", 
-    left: "80%", 
-    delay: "3s", 
-    rotate: "-rotate-12",
     size: "w-20 h-20 text-3xl",
-    speed: 2
+    speed: 1.5
   },
   { 
     id: 6, 
     type: "glass", 
     icon: "✈️", 
-    top: "10%", 
-    left: "75%", 
+    top: "12%", 
+    left: "80%", 
     delay: "4s", 
     rotate: "rotate-45",
     size: "w-16 h-16 text-2xl",
-    speed: 3
-  },
-  { 
-    id: 7, 
-    type: "glass", 
-    icon: "🏨", 
-    top: "80%", 
-    left: "15%", 
-    delay: "1s", 
-    rotate: "-rotate-6",
-    size: "w-28 h-28 text-4xl",
-    speed: 1.5
+    speed: 2
   },
   { 
     id: 8, 
     type: "glass", 
     icon: "🗺️", 
-    top: "40%", 
-    left: "5%", 
+    top: "75%", 
+    left: "85%", 
     delay: "5s", 
     rotate: "rotate-3",
-    size: "w-20 h-20 text-2xl",
-    speed: 2.2
+    size: "w-16 h-16 text-xl",
+    speed: 1.2
   },
 ];
 
@@ -100,15 +78,15 @@ export default function InteractiveHeroBg() {
     >
       {/* ── Soft Ambient Nebulas ── */}
       <div
-        className="absolute -top-[20%] -left-[10%] w-[60%] h-[80%] rounded-full opacity-30 mix-blend-multiply blur-[120px] animate-pulse-slow"
+        className="absolute -top-[20%] -left-[10%] w-[60%] h-[80%] rounded-full opacity-15 mix-blend-multiply blur-[120px] animate-pulse-slow"
         style={{ background: "#6c63ff" }}
       />
       <div
-        className="absolute top-[10%] -right-[15%] w-[55%] h-[85%] rounded-full opacity-25 mix-blend-multiply blur-[120px] animate-pulse-slow"
+        className="absolute top-[10%] -right-[15%] w-[55%] h-[85%] rounded-full opacity-10 mix-blend-multiply blur-[120px] animate-pulse-slow"
         style={{ background: "#ff6584", animationDelay: "2s" }}
       />
       <div
-        className="absolute -bottom-[20%] left-[20%] w-[40%] h-[60%] rounded-full opacity-20 mix-blend-multiply blur-[100px] animate-pulse-slow"
+        className="absolute -bottom-[20%] left-[20%] w-[40%] h-[60%] rounded-full opacity-10 mix-blend-multiply blur-[100px] animate-pulse-slow"
         style={{ background: "#43e97b", animationDelay: "1s" }}
       />
 

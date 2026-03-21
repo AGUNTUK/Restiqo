@@ -17,10 +17,25 @@ export async function signIn(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data: { user }, error } = await supabase.auth.signInWithPassword({ email, password });
 
-  if (error) {
-    return { error: error.message };
+  if (error || !user) {
+    return { error: error?.message || "Invalid credentials" };
+  }
+
+  // Role-based redirection logic for standard logins
+  if (!formData.get("redirectTo")) {
+    const { data: profile } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role === "admin") {
+      redirect("/admin");
+    } else if (profile?.role === "host") {
+      redirect("/host");
+    }
   }
 
   redirect(redirectTo);

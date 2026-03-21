@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Payment service unavailable" }, { status: 500 });
     }
 
-    const verifyResponse = await fetch(`${pipraBaseUrl}/pay/api/verify`, {
+    const verifyResponse = await fetch(`${pipraBaseUrl}/verify`, {
       method: "POST",
       headers: {
         "x-api-key": pipraApiKey,

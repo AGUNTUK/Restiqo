@@ -84,7 +84,9 @@ export const dictionaries = {
       verified: "Verified Property",
       trusted: "Trusted by local hosts",
       contactHost: "Contact Host",
-      callHost: "Call Host"
+      callHost: "Call Host",
+      location: "Location",
+      whereYoullBe: "Where you'll be"
     },
     booking: {
       price: "price",
@@ -258,7 +260,9 @@ export const dictionaries = {
       verified: "ভেরিফাইড প্রপার্টি",
       trusted: "স্থানীয় হোস্টদের দ্বারা বিশ্বস্ত",
       contactHost: "হোস্টের সাথে যোগাযোগ করুন",
-      callHost: "হোস্টকে কল করুন"
+      callHost: "হোস্টকে কল করুন",
+      location: "অবস্থান",
+      whereYoullBe: "আপনি যেখানে থাকবেন"
     },
     booking: {
       price: "মূল্য",

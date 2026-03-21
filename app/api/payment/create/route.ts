@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     const successUrl = `${appBaseUrl}/payment/success?bookingId=${bookingId}`;
     const cancelUrl = `${appBaseUrl}/payment/failed?bookingId=${bookingId}`;
 
-    const paymentResponse = await fetch(`${pipraBaseUrl}/pay/api/checkout`, {
+    const paymentResponse = await fetch(`${pipraBaseUrl}/checkout`, {
       method: "POST",
       headers: {
         "x-api-key": pipraApiKey,

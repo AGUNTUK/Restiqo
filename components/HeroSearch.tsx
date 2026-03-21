@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { dictionaries } from "@/lib/i18n/dictionaries";
@@ -28,6 +28,13 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
   const [cityCenter, setCityCenter] = useState(false);
   const [coupleFriendly, setCoupleFriendly] = useState(false);
   const [familyFriendly, setFamilyFriendly] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const today = mounted ? new Date().toISOString().split("T")[0] : "";
 
   const totalGuests = guests.adults + guests.children;
 
@@ -119,7 +126,7 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
               onChange={(e) => setCheckIn(e.target.value)}
               className="bg-transparent border-none outline-none py-4 text-sm flex-1"
               style={{ color: checkIn ? "#2d3748" : "#a0aec0", fontFamily: "inherit", minWidth: 0 }}
-              min={new Date().toISOString().split("T")[0]}
+              min={today}
             />
           </div>
         </div>
@@ -141,7 +148,7 @@ export default function HeroSearch({ dict }: { dict: typeof dictionaries["en"] }
               onChange={(e) => setCheckOut(e.target.value)}
               className="bg-transparent border-none outline-none py-4 text-sm flex-1"
               style={{ color: checkOut ? "#2d3748" : "#a0aec0", fontFamily: "inherit", minWidth: 0 }}
-              min={checkIn || new Date().toISOString().split("T")[0]}
+              min={checkIn || today}
             />
           </div>
         </div>

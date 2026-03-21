@@ -52,6 +52,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Restiqa",
+  },
 };
 
 export const viewport = {
@@ -64,6 +70,7 @@ export const viewport = {
 import { getDictionary, getLocale } from "@/lib/i18n";
 import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import PWAProvider from "@/components/PWAProvider";
 
 export default async function RootLayout({
   children,
@@ -72,8 +79,11 @@ export default async function RootLayout({
   const locale = await getLocale();
 
   return (
-    <html lang={locale} className={inter.variable}>
+    <html lang={locale} className={inter.variable} suppressHydrationWarning>
       <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="mobile-web-app-capable" content="yes" />
         {/* Google tag (gtag.js) */}
         <Script
           async
@@ -100,10 +110,12 @@ export default async function RootLayout({
           flexDirection: "column",
         }}
       >
-        <Navbar />
-        <main style={{ flex: 1 }}>{children}</main>
-        <Footer dict={dict} locale={locale} />
-        <SpeedInsights />
+        <PWAProvider>
+          <Navbar />
+          <main style={{ flex: 1 }}>{children}</main>
+          <Footer dict={dict} locale={locale} />
+          <SpeedInsights />
+        </PWAProvider>
       </body>
     </html>
   );
